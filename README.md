@@ -1,2 +1,2 @@
-# Programas_25_mayo_2020
+# Proyecto final de Compiladores
 Repositorio para el proyecto final de la materia Compiladores
