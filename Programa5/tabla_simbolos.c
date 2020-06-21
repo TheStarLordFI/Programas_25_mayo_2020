@@ -57,7 +57,7 @@ SYM *set_sym(SYM *simbol, char *id, int direccion, int tipo, char *tipoVariable,
     strcpy(simbol->var, tipoVariable);
   else
     strcpy(simbol->var, "var");
-  if(parametros != NULL)
+  if(args != NULL)
     simbol->args = args;
   return simbol;
 }
@@ -128,7 +128,7 @@ void finish_sym_tab(SYMTAB *tabSimbolos){
 * Autor: OJA
 * Fecha de creación: 30  de mayo 2020
 */
-void print_tab(SYMTAB *tabSimbolos){
+void print_tab_sym(SYMTAB *tabSimbolos){
   SYM *simbol;
   simbol=tabSimbolos->head;
   printf("\n-------------------------------------------------------------------------\n");

@@ -1,6 +1,6 @@
 #ifndef TYPTAB_H
 #define TYPTAB_H
-#include <stdbool.h>
+//#include <stdbool.h>
 #include "data.h"
 void append_type(TYPTAB *tt,TYP *t); //*Agrega a l f i n a l de la tabla un nuevo tipo
 void clear_type_tab(TYPTAB *tt); //*Deja vacia la tabla
@@ -23,5 +23,5 @@ void finish_type(TYP *s); //*libera memoria para un tipo
 int getTam(TYPTAB *t , int id);//*Retorna el tam de un tipo
 TB *getTipoBase(TYPTAB *t , int id); //*retorna el tipo base
 char *getNombre( TYPTAB *t , int id ) ; //*retorna el nombre de un tipo tambien lo puede cambiar por un entero
-void print_tab(TYPTAB *t ); //*Imprime en pantalla la tabla de tipos
+void print_tab_type(TYPTAB *t ); //*Imprime en pantalla la tabla de tipos
 #endif

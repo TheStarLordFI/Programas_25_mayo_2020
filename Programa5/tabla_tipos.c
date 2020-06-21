@@ -72,7 +72,7 @@ void clear_type_tab(TYPTAB *tt){
 * Autor: Méndez Cabrera Ana Belem
 * Fecha de creación: 31 Mayo 2020
 */
-void print_tab(TYPTAB *t){
+void print_tab_type(TYPTAB *t){
   TYP *tipoDato;
   tipoDato=t->head;
   printf("\n------------------------------------------\n");

@@ -8,16 +8,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "tabla_simbolos.h"
 #include "tabla_tipos.h"
 #include "cuadruplas.h"
 #include "backpatch.h"
 #include "tipos.h"
+#include "tabla_cadenas.h"
+#include "pila_direcciones.h"
 
 void yyerror(char *s);
+extern int yylineno;
 extern int yylex();
-extern int n;
-
+extern char* yytext;
 
 /*Se deben declarar las estructuras que para nuestro proyecto se tienen.
 * Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
@@ -68,7 +71,7 @@ char *estTemp;//nombre de la tabla de tipos
 	struct{
 	    int tipoCad;
 	    char *lexval;
-	    struct CADENA *cad;//FALTA IMPLEMENTACION DE LA ESTRUCTURA CADENAS
+	    struct CAD *cad;//FALTA IMPLEMENTACION DE LA ESTRUCTURA CADENAS
 	}cad;
 
 	struct{
@@ -115,15 +118,15 @@ char *estTemp;//nombre de la tabla de tipos
 	struct{
 		int tipoVaComp;
 		char *des;
-		bool code_est;
+		int code_est;
 	}varComp;
 
 	struct{
-		bool estructura;
-		SYMTAB tabla;
+		int estructura;
+		struct SYMTAB *tabla;
 		int type;
 		char *des;
-		bool code_est;
+		int code_est;
 	}datoEst;
 	
 
@@ -164,14 +167,6 @@ char *estTemp;//nombre de la tabla de tipos
 %nonassoc SITEMP
 %nonassoc SINO
 
-/*No terminales van declarados en minuscula*/
-//%type<exp> programa declaraciones tipo_registro tipo base tipo_arreglo lista_var funciones argumentos lista_arg arg 
-//tipo_arg param_arr sentencias sentencia casos predeterminado e_bool relacional expresion variable variable_comp 
-//dato_est_sim arreglo parametros lista_param
-//%type<exp> declaraciones  lista_var funciones 
-//casos predeterminado variable_comp 
-//dato_est_sim
-//...
 %type<tipo> tipo base
 %type<tipo> tipo_arreglo
 %type<eExpr> expresion
@@ -184,9 +179,9 @@ char *estTemp;//nombre de la tabla de tipos
 %type<tipo> arg tipo_registro
 %type<tipo> tipo_arg param_arr
 %type<var> variable arreglo
-%type<> declaraciones
-%type<> lista_var
-%type<>	funciones
+%type declaraciones
+%type lista_var
+%type funciones
 %type<listIndice_C> casos
 %type<listIndice_P> predeterminado
 %type<varComp> variable_comp
@@ -201,12 +196,12 @@ programa:        {printf("=> Inicio: programa\n");
                   pDirecciones = crearPilaDir();
                   pSimbolos = init_sym_tab_stack();
                   pTipos = init_type_tab_stack();
-                  TGT = init_typ_tab();
+                  init_type_tab(TGT);
                   TGS = init_sym_tab();
-                  push_st(TGS, pSimbolos);
-                  push_tt(TGT, pTipos);
+                  push_st(pSimbolos,TGS);
+                  push_tt(pTipos,TGT);
                   tabCadenas = crearTablaCadenas();
-                  } declaraciones funciones {imprimirCodigo(codigo);};
+                  } declaraciones funciones {/*imprimirCodigo(codigo);*/};
 				  
 declaraciones:    tipo lista_var PYC declaraciones {}
                 | tipo_registro lista_var PYC declaraciones {}
@@ -259,10 +254,10 @@ casos2:           casos{} | {} ;
 
 predeterminado:   PRED DOSP sentencia{} | {};
 
-e_bool:           e_bool OR e_bool
-                | e_bool AND e_bool
+e_bool:           e_bool OR e_bool{}
+                | e_bool AND e_bool{}
                 | NOT e_bool{}
-                | relacional
+                | relacional{}
                 | TRUE{}
                 | FALSE{} ;
 
@@ -299,3 +294,9 @@ parametros:        lista_param{} | {};
 
 lista_param:       lista_param COMA expresion {}
                   | expresion {};				  
+
+
+%%
+void yyerror(char *msg){
+	printf("%s, linea: %d, token: %s\n",msg, yylineno, yytext);
+}

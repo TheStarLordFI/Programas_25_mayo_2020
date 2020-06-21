@@ -4,7 +4,7 @@
 */
 #ifndef SYMTAB_H
 #define SYMTAB_H
-#include <stdbool.h>
+//#include <stdbool.h>
 #include "data.h"
 
 void append_arg(ARGS* args, int arg);//Agrega un argumento al final
@@ -27,7 +27,7 @@ void finish_sym(SYMTAB *T,SYM *s); // libera memoria para un simbolo vacio
 void finish_arg(ARG *s); //libera memoria para un arg
 void finish_args(ARGS *s);// libera memoria para una lista ARGS
 
-void print_tab(SYMTAB *t); // Imprime en pantalla la tabla de simbolos
+void print_tab_sym(SYMTAB *t); // Imprime en pantalla la tabla de simbolos
 
 int getDir(SYMTAB *T , char *id);
 int getTipo(SYMTAB *T , char *id);

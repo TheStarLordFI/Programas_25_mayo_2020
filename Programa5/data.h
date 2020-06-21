@@ -25,28 +25,7 @@ struct sym{
   SYM *next; // apuntador al siguiente simbolo
 };
 
-typedef struct sym_tab SYMTAB;
-
-struct sym_tab{
-  SYM *head;
-  SYM *tail;
-  int num; //Numero de elementos en la tabla
-  SYMTAB *next; // apuntador a la tabla siguiente
-  TYPTAB *tt_asoc; //apuntadora a la tabla de tipos asociada.
-};
-
-typedef struct sym_stack{
-  SYMTAB *top ;
-  SYMTAB *tail;
-}SSTACK;
-
-typedef struct tipobase{
-  int is_est; // 1: si es estructura 0: si es tipo simple −1: si no tiene tipo base
-  union{
-    SYMTAB *est ;
-    int tipo ;
-  }tipo;
-}TB;
+typedef struct tipobase TB;
 
 typedef struct type TYP ;
 struct type{
@@ -65,6 +44,29 @@ struct type_tab{
   int num; //Contador de elementos en la tabla
   TYPTAB *next; //apuntador a la tabla siguiente
 };
+
+typedef struct sym_tab SYMTAB;
+struct sym_tab{
+  SYM *head;
+  SYM *tail;
+  int num; //Numero de elementos en la tabla
+  SYMTAB *next; // apuntador a la tabla siguiente
+  TYPTAB *tt_asoc; //apuntadora a la tabla de tipos asociada.
+};
+
+struct tipobase{
+  int is_est; // 1: si es estructura 0: si es tipo simple −1: si no tiene tipo base
+  union{
+    SYMTAB *est ;
+    int tipo ;
+  }tipo;
+};
+
+typedef struct sym_stack{
+  SYMTAB *top ;
+  SYMTAB *tail;
+}SSTACK;
+
 typedef struct typ_stack{
   TYPTAB *top;
   TYPTAB *tail;

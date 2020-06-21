@@ -8,7 +8,6 @@
   #include <string.h>
   #include <stdlib.h>
   #include "y.tab.h"
-  void error(char *s);
 %}
 
 %option noyywrap
@@ -47,9 +46,9 @@ caracter \'([a-zA-Z])\'
 "no" {return NOT;}
 "verdadero" {return TRUE;}
 "falso" {return FALSE;}
-"ent" {return ENTERO}
-"real" {return REAL}
-"dreal" {return DREAL}
+"ent" {return ENTERO;}
+"real" {return REAL;}
+"dreal" {return DREAL;}
 "car" {return CAR;}
 "sin" {return SIN;}
 "%" {return MODULO;}
