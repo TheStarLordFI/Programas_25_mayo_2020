@@ -26,7 +26,7 @@ SSTACK *pSimbolos;
 TSTACK *pTipos; 
 DSTACK *pDirecciones; 
 SYMTAB *TGS, *TS1, *tTempSimbol;
-//-->>>>>TGT: Tabla General de Tipos, TT1: Tabla Tipos 1, 
+//TGT: Tabla General de Tipos, TT1: Tabla Tipos 1
 TYPTAB *TGT, *TT1, *tTempTipos; 
 CADTAB *tabCadenas;
 SYM *simbol; 
