@@ -278,3 +278,23 @@ void finish_type_tab(TYPTAB *st){
 void finish_type(TYP *S ){
   free(S);
 }
+
+TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos){
+  TYP *aux;
+  int intAux;
+  type->id = tabTipos->num;
+  strcpy(type->nombre, nombre);
+  if( type->tb->is_est == 0){ //si es un tipo simple
+    aux = buscarTipo(tabTipos, idTipo);
+    if (aux != NULL ) //significa que sí encontró ese tipo de dato
+      type->tb->tipo.tipo= aux->id;
+    else
+     printf("Tabla de Tipos: ERROR! No se pudo insertar el tipo %s, no existe el tipo base %i \n", nombre, idTipo);
+  }
+  else {
+    /* En caso de que sea estructura */
+  }
+  aux = buscarTipo(tabTipos, idTipo);
+  type->tam = getTam(tabTipos, type->id);
+  return type;
+}

@@ -24,4 +24,6 @@ int getTam(TYPTAB *t , int id);//*Retorna el tam de un tipo
 TB *getTipoBase(TYPTAB *t , int id); //*retorna el tipo base
 char *getNombre( TYPTAB *t , int id ) ; //*retorna el nombre de un tipo tambien lo puede cambiar por un entero
 void print_tab_type(TYPTAB *t ); //*Imprime en pantalla la tabla de tipos
+
+TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos);
 #endif

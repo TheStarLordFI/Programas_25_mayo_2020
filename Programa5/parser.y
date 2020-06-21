@@ -27,7 +27,8 @@ extern char* yytext;
 */
 SSTACK *pSimbolos; 
 TSTACK *pTipos; 
-DSTACK *pDirecciones; 
+DSTACK *pDirecciones;
+DIR *structDir;
 SYMTAB *TGS, *TS1, *tTempSimbol;
 //TGT: Tabla General de Tipos, TT1: Tabla Tipos 1
 TYPTAB *TGT, *TT1, *tTempTipos; 
@@ -71,7 +72,7 @@ char *estTemp;//nombre de la tabla de tipos
 	struct{
 	    int tipoCad;
 	    char *lexval;
-	    struct CAD *cad;//FALTA IMPLEMENTACION DE LA ESTRUCTURA CADENAS
+	    struct CAD *cad;
 	}cad;
 
 	struct{
@@ -131,11 +132,8 @@ char *estTemp;//nombre de la tabla de tipos
 	
 
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 %token ERROR
-
 /*Los símbolos terminales de la gramática PARA Bison SON tokens y deben declararse en la sección de definiciones.*/
 %token DEF
 %token ESTRUCT
@@ -190,7 +188,7 @@ char *estTemp;//nombre de la tabla de tipos
 %start programa
 
 %%
-programa:        {printf("=> Inicio: programa\n");
+programa:        {printf("==========================P r o g r a m a==========================\n");
                   dir = 0;
                   codigo = init_code();
                   pDirecciones = crearPilaDir();
@@ -203,11 +201,27 @@ programa:        {printf("=> Inicio: programa\n");
                   tabCadenas = crearTablaCadenas();
                   } declaraciones funciones {/*imprimirCodigo(codigo);*/};
 				  
-declaraciones:    tipo lista_var PYC declaraciones {}
-                | tipo_registro lista_var PYC declaraciones {}
+declaraciones:    tipo {typeGBL  = $1.valorTipo;} lista_var PYC declaraciones
+                | tipo_registro {typeGBL  = $1.valorTipo;} lista_var PYC declaraciones
                 | {};
 
-tipo_registro:    ESTRUCT INICIO declaraciones END {};
+tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
+							   	  init_type_tab(TT1);
+								  structDir = crearDir();
+								  structDir->info = dir;
+								  pushDir(structDir, pDirecciones);
+								  dir = 0;
+								  push_tt(pTipos,TT1);
+								  push_st(pSimbolos, TS1);} declaraciones {
+									  TT1= pop_tt(pTipos);
+								      TS1= pop_ts(pSimbolos);
+									  estructDir = popPDir(pDirecciones);
+									  direccion = estructDir->info;
+									  TYP* newTYP= init_type();
+									  newTYP = set_typ(newTYP,"reg",0, pop_tt(pTipos));
+									  typeTemp = append_type(pop_tt(pTipos), tp);} END {
+										  $$.valorTipo=typeTemp;
+									  };
 
 tipo:             base tipo_arreglo {};
 

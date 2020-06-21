@@ -73,7 +73,7 @@ typedef union{
 	struct{
 	    int tipoCad;
 	    char *lexval;
-	    struct CAD *cad;/*FALTA IMPLEMENTACION DE LA ESTRUCTURA CADENAS*/
+	    struct CAD *cad;
 	}cad;
 
 	struct{
