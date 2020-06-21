@@ -1,8 +1,6 @@
 #ifndef BACKPATCH_H
 #define BACKPATCH_H
 
-#include "cuadruplas.h"
-
 typedef struct index INDEX;
 
 struct index{
