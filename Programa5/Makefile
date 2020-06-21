@@ -8,4 +8,3 @@ exec:
 	./exe
 clean:
 	rm -rf exe
-	rm -rf *.o
