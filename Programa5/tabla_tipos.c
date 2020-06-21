@@ -10,7 +10,7 @@
 * Autor: Méndez Cabrera Ana Belem
 * Fecha de creación: 31 Mayo 2020
 */
-void push_st( TSTACK *s , TYPTAB *tt){
+void push_tt( TSTACK *s , TYPTAB *tt){
    tt->next = s->top;
    s->top = tt;
    printf("Pila de Tipos: Se ha insertado una tabla de tipos\n");
@@ -240,7 +240,7 @@ TSTACK *init_type_tab_stack(){
 * Autor: Rodríguez Sánchez José Andrés
 * Fecha de creación: 31 Mayo 2020
 */
-TYPTAB pop_st(TSTACK *s){
+TYPTAB pop_tt(TSTACK *s){
   TYPTAB *tabTipos;
   tabTipos=s->top;
   s->top=tabTipos->next;
