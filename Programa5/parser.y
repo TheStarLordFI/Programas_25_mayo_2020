@@ -49,14 +49,13 @@ char *L;
 char *L1, *L2; //L temporales
 char IDGBL[32];
 char *estTemp;//nombre de la tabla de tipos
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 %}
 
-//////////////////////////////////////////////////////Proyecto Actual//////////////////////////////////////////////////////
 %union{
-	.
-	.
-	.
+	struct{
+    	int valorTipo;
+  	}tipo;
+
 	struct{
 	    int tipe;
 	    char* valor;
@@ -73,9 +72,18 @@ char *estTemp;//nombre de la tabla de tipos
 	}cad;
 
 	struct{
-	  	struct LINDEX *listIndex;//En la DDS viene como prueba
-	}indice; 
+	  	struct LINDEX *nextlist;//listIndex
+	}listIndice_S; 
 	
+	struct{
+		struct LINDEX *prueba;//listIndex
+	  	struct LINDEX *nextlist;//listIndex
+	}listIndice_C; 
+
+	struct{
+		struct LINDEX *prueba;//listIndex
+	}listIndice_P;
+
 	struct{
 	   	struct LINDEX *listTrue; //En la DDS viene como truelist
 	   	struct LINDEX *listFalse; //En la DDS viene como falselist
@@ -87,9 +95,38 @@ char *estTemp;//nombre de la tabla de tipos
 	    struct LINDEX *listRelTrue;//En la DDS viene como truelist
 	    struct LINDEX *listRelFalse;//En la DDS viene como falselist
   	}rel;
-	.
-	.
-	.
+	
+	struct{
+    	int tipoExp;
+		char *dirExp;
+    }eExpr;
+	
+	struct{
+    	int tipoVA;
+    	int baseVA;
+    	int tam;
+    	char *dirVA;
+  	}var;
+	
+	struct{
+    	struct ARGS *listArgs;//listParam
+  	}eListARGS;
+
+	struct{
+		int tipoVaComp;
+		char *des;
+		bool code_est;
+	}varComp;
+
+	struct{
+		bool estructura;
+		SYMTAB tabla;
+		int type;
+		char *des;
+		bool code_est;
+	}datoEst;
+	
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -128,18 +165,137 @@ char *estTemp;//nombre de la tabla de tipos
 %nonassoc SINO
 
 /*No terminales van declarados en minuscula*/
-//%type<exp> programa declaraciones tipo_registro tipo base tipo_arreglo lista_var funciones argumentos lista_arg arg tipo_arg param_arr sentencias sentencia casos predeterminado e_bool relacional expresion variable variable_comp dato_est_sim arreglo parametros lista_param
+//%type<exp> programa declaraciones tipo_registro tipo base tipo_arreglo lista_var funciones argumentos lista_arg arg 
+//tipo_arg param_arr sentencias sentencia casos predeterminado e_bool relacional expresion variable variable_comp 
+//dato_est_sim arreglo parametros lista_param
+//%type<exp> declaraciones  lista_var funciones 
+//casos predeterminado variable_comp 
+//dato_est_sim
 //...
-%type<>
-%type<>
-%type<>
-%type<indice> sentencia sentencias
+%type<tipo> tipo base
+%type<tipo> tipo_arreglo
+%type<eExpr> expresion
+%type<listIndice_S> sentencia sentencias
 %type<eBool> e_bool
 %type<rel> relacional
-%type<>
-%type<>
-//...
+%type<eListARGS> lista_param lista_arg
+%type<eListARGS> argumentos
+%type<eListARGS> parametros
+%type<tipo> arg tipo_registro
+%type<tipo> tipo_arg param_arr
+%type<var> variable arreglo
+%type<> declaraciones
+%type<> lista_var
+%type<>	funciones
+%type<listIndice_C> casos
+%type<listIndice_P> predeterminado
+%type<varComp> variable_comp
+%type<datoEst> dato_est_sim
 
 %start programa
 
 %%
+programa:        {printf("=> Inicio: programa\n");
+                  dir = 0;
+                  codigo = init_code();
+                  pDirecciones = crearPilaDir();
+                  pSimbolos = init_sym_tab_stack();
+                  pTipos = init_type_tab_stack();
+                  TGT = init_typ_tab();
+                  TGS = init_sym_tab();
+                  push_st(TGS, pSimbolos);
+                  push_tt(TGT, pTipos);
+                  tabCadenas = crearTablaCadenas();
+                  } declaraciones funciones {imprimirCodigo(codigo);};
+				  
+declaraciones:    tipo lista_var PYC declaraciones {}
+                | tipo_registro lista_var PYC declaraciones {}
+                | {};
+
+tipo_registro:    ESTRUCT INICIO declaraciones END {};
+
+tipo:             base tipo_arreglo {};
+
+base:             ENTERO{} 
+                | REAL{} 
+                | DREAL{} 
+                | CAR{} 
+                | SIN {};
+
+tipo_arreglo:     LCOR NUM RCOR tipo_arreglo{} | {};
+
+lista_var:        lista_var COMA ID{} | ID{} ;
+
+funciones:        DEF tipo ID LPAR argumentos RPAR INICIO declaraciones sentencias END funciones {}| {};
+                    
+argumentos:       lista_arg{} | SIN{} ;
+
+lista_arg:        lista_arg COMA arg {}| arg {};
+
+arg:              tipo_arg ID {} ;
+
+tipo_arg:         base param_arr {};
+
+param_arr:        LCOR RCOR param_arr{} | {};
+
+sentencias:       sentencias sentencia {} | sentencia {};
+
+sentencia:        IF e_bool THEN sentencia %prec SITEMP END{}                                                               
+                  | IF e_bool THEN sentencia SINO sentencia END{}
+                  | WHILE e_bool DO sentencia END{}
+                  | DO sentencia WHILE e_bool PYC {}
+                  | SEGUN LPAR variable RPAR DO casos predeterminado END{}
+                  | variable IGUAL expresion PYC{}
+                  | WRITE expresion PYC {}
+                  | READ variable PYC{}
+                  | DEV PYC{}
+                  | DEV expresion PYC {}
+                  | TERMINAR PYC {}
+                  | INICIO sentencias END {};
+
+casos:            CASO NUM DOSP sentencia casos2{};
+
+casos2:           casos{} | {} ;
+
+predeterminado:   PRED DOSP sentencia{} | {};
+
+e_bool:           e_bool OR e_bool
+                | e_bool AND e_bool
+                | NOT e_bool{}
+                | relacional
+                | TRUE{}
+                | FALSE{} ;
+
+relacional:       relacional MENORQUE relacional {}
+                | relacional MAYORQUE relacional {}
+                | relacional MENORIGUAL relacional {}
+                | relacional MAYORIGUAL relacional {}
+                | relacional IDENTICO relacional {}
+                | relacional DIFERENTE relacional {}
+                | expresion {};
+
+expresion:        expresion MAS expresion {}
+                | expresion MENOS expresion{}
+                | expresion MUL expresion {}
+                | expresion DIV expresion {}
+                | expresion MODULO expresion {}
+                | LPAR expresion RPAR {}
+                | variable{}
+                | NUM{}
+                | CADENA{}
+                | CARACTER {};
+                
+
+variable:         ID variable_comp {};
+
+variable_comp:    dato_est_sim{} | arreglo{} | LPAR parametros RPAR{} ;
+
+dato_est_sim:     dato_est_sim PUNTO ID{} | {};
+
+arreglo:           LCOR expresion RCOR{}
+                 | arreglo LCOR expresion RCOR {};
+
+parametros:        lista_param{} | {};
+
+lista_param:       lista_param COMA expresion {}
+                  | expresion {};				  
