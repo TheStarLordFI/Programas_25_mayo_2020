@@ -2,11 +2,11 @@
 #define TYPTAB_H
 //#include <stdbool.h>
 #include "data.h"
-void append_type(TYPTAB *tt,TYP *t); //*Agrega a l f i n a l de la tabla un nuevo tipo
+int append_type(TYPTAB *tt,TYP *t); //*Agrega a l f i n a l de la tabla un nuevo tipo
 void clear_type_tab(TYPTAB *tt); //*Deja vacia la tabla
 
-TYPTAB pop_tt(TSTACK *s); //*Ejecuta un pop sobre la pila de tablas de tipos
-void push_tt(TSTACK *s,TYPTAB *tt); //* Ing resa una tabla a la pila de tablas de tipos
+TYPTAB *pop_tt(TSTACK *s); //*Ejecuta un pop sobre la pila de tablas de tipos
+void push_tt(TSTACK *s,TYPTAB *tt); //* Ingresa una tabla a la pila de tablas de tipos
 
 TSTACK *init_type_tab_stack(); //*Reserva memoria para la pila
 TYPTAB *init_type_tab(TYPTAB *tabTipos); //*Reserva memoria para una tabla de tipos e inserta los tipos nativos
@@ -24,6 +24,8 @@ int getTam(TYPTAB *t , int id);//*Retorna el tam de un tipo
 TB *getTipoBase(TYPTAB *t , int id); //*retorna el tipo base
 char *getNombre( TYPTAB *t , int id ) ; //*retorna el nombre de un tipo tambien lo puede cambiar por un entero
 void print_tab_type(TYPTAB *t ); //*Imprime en pantalla la tabla de tipos
+TYPTAB *getTopType(TSTACK *pilaTT);//Retorna el tope de la pila de tipos
+
 
 TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos);
 #endif

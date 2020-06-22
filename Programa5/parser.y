@@ -29,9 +29,13 @@ SSTACK *pSimbolos;
 TSTACK *pTipos; 
 DSTACK *pDirecciones;
 DIR *structDir;
-SYMTAB *TGS, *TS1, *tTempSimbol;
+SYMTAB *TGS;
+SYMTAB *TS1;
+SYMTAB *tTempSimbol;
 //TGT: Tabla General de Tipos, TT1: Tabla Tipos 1
-TYPTAB *TGT, *TT1, *tTempTipos; 
+TYPTAB *TGT;
+TYPTAB *TT1; 
+TYPTAB *tTempTipos; 
 CADTAB *tabCadenas;
 SYM *simbol; 
 ARG *argx; 
@@ -209,29 +213,46 @@ tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
 							   	  init_type_tab(TT1);
 								  structDir = crearDir();
 								  structDir->info = dir;
-								  pushDir(structDir, pDirecciones);
+								  pushPDir(structDir, pDirecciones);
 								  dir = 0;
 								  push_tt(pTipos,TT1);
 								  push_st(pSimbolos, TS1);} declaraciones {
-									  TT1= pop_tt(pTipos);
-								      TS1= pop_ts(pSimbolos);
-									  estructDir = popPDir(pDirecciones);
-									  direccion = estructDir->info;
+									  TT1 = pop_tt(pTipos);
+								      TS1 = pop_st(pSimbolos);
+									  structDir = popPDir(pDirecciones);
+									  dir = structDir->info;
 									  TYP* newTYP= init_type();
-									  newTYP = set_typ(newTYP,"reg",0, pop_tt(pTipos));
-									  typeTemp = append_type(pop_tt(pTipos), tp);} END {
+									  newTYP = set_typ(newTYP,"reg",0,getTopType(pTipos));
+									  typeTemp = append_type(getTopType(pTipos), newTYP);} END {
 										  $$.valorTipo=typeTemp;
 									  };
 
-tipo:             base tipo_arreglo {};
+tipo:             base {baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$2.valorTipo;};
 
-base:             ENTERO{} 
-                | REAL{} 
-                | DREAL{} 
-                | CAR{} 
-                | SIN {};
+base:           ENTERO {$$.valorTipo=0;} 
+                | REAL{$$.valorTipo=1;} 
+                | DREAL{$$.valorTipo=4;} 
+                | CAR{$$.valorTipo=2;} 
+                | SIN {$$.valorTipo=3;};
 
-tipo_arreglo:     LCOR NUM RCOR tipo_arreglo{} | {};
+tipo_arreglo: 	LCOR NUM RCOR tipo_arreglo{
+					if($2.tipe==0){
+                        int n = atoi($2.valor);
+                                 
+                        if(n>0){
+                            TYP *newTYP = init_type();
+                            newTYP = set_typ(newTYP,"array",$4.valorTipo,getTopType(pTipos));
+                            $$.valorTipo = append_type(getTopType(pTipos), newTYP);
+                        }
+                        else{
+                            printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
+                        }
+                    }
+                    else{
+                        printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
+                    }
+				} 
+				| {};
 
 lista_var:        lista_var COMA ID{} | ID{} ;
 

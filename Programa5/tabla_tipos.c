@@ -23,27 +23,30 @@ void push_tt( TSTACK *s , TYPTAB *tt){
 * Fecha de creación: 31 Mayo 2020
 */
 
-void append_type(TYPTAB *tt, TYP *t){
+int append_type(TYPTAB *tt, TYP *t){
   int insertado = -1;
   if(tt->head == NULL){
-	tt->head = t;
-	tt->tail = t;
-	insertado = 1;
+    tt->head = t;
+    tt->tail = t;
+    insertado = 1;
+    //imprimeTT(*tabTipos);
   } else {
-	(tt->tail)->next= t;
-	tt->tail= t;
-	insertado = 1;
+    (tt->tail)->next=t;
+    tt->tail=t;
+    insertado = 1;
   }
   if (tt->num <= 4 ){
     tt->num++;
+    return tt->num;
   }
   else if (insertado == 1){
-	tt->num++;
-	//printf("Tabla de tipos: tipo insertado correctamente \n");
-	printf("\nInsertando en tabla de tipos:");
-	//imprimeTT(*tt);
+    tt->num++;
+    printf("\nInsertando en tabla de tipos:");
+    print_tab_type(tt);
+    return tt->num-1;
   } else {
-	printf("Tabla de tipos: ERROR! no se inserto el tipo\n");
+    printf("Tabla de tipos: ERROR! no se inserto el tipo\n");
+    return insertado;
   }
 }
 
@@ -240,13 +243,13 @@ TSTACK *init_type_tab_stack(){
 * Autor: Rodríguez Sánchez José Andrés
 * Fecha de creación: 31 Mayo 2020
 */
-TYPTAB pop_tt(TSTACK *s){
+TYPTAB *pop_tt(TSTACK *s){
   TYPTAB *tabTipos;
   tabTipos=s->top;
   s->top=tabTipos->next;
   //s->elementosPila--;
   printf("Pila de Tipos: Se ha sacado una tabla de tipos\n");
-  return *tabTipos;
+  return tabTipos;
 }
 
 /*
@@ -285,7 +288,7 @@ TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos){
   type->id = tabTipos->num;
   strcpy(type->nombre, nombre);
   if( type->tb->is_est == 0){ //si es un tipo simple
-    aux = buscarTipo(tabTipos, idTipo);
+    aux = search_type(tabTipos, idTipo);
     if (aux != NULL ) //significa que sí encontró ese tipo de dato
       type->tb->tipo.tipo= aux->id;
     else
@@ -294,7 +297,11 @@ TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos){
   else {
     /* En caso de que sea estructura */
   }
-  aux = buscarTipo(tabTipos, idTipo);
+  aux = search_type(tabTipos, idTipo);
   type->tam = getTam(tabTipos, type->id);
   return type;
+}
+
+TYPTAB *getTopType(TSTACK *pilaTT){
+  return pilaTT->top;
 }

@@ -8,8 +8,8 @@ allC:
 	gcc lex.yy.c y.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c -o exe
 all:
 	flex lexer.l
-	byacc -d parser.y
-	gcc lex.yy.c y.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c main.c-o exe
+	bison -d parser.y
+	gcc lex.yy.c parser.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c main.c -o exe
 exec:
 	./exe
 clean:

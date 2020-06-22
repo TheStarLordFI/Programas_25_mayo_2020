@@ -347,13 +347,13 @@ int compare_args(ARGS *a1, ARGS *a2){
 * Autor: Morales Garcia Luis
 * Fecha de creación: 31 de mayo 2020
 */
-SYMTAB pop_st(SSTACK *s){
+SYMTAB *pop_st(SSTACK *s){
   SYMTAB* temp;
   temp = s->top;
   s->top = temp->next;
   //s->numeroelementos --;
   printf("Se ha sacado una tabla de simbolos\n");
-  return *temp;
+  return temp;
 }
 
 /*

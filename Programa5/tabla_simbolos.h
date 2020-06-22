@@ -12,7 +12,7 @@ int compare_args(ARGS *a1, ARGS *a2);//Compara dos listas y devuelve 1 si son ig
 void append_sym(SYMTAB *t,SYM *s) ; //Agrega al final de la tabla un nuevo simbolo
 void clear_sym_tab(SYMTAB *t) ; // Deja vacia la tabla
 
-SYMTAB pop_st(SSTACK *s) ; // Ejecuta un pop sobre la pila de tablas de simbolos
+SYMTAB *pop_st(SSTACK *s) ; // Ejecuta un pop sobre la pila de tablas de simbolos
 void push_st(SSTACK *s,SYMTAB *st) ; // Ingresa una tabla a la pila de tablas de simbolos
 
 ARGS *init_args(); // Retorna el apuntador a un tipo ARGS
