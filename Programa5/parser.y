@@ -45,6 +45,7 @@ TYP *newTipo;
 CODE* codigo; 
 ARGS *ListaArg; 
 INDEX *indiceGlobal, *indiceAux; 
+LINDEX *prueba;
 
 /////////////////////////////Variables doc 2020-2DDS_usr1///////////////////////////////////////
 int dir;
@@ -54,10 +55,11 @@ int tam;
 int baseGBL;
 char *tmpLabel;
 //char *labelG = "label";
-char *L1, *L2; //L temporales
+char *tmpEtq, *L1,*L2; //L temporales
 char IDGBL[32];
 char *estTemp;//nombre de la tabla de tipos
 int funcType;
+bool funcReturn;
 %}
 
 %union{
@@ -77,32 +79,32 @@ int funcType;
 	struct{
 	    int tipoCad;
 	    char *lexval;
-	    struct CAD *cad;
+	    struct tablaCadenas *cad;
 	}cad;
 
 	struct{
-	  	struct LINDEX *nextlist;//listIndex
+	  	struct list_index *nextlist;//listIndex
 	}listIndice_S; 
 	
 	struct{
-		struct LINDEX *prueba;//listIndex
-	  	struct LINDEX *nextlist;//listIndex
+		struct list_index *prueba;//listIndex
+	  	struct list_index *nextlist;//listIndex
 	}listIndice_C; 
 
 	struct{
-		struct LINDEX *prueba;//listIndex
+		struct list_index *prueba;//listIndex
 	}listIndice_P;
 
 	struct{
-	   	struct LINDEX *listTrue; //En la DDS viene como truelist
-	   	struct LINDEX *listFalse; //En la DDS viene como falselist
+	   	struct list_index *listTrue; //En la DDS viene como truelist
+	   	struct list_index *listFalse; //En la DDS viene como falselist
 	}eBool;
 
 	struct{
 	    int tipoRel; //En la DDS viene como tipo 
 	    char* dirRel;//En la DDS viene como dir
-	    struct LINDEX *listRelTrue;//En la DDS viene como truelist
-	    struct LINDEX *listRelFalse;//En la DDS viene como falselist
+	    struct list_index *listRelTrue;//En la DDS viene como truelist
+	    struct list_index *listRelFalse;//En la DDS viene como falselist
   	}rel;
 	
 	struct{
@@ -118,7 +120,7 @@ int funcType;
   	}var;
 	
 	struct{
-    	struct ARGS *listArgs;//listParam
+    	struct args *listArgs;//listParam
   	}eListARGS;
 
 	struct{
@@ -129,7 +131,7 @@ int funcType;
 
 	struct{
 		int estructura;
-		struct SYMTAB *tabla;
+		struct sym_tab *tabla;
 		int type;
 		char *des;
 		int code_est;
@@ -277,7 +279,38 @@ lista_var:        lista_var COMA ID{
 												printf("El idntificador ya fue declarado\n");
 									  		} ;
 
-funciones:        DEF tipo ID LPAR argumentos RPAR INICIO declaraciones sentencias END funciones {}| {};
+funciones:        DEF tipo ID {if(search_id_symbol(TGS,$3.lexval) == -1){
+									simbol = init_sym();
+									simbol = set_sym(simbol,$3.lexval,-1,$2.valorTipo,"func",NULL,TGS,TGT);
+									append_sym(TGS,simbol);
+									structDir = crearDir();
+									structDir->info = dir;
+									pushPDir(structDir,pDirecciones);
+									funcType = $2.valorTipo;
+									funcReturn = false;
+									dir = 0;
+									TS1 = init_sym_tab();
+							   	  	init_type_tab(TT1);
+									push_tt(pTipos,TT1);
+								 	push_st(pSimbolos, TS1);
+									append_new_quad(codigo,"label","-","-",$3.lexval);
+								}else
+									printf("Error => el identificador de la funcion ya fue declarado\n");
+								} LPAR argumentos RPAR INICIO declaraciones sentencias END {
+										tmpEtq = create_label();
+										backpatch( codigo, $10.nextlist, tmpEtq);
+										TT1= pop_tt(pTipos);
+										TS1= pop_st(pSimbolos);
+										structDir = popPDir(pDirecciones);
+										dir = structDir->info;
+										simbol = init_sym();
+										simbol = search_SYM(pSimbolos->top,$3.lexval);
+										simbol->args = $6.listArgs;
+
+										if($2.valorTipo != 3 && funcReturn == false){
+											printf("Error la funcion no tiene valor de retorno\n");
+										}
+								} funciones | ;
                     
 argumentos:       lista_arg{} | SIN{} ;
 
@@ -291,47 +324,40 @@ param_arr:        LCOR RCOR param_arr{} | {};
 
 sentencias:       sentencias sentencia {} | sentencia {};
 
-sentencia:        IF e_bool THEN sentencia{
-									tmpLabel=create_label();
-									backtpatch(codigo,$2.listTrue,tmpLabel);
-									append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
-								} END{$$.nextlist=combinar($2.listFalse,$6.nextlist);}
-                  | IF e_bool THEN{
-									tmpLabel=create_label();
-									backtpatch(codigo,$2.listTrue,tmpLabel);
-									append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
-									} sentencia SINO{
-										tmpLabel=create_label();
-										backtpatch(codigo,$2.listFalse,tmpLabel);
-										append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
-									} sentencia END{$$.nextlist=combinar($5.nextlist,$10.nextlist);}
-                  | WHILE{
-						$<id.lexval>$=create_label();
-						}{ append_new_quad(codigo,"label",espacioG,espacioG,$<id.lexval>3); }
-								e_bool DO
-							{ tmpLabel=create_label();
-								backtpatch(codigo,$5.listTrue,tmpLabel);
-								append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
-							}sentencia END{
-								backtpatch(codigo,$9.nextlist,$<id.lexval>3);
-								append_new_quad(codigo,"GOTO"," "," ",$<id.lexval>3);
-								$$.nextlist=$5.listFalse;
-							}
-                  | DO {$<id.lexval>$=create_label();}
-										sentencia WHILE e_bool PYC {
-										backpatch(codigo,$8.listTrue,$<id.lexval>3);
-										$$.nextlist=$8.listFalse;
+sentencia:        IF e_bool THEN sentencia END {tmpLabel=create_label();
+												backtpatch(codigo,$2.listTrue,tmpLabel);
+												append_new_quad(codigo,"label","-","-",tmpLabel);
+												$$.nextlist=combinar($2.listFalse,$4.nextlist);
+											    }
+                  | IF e_bool THEN sentencia SINO sentencia END{
+															tmpLabel=create_label();
+															backtpatch(codigo,$2.listTrue,tmpLabel);
+															append_new_quad(codigo,"label","-","-",tmpLabel);
+															tmpLabel=create_label();
+															backtpatch(codigo,$2.listFalse,tmpLabel);
+															append_new_quad(codigo,"label","-","-",tmpLabel);
+															$$.nextlist=combinar($4.nextlist,$6.nextlist);
+															}
+                  | WHILE e_bool DO sentencia END{
+													L1=create_label();
+													L2=create_label();
+													backtpatch(codigo,$4.nextlist,L1);
+													backtpatch(codigo,$2.listTrue,L2);
+													$$.nextlist=$2.listFalse;
+													append_new_quad(codigo,"label","-","-",L1);
+													append_new_quad(codigo,"label","-","-",L2);
+													append_new_quad(codigo,"goto","-","-", $4.nextlist[0]);
+												}
+
+                  | DO sentencia WHILE e_bool PYC {tmpLabel=create_label();
+												   backpatch(codigo,$4.listTrue,tmpLabel);
+												   $$.nextlist=$4.listFalse;
 									}
-                  | SEGUN {$<id.lexval>$=create_label();}  
-									LPAR variable RPAR DO
-									{	tmpLabel=create_label();
-										backtpatch(codigo,$5.listTrue,tmpLabel);
-										append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);}
-									casos predeterminado END{
-										backtpatch(codigo,$9.nextlist,$<id.lexval>3);
-										append_new_quad(codigo,"GOTO"," "," ",$<id.lexval>3);
-										$$.nextlist=$5.listFalse;	
-									}
+                  | SEGUN LPAR variable RPAR DO casos predeterminado END{
+																	L1=create_label();
+																	prueba = combinar($6.prueba, $7.prueba)
+																	backtpatch(codigo,$6.nextlist,L1);
+																	}
                   | variable IGUAL expresion PYC{
 										if(search_id_symbol(getTopSym(pSimbolos),$1.lexval) != -1 || search_id_symbol(TGS,$1.lexval) != -1 ){
 											simbol = init_sym();
@@ -339,57 +365,20 @@ sentencia:        IF e_bool THEN sentencia{
 											if(simbol==NULL){
 												simbol=search_id_symbol(TGS,$1.lexval);
 											}
-											dir1=reducir ($3.tipoExp,simbol->tipo,$3.dirExp,codigo);
+											dir1=reducir($3.tipoExp,simbol->tipo,$3.dirExp,codigo);
 											char *tmp=(char*)malloc(sizeof(char));
 											char *tmp2=(char*)malloc(sizeof(char));
 											sprintf(tmp, "%i", simbol->dir);
 											strcpy(tmp2,$1.lexval);
 											strcat(tmp2,"+");
 											strcat(tmp2,tmp);
-											append_new_quad(codigo,igual,dir1,espacioG,tmp2);
+											append_new_quad(codigo,igual,dir1,"-",tmp2);
 									}else{
 											printf("Error (el idntificador  no se ha declarado)\n");
 										}
 										$$.nextlist=NULL;
 									}
-                  | WRITE expresion PYC {
-										append_new_quad(codigo,prt,$2.dirExp,espacioG,espacioG);
-                   						$$.nextlist=NULL;}
-                  | READ variable PYC{
-										append_new_quad(codigo,sc,espacioG,espacioG,$2.dirExp);
-										$$.nextlist=NULL;
-									}
-                  | DEV PYC{
-							if(funcType==3){
-								append_new_quad(codigo,ret,espacioG,espacioG,espacioG);
-							}else{
-								printf("la funcion debe retornar  algun valor de tipo:%d",funcType);
-							}
-	                     	$$.nextlist=NULL;
-							}
-                  | DEV expresion PYC {
-										if(funcType!=3)
-                    {
-                       dir1=reducir ($2.tipoExp,funcType,$2.dirExp,codigo);
-                       append_new_quad(codigo,ret,$2.dirExp,espacioG,espacioG);
-                       funcReturn=true;
-                    }
-                    else{
-                     printf("la funcion debe retornar  algun valor de tipo:%d",funcType);
-                      }
-                     $$.nextlist=NULL;
-									}
-                  | TERMINAR PYC {
-										indiceGlobal = init_index();
-                    char *tmp3=(char*)malloc(sizeof(char));
-                    sprintf(tmp3, "%i", indiceGlobal->valorMyIndex);
-                    agrega_cuadrupla(codigo, gooto, espacioG, espacioG, tmp3);
-                    $$.nextlist = init_list_index();
-                    append_index($$.listaIndice, indiceGlobal);
-									}
-                  | INICIO sentencias END {
-										sentencia.nextlist=sentencia1.nextlist;
-									};
+                  | WRITE expresion PYC {};
 
 casos:            CASO NUM DOSP sentencia casos2{};
 
