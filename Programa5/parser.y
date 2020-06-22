@@ -45,17 +45,17 @@ TYP *newTipo;
 CODE* codigo; 
 ARGS *ListaArg; 
 INDEX *indiceGlobal, *indiceAux; 
-
+LINDEX *prueba;
 /////////////////////////////Variables doc 2020-2DDS_usr1///////////////////////////////////////
 int dir;
-int dir1, dir2, dirTemp; //Dir temporales
+char *dir1, *dir2, *dirTemp; //Dir temporales
 int typeGBL;
 int typeTemp;
 int tam;
 int baseGBL;
 int funcType;
 bool funcReturn;
-char *L;
+char *L, *tmpLabel;
 char *L1, *L2; //L temporales
 char IDGBL[32];
 char *estTemp;//nombre de la tabla de tipos
@@ -116,7 +116,7 @@ char *tmpEtq;
     	int tipoVA;
     	int baseVA;
     	int tam;
-    	char *dirVA;
+    	char *idVar;
   	}var;
 	
 	struct{
@@ -274,7 +274,7 @@ funciones:        DEF tipo ID {if(search_id_symbol(TGS,$3.lexval) == -1){
 							   	  	init_type_tab(TT1);
 									push_tt(pTipos,TT1);
 								 	push_st(pSimbolos, TS1);
-									append_new_quad(codigo,"label"," "," ",$3.lexval);
+									append_new_quad(codigo,"label","-","-",$3.lexval);
 								}
 
 					} LPAR argumentos RPAR INICIO declaraciones sentencias END{
@@ -330,22 +330,72 @@ param_arr:      LCOR RCOR param_arr{
 sentencias:     sentencias{
 					tmpEtq=create_label();
                     backpatch(codigo,$1.nextlist,tmpEtq);
-                    append_new_quad(codigo,"label"," "," ",tmpEtq);
+                    append_new_quad(codigo,"label","-","-",tmpEtq);
 				} sentencia {$$.nextlist=$3.nextlist;}
 				| sentencia {$$.nextlist=$1.nextlist;};
 
-sentencia:        IF e_bool THEN sentencia %prec SITEMP END{}                                                               
-                  | IF e_bool THEN sentencia SINO sentencia END{}
-                  | WHILE e_bool DO sentencia END{}
-                  | DO sentencia WHILE e_bool PYC {}
-                  | SEGUN LPAR variable RPAR DO casos predeterminado END{}
-                  | variable IGUAL expresion PYC{}
+sentencia:        IF e_bool THEN sentencia END {tmpLabel=create_label();
+												backpatch(codigo,$2.listTrue,tmpLabel);
+												append_new_quad(codigo,"label","-","-",tmpLabel);
+												$$.nextlist=combinar($2.listFalse,$4.nextlist);
+											    }
+                  | IF e_bool THEN sentencia SINO sentencia END{
+															tmpLabel=create_label();
+															backpatch(codigo,$2.listTrue,tmpLabel);
+															append_new_quad(codigo,"label","-","-",tmpLabel);
+															tmpLabel=create_label();
+															backpatch(codigo,$2.listFalse,tmpLabel);
+															append_new_quad(codigo,"label","-","-",tmpLabel);
+															$$.nextlist=combinar($4.nextlist,$6.nextlist);
+															}
+                  | WHILE e_bool DO sentencia END{
+													L1=create_label();
+													L2=create_label();
+													backpatch(codigo,$4.nextlist,L1);
+													backpatch(codigo,$2.listTrue,L2);
+													$$.nextlist=$2.listFalse;
+													append_new_quad(codigo,"label","-","-",L1);
+													append_new_quad(codigo,"label","-","-",L2);
+													char *L_nextList = create_label();
+													backpatch(codigo,$4.nextlist,L_nextList);
+													append_new_quad(codigo,"goto","-","-",L_nextList);
+												}
+
+                  | DO sentencia WHILE e_bool PYC {tmpLabel=create_label();
+												   backpatch(codigo,$4.listTrue,tmpLabel);
+												   $$.nextlist=$4.listFalse;
+													}
+                  | SEGUN LPAR variable RPAR DO casos predeterminado END{
+																	L1=create_label();
+																	prueba = combinar($6.prueba, $7.prueba);
+																	backpatch(codigo,$6.nextlist,L1);
+																	}
+                  | variable IGUAL expresion PYC{
+										if(search_id_symbol(getTopSym(pSimbolos),$1.idVar) != -1 || search_id_symbol(TGS,$1.idVar) != -1 ){
+											simbol = init_sym();
+											simbol=search_SYM(getTopSym(pSimbolos),$1.idVar);
+											if(simbol==NULL){
+												simbol=search_SYM(TGS,$1.idVar);
+											}
+											dir1=reducir($3.dirExp,$3.tipoExp,simbol->tipo,codigo);
+											char *tmp=(char*)malloc(sizeof(char));
+											char *tmp2=(char*)malloc(sizeof(char));
+											sprintf(tmp, "%i", simbol->dir);
+											strcpy(tmp2,$1.idVar);
+											strcat(tmp2,"+");
+											strcat(tmp2,tmp);
+											append_new_quad(codigo,"=",dir1,"-",tmp2);
+									}else{
+											printf("Error (el idntificador  no se ha declarado)\n");
+										}
+										$$.nextlist=NULL;
+									}
                   | WRITE expresion PYC {}
-                  | READ variable PYC{}
                   | DEV PYC{}
                   | DEV expresion PYC {}
                   | TERMINAR PYC {}
                   | INICIO sentencias END {};
+				  
 
 casos:            CASO NUM DOSP sentencia casos2{};
 
@@ -356,7 +406,7 @@ predeterminado:   PRED DOSP sentencia{} | {};
 e_bool:         e_bool OR {
 					tmpEtq = create_label();
 					backpatch(codigo,$1.listFalse,tmpEtq);
-					append_new_quad(codigo,"label"," "," ",tmpEtq);
+					append_new_quad(codigo,"label","-","-",tmpEtq);
 				} e_bool{
 					$$.listTrue=combinar($1.listTrue,$4.listTrue);
 					$$.listFalse=$4.listFalse;
@@ -364,7 +414,7 @@ e_bool:         e_bool OR {
                 | e_bool AND{
 					tmpEtq=create_label();
 					backpatch(codigo,$1.listTrue,tmpEtq);
-					append_new_quad(codigo,"label"," "," ",tmpEtq);
+					append_new_quad(codigo,"label","-","-",tmpEtq);
 				}
 				 e_bool{
 					$$.listTrue=$4.listTrue;
@@ -382,7 +432,7 @@ e_bool:         e_bool OR {
 					append_index($$.listTrue, indiceGlobal);
 					char *tmp=(char*)malloc(sizeof(char));
 					sprintf(tmp, "%i", indiceGlobal->indice);
-					append_new_quad(codigo,"GOTO"," "," ",tmp);}
+					append_new_quad(codigo,"goto","-","-",tmp);}
                 | FALSE{
 					indiceGlobal = init_index();
 					$$.listFalse=init_list_index(NULL); 
@@ -390,7 +440,7 @@ e_bool:         e_bool OR {
 					append_index($$.listFalse, indiceGlobal);
 					char *tmp=(char*)malloc(sizeof(char));
 					sprintf(tmp, "%i", indiceGlobal->indice);
-					append_new_quad(codigo,"GOTO"," "," ",tmp);
+					append_new_quad(codigo,"goto","-","-",tmp);
 				};
 
 relacional:     relacional MENORQUE relacional {
@@ -403,14 +453,14 @@ relacional:     relacional MENORQUE relacional {
 					append_index($$.listRelTrue, indiceGlobal);
 					append_index($$.listRelFalse, indiceAux);
 					$$.tipoRel = max($1.tipoRel, $3.tipoRel);
-					dir1 = ampliar($1.tipoRel,$$.tipoRel,$1.dirRel, codigo);
-					dir2 = ampliar($3.tipoRel,$$.tipoRel,$3.dirRel, codigo);
+					dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
+					dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
 					char *tmpIndGlobal=(char*)malloc(sizeof(char));
 					char *tmpIndAux=(char*)malloc(sizeof(char));
 					sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
 					sprintf(tmpIndAux, "%i", indiceAux->indice);
 					append_new_quad(codigo,"<", dir1, dir2, tmpIndGlobal);
-					append_new_quad(codigo,"GOTO", " ", " ", tmpIndAux);
+					append_new_quad(codigo,"goto", "-", "-", tmpIndAux);
 				}
                 | relacional MAYORQUE relacional {}
                 | relacional MENORIGUAL relacional {}
