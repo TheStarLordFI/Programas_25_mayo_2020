@@ -44,4 +44,6 @@ int getNumArgs(SYMTAB *T, char *id);
 int search_id_symbol(SYMTAB *T, char *id);
 SYM *search_Prev_SYM(SYMTAB *T, char *id);
 SYM *search_SYM(SYMTAB *T, char *id);
+SYM *set_sym(SYM *s, char *id, int dir, int tipo, char *var, ARGS *args, SYMTAB *ts, TYPTAB *tt);
+SYMTAB *getTopSym(SSTACK *pilaTS);
 #endif

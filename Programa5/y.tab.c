@@ -64,14 +64,13 @@ INDEX *indiceGlobal, *indiceAux;
 int dir;
 int dir1, dir2, dirTemp; /*Dir temporales*/
 int typeGBL;
-int typeTemp;
 int tam;
 int baseGBL;
 char *L;
 char *L1, *L2; /*L temporales*/
 char IDGBL[32];
 char *estTemp;/*nombre de la tabla de tipos*/
-#line 62 "parser.y"
+#line 61 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -156,7 +155,7 @@ typedef union{
 
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 160 "y.tab.c"
+#line 159 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -574,12 +573,12 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 334 "parser.y"
+#line 355 "parser.y"
 
 void yyerror(char *msg){
 	printf("%s, linea: %d, token: %s\n",msg, yylineno, yytext);
 }
-#line 583 "y.tab.c"
+#line 582 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -782,7 +781,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 195 "parser.y"
+#line 194 "parser.y"
 	{printf("==========================P r o g r a m a==========================\n");
                   dir = 0;
                   codigo = init_code();
@@ -797,23 +796,23 @@ case 1:
                   }
 break;
 case 2:
-#line 206 "parser.y"
+#line 205 "parser.y"
 	{/*imprimirCodigo(codigo);*/}
 break;
 case 3:
-#line 208 "parser.y"
+#line 207 "parser.y"
 	{typeGBL  = yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 5:
-#line 209 "parser.y"
+#line 208 "parser.y"
 	{typeGBL  = yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 7:
-#line 210 "parser.y"
+#line 209 "parser.y"
 	{}
 break;
 case 8:
-#line 212 "parser.y"
+#line 211 "parser.y"
 	{TS1 = init_sym_tab();
 							   	  init_type_tab(TT1);
 								  structDir = crearDir();
@@ -824,7 +823,7 @@ case 8:
 								  push_st(pSimbolos, TS1);}
 break;
 case 9:
-#line 219 "parser.y"
+#line 218 "parser.y"
 	{
 									  TT1 = pop_tt(pTipos);
 								      TS1 = pop_st(pSimbolos);
@@ -832,331 +831,354 @@ case 9:
 									  dir = structDir->info;
 									  TYP* newTYP= init_type();
 									  newTYP = set_typ(newTYP,"reg",0,getTopType(pTipos));
-									  typeTemp = append_type(getTopType(pTipos), newTYP);}
+									 typeGBL = append_type(getTopType(pTipos), newTYP);}
 break;
 case 10:
-#line 226 "parser.y"
+#line 225 "parser.y"
 	{
-										  yyval.tipo.valorTipo=typeTemp;
+										  yyval.tipo.valorTipo=typeGBL;
 									  }
 break;
 case 11:
-#line 230 "parser.y"
+#line 229 "parser.y"
 	{baseGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 12:
-#line 230 "parser.y"
+#line 229 "parser.y"
 	{yyval.tipo.valorTipo=yystack.l_mark[-1].tipo.valorTipo;}
 break;
 case 13:
-#line 232 "parser.y"
-	{yyval.tipo.valorTipo=0;}
+#line 231 "parser.y"
+	{
+						yyval.tipo.valorTipo=0;}
 break;
 case 14:
 #line 233 "parser.y"
-	{yyval.tipo.valorTipo=1;}
+	{
+						yyval.tipo.valorTipo=1;}
 break;
 case 15:
-#line 234 "parser.y"
-	{yyval.tipo.valorTipo=4;}
+#line 235 "parser.y"
+	{
+						yyval.tipo.valorTipo=4;}
 break;
 case 16:
-#line 235 "parser.y"
-	{yyval.tipo.valorTipo=2;}
+#line 237 "parser.y"
+	{
+						yyval.tipo.valorTipo=2;}
 break;
 case 17:
-#line 236 "parser.y"
-	{yyval.tipo.valorTipo=3;}
+#line 239 "parser.y"
+	{
+						yyval.tipo.valorTipo=3;}
 break;
 case 18:
-#line 238 "parser.y"
+#line 242 "parser.y"
 	{
-					if(yystack.l_mark[-2].num.tipe==0){
-                        int n = atoi(yystack.l_mark[-2].num.valor);
-                                 
-                        if(n>0){
-                            TYP *newTYP = init_type();
-                            newTYP = set_typ(newTYP,"array",yystack.l_mark[0].tipo.valorTipo,getTopType(pTipos));
-                            yyval.tipo.valorTipo = append_type(getTopType(pTipos), newTYP);
-                        }
-                        else{
-                            printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
-                        }
-                    }
-                    else{
-                        printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
-                    }
-				}
+						if(yystack.l_mark[-2].num.tipe==0){
+							int n = atoi(yystack.l_mark[-2].num.valor);
+							if(n>0){
+								TYP *newTYP = init_type();
+								newTYP = set_typ(newTYP,"array",yystack.l_mark[0].tipo.valorTipo,getTopType(pTipos));
+								yyval.tipo.valorTipo = append_type(getTopType(pTipos), newTYP);
+							}
+							else{
+								printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
+							}
+						}
+						else{
+							printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
+						};}
 break;
 case 19:
-#line 255 "parser.y"
-	{}
+#line 256 "parser.y"
+	{yyval.tipo.valorTipo=baseGBL;}
 break;
 case 20:
-#line 257 "parser.y"
-	{}
+#line 258 "parser.y"
+	{
+									if(search_id_symbol(getTopSym(pSimbolos),yystack.l_mark[0].id.lexval) == -1){
+									simbol = init_sym();
+									simbol=set_sym(simbol, yystack.l_mark[0].id.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
+									append_sym(getTopSym(pSimbolos),simbol);
+									dir = dir + getTam(getTopType(pTipos), typeGBL);
+                                      }
+                                      else{
+										  printf("El identificador ya fue declarado\n");
+									  };
+									  }
 break;
 case 21:
-#line 257 "parser.y"
-	{}
+#line 268 "parser.y"
+	{
+										  		if( search_id_symbol(getTopSym(pSimbolos),yystack.l_mark[0].id.lexval) == -1){
+												simbol = init_sym(); 
+												simbol= set_sym(simbol, yystack.l_mark[0].id.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
+												append_sym(getTopSym(pSimbolos),simbol);
+												dir = dir + getTam(getTopType(pTipos), typeGBL);
+												}
+												else{
+													printf("El identificador ya fue declarado\n");
+												};
+									  		}
 break;
 case 22:
-#line 259 "parser.y"
-	{}
-break;
-case 23:
-#line 259 "parser.y"
-	{}
-break;
-case 24:
-#line 261 "parser.y"
-	{}
-break;
-case 25:
-#line 261 "parser.y"
-	{}
-break;
-case 26:
-#line 263 "parser.y"
-	{}
-break;
-case 27:
-#line 263 "parser.y"
-	{}
-break;
-case 28:
-#line 265 "parser.y"
-	{}
-break;
-case 29:
-#line 267 "parser.y"
-	{}
-break;
-case 30:
-#line 269 "parser.y"
-	{}
-break;
-case 31:
-#line 269 "parser.y"
-	{}
-break;
-case 32:
-#line 271 "parser.y"
-	{}
-break;
-case 33:
-#line 271 "parser.y"
-	{}
-break;
-case 34:
-#line 273 "parser.y"
-	{}
-break;
-case 35:
-#line 274 "parser.y"
-	{}
-break;
-case 36:
-#line 275 "parser.y"
-	{}
-break;
-case 37:
-#line 276 "parser.y"
-	{}
-break;
-case 38:
-#line 277 "parser.y"
-	{}
-break;
-case 39:
-#line 278 "parser.y"
-	{}
-break;
-case 40:
-#line 279 "parser.y"
-	{}
-break;
-case 41:
 #line 280 "parser.y"
 	{}
 break;
-case 42:
-#line 281 "parser.y"
+case 23:
+#line 280 "parser.y"
 	{}
 break;
-case 43:
+case 24:
 #line 282 "parser.y"
 	{}
 break;
-case 44:
-#line 283 "parser.y"
+case 25:
+#line 282 "parser.y"
 	{}
 break;
-case 45:
+case 26:
 #line 284 "parser.y"
 	{}
 break;
-case 46:
+case 27:
+#line 284 "parser.y"
+	{}
+break;
+case 28:
 #line 286 "parser.y"
 	{}
 break;
-case 47:
+case 29:
 #line 288 "parser.y"
 	{}
 break;
-case 48:
-#line 288 "parser.y"
-	{}
-break;
-case 49:
+case 30:
 #line 290 "parser.y"
 	{}
 break;
-case 50:
+case 31:
 #line 290 "parser.y"
 	{}
 break;
-case 51:
+case 32:
 #line 292 "parser.y"
 	{}
 break;
-case 52:
-#line 293 "parser.y"
+case 33:
+#line 292 "parser.y"
 	{}
 break;
-case 53:
+case 34:
 #line 294 "parser.y"
 	{}
 break;
-case 54:
+case 35:
 #line 295 "parser.y"
 	{}
 break;
-case 55:
+case 36:
 #line 296 "parser.y"
 	{}
 break;
-case 56:
+case 37:
 #line 297 "parser.y"
 	{}
 break;
-case 57:
+case 38:
+#line 298 "parser.y"
+	{}
+break;
+case 39:
 #line 299 "parser.y"
 	{}
 break;
-case 58:
+case 40:
 #line 300 "parser.y"
 	{}
 break;
-case 59:
+case 41:
 #line 301 "parser.y"
 	{}
 break;
-case 60:
+case 42:
 #line 302 "parser.y"
 	{}
 break;
-case 61:
+case 43:
 #line 303 "parser.y"
 	{}
 break;
-case 62:
+case 44:
 #line 304 "parser.y"
 	{}
 break;
-case 63:
+case 45:
 #line 305 "parser.y"
 	{}
 break;
-case 64:
+case 46:
 #line 307 "parser.y"
 	{}
 break;
-case 65:
-#line 308 "parser.y"
-	{}
-break;
-case 66:
+case 47:
 #line 309 "parser.y"
 	{}
 break;
-case 67:
-#line 310 "parser.y"
+case 48:
+#line 309 "parser.y"
 	{}
 break;
-case 68:
+case 49:
 #line 311 "parser.y"
 	{}
 break;
-case 69:
-#line 312 "parser.y"
+case 50:
+#line 311 "parser.y"
 	{}
 break;
-case 70:
+case 51:
 #line 313 "parser.y"
 	{}
 break;
-case 71:
+case 52:
 #line 314 "parser.y"
 	{}
 break;
-case 72:
+case 53:
 #line 315 "parser.y"
 	{}
 break;
-case 73:
+case 54:
 #line 316 "parser.y"
 	{}
 break;
-case 74:
-#line 319 "parser.y"
+case 55:
+#line 317 "parser.y"
 	{}
 break;
-case 75:
+case 56:
+#line 318 "parser.y"
+	{}
+break;
+case 57:
+#line 320 "parser.y"
+	{}
+break;
+case 58:
 #line 321 "parser.y"
 	{}
 break;
-case 76:
-#line 321 "parser.y"
+case 59:
+#line 322 "parser.y"
 	{}
 break;
-case 77:
-#line 321 "parser.y"
-	{}
-break;
-case 78:
+case 60:
 #line 323 "parser.y"
 	{}
 break;
-case 79:
-#line 323 "parser.y"
+case 61:
+#line 324 "parser.y"
 	{}
 break;
-case 80:
+case 62:
 #line 325 "parser.y"
 	{}
 break;
-case 81:
+case 63:
 #line 326 "parser.y"
 	{}
 break;
-case 82:
+case 64:
 #line 328 "parser.y"
 	{}
 break;
-case 83:
-#line 328 "parser.y"
+case 65:
+#line 329 "parser.y"
 	{}
 break;
-case 84:
+case 66:
 #line 330 "parser.y"
 	{}
 break;
-case 85:
+case 67:
 #line 331 "parser.y"
 	{}
 break;
-#line 1160 "y.tab.c"
+case 68:
+#line 332 "parser.y"
+	{}
+break;
+case 69:
+#line 333 "parser.y"
+	{}
+break;
+case 70:
+#line 334 "parser.y"
+	{}
+break;
+case 71:
+#line 335 "parser.y"
+	{}
+break;
+case 72:
+#line 336 "parser.y"
+	{}
+break;
+case 73:
+#line 337 "parser.y"
+	{}
+break;
+case 74:
+#line 340 "parser.y"
+	{}
+break;
+case 75:
+#line 342 "parser.y"
+	{}
+break;
+case 76:
+#line 342 "parser.y"
+	{}
+break;
+case 77:
+#line 342 "parser.y"
+	{}
+break;
+case 78:
+#line 344 "parser.y"
+	{}
+break;
+case 79:
+#line 344 "parser.y"
+	{}
+break;
+case 80:
+#line 346 "parser.y"
+	{}
+break;
+case 81:
+#line 347 "parser.y"
+	{}
+break;
+case 82:
+#line 349 "parser.y"
+	{}
+break;
+case 83:
+#line 349 "parser.y"
+	{}
+break;
+case 84:
+#line 351 "parser.y"
+	{}
+break;
+case 85:
+#line 352 "parser.y"
+	{}
+break;
+#line 1182 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

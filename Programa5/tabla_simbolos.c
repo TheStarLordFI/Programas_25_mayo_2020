@@ -489,3 +489,13 @@ void finish_args(ARGS *s){
 
   printf("Se ha borrado toda la pila de argumentos");
 }
+
+/*
+* Función: getTopSym
+* Descripción: Libera memoria para una lista ARGS
+* Autor: Morales Garcia Luis
+* Fecha de creación: 31 de mayo 2020
+*/
+SYMTAB *getTopSym(SSTACK *pilaTS){
+  return pilaTS->top;
+}

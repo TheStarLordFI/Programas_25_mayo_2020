@@ -50,13 +50,14 @@ INDEX *indiceGlobal, *indiceAux;
 int dir;
 int dir1, dir2, dirTemp; //Dir temporales
 int typeGBL;
-int typeTemp;
 int tam;
 int baseGBL;
-char *L;
+char *tmpLabel;
+//char *labelG = "label";
 char *L1, *L2; //L temporales
 char IDGBL[32];
 char *estTemp;//nombre de la tabla de tipos
+int funcType;
 %}
 
 %union{
@@ -158,7 +159,7 @@ char *estTemp;//nombre de la tabla de tipos
 %right IGUAL
 %left OR
 %left AND
-%left IDENTICO DIFERENTE
+%left idNTICO DIFERENTE
 %left MENORQUE MENORIGUAL MAYORIGUAL MAYORQUE
 %left MAS MENOS
 %left MUL DIV MODULO
@@ -223,38 +224,58 @@ tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
 									  dir = structDir->info;
 									  TYP* newTYP= init_type();
 									  newTYP = set_typ(newTYP,"reg",0,getTopType(pTipos));
-									  typeTemp = append_type(getTopType(pTipos), newTYP);} END {
-										  $$.valorTipo=typeTemp;
+									 typeGBL = append_type(getTopType(pTipos), newTYP);} END {
+										  $$.valorTipo=typeGBL;
 									  };
 
-tipo:             base {baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$2.valorTipo;};
+tipo:             base {baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;};
 
-base:           ENTERO {$$.valorTipo=0;} 
-                | REAL{$$.valorTipo=1;} 
-                | DREAL{$$.valorTipo=4;} 
-                | CAR{$$.valorTipo=2;} 
-                | SIN {$$.valorTipo=3;};
+base:           ENTERO {
+						$$.valorTipo=0;}
+				| REAL{
+						$$.valorTipo=1;} 
+				| DREAL{
+						$$.valorTipo=4;} 
+				| CAR{
+						$$.valorTipo=2;} 
+				| SIN{
+						$$.valorTipo=3;};
 
-tipo_arreglo: 	LCOR NUM RCOR tipo_arreglo{
-					if($2.tipe==0){
-                        int n = atoi($2.valor);
-                                 
-                        if(n>0){
-                            TYP *newTYP = init_type();
-                            newTYP = set_typ(newTYP,"array",$4.valorTipo,getTopType(pTipos));
-                            $$.valorTipo = append_type(getTopType(pTipos), newTYP);
-                        }
-                        else{
-                            printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
-                        }
-                    }
-                    else{
-                        printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
-                    }
-				} 
-				| {};
+tipo_arreglo:   LCOR NUM RCOR tipo_arreglo{
+						if($2.tipe==0){
+							int n = atoi($2.valor);
+							if(n>0){
+								TYP *newTYP = init_type();
+								newTYP = set_typ(newTYP,"array",$4.valorTipo,getTopType(pTipos));
+								$$.valorTipo = append_type(getTopType(pTipos), newTYP);
+							}
+							else{
+								printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
+							}
+						}
+						else
+							printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
+						}| {$$.valorTipo=baseGBL;} ;
 
-lista_var:        lista_var COMA ID{} | ID{} ;
+lista_var:        lista_var COMA ID{
+									if(search_id_symbol(getTopSym(pSimbolos),$3.lexval) == -1){
+										simbol = init_sym();
+										simbol=set_sym(simbol, $3.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
+										append_sym(getTopSym(pSimbolos),simbol);
+										dir = dir + getTam(getTopType(pTipos), typeGBL);
+									}
+									else
+										printf("El idntificador ya fue declarado\n");
+									} | ID{
+											if( search_id_symbol(getTopSym(pSimbolos),$1.lexval) == -1){
+												simbol = init_sym(); 
+												simbol= set_sym(simbol, $1.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
+												append_sym(getTopSym(pSimbolos),simbol);
+												dir = dir + getTam(getTopType(pTipos), typeGBL);
+											}
+											else
+												printf("El idntificador ya fue declarado\n");
+									  		} ;
 
 funciones:        DEF tipo ID LPAR argumentos RPAR INICIO declaraciones sentencias END funciones {}| {};
                     
@@ -270,18 +291,105 @@ param_arr:        LCOR RCOR param_arr{} | {};
 
 sentencias:       sentencias sentencia {} | sentencia {};
 
-sentencia:        IF e_bool THEN sentencia %prec SITEMP END{}                                                               
-                  | IF e_bool THEN sentencia SINO sentencia END{}
-                  | WHILE e_bool DO sentencia END{}
-                  | DO sentencia WHILE e_bool PYC {}
-                  | SEGUN LPAR variable RPAR DO casos predeterminado END{}
-                  | variable IGUAL expresion PYC{}
-                  | WRITE expresion PYC {}
-                  | READ variable PYC{}
-                  | DEV PYC{}
-                  | DEV expresion PYC {}
-                  | TERMINAR PYC {}
-                  | INICIO sentencias END {};
+sentencia:        IF e_bool THEN sentencia{
+									tmpLabel=create_label();
+									backtpatch(codigo,$2.listTrue,tmpLabel);
+									append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
+								} END{$$.nextlist=combinar($2.listFalse,$6.nextlist);}
+                  | IF e_bool THEN{
+									tmpLabel=create_label();
+									backtpatch(codigo,$2.listTrue,tmpLabel);
+									append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
+									} sentencia SINO{
+										tmpLabel=create_label();
+										backtpatch(codigo,$2.listFalse,tmpLabel);
+										append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
+									} sentencia END{$$.nextlist=combinar($5.nextlist,$10.nextlist);}
+                  | WHILE{
+						$<id.lexval>$=create_label();
+						}{ append_new_quad(codigo,"label",espacioG,espacioG,$<id.lexval>3); }
+								e_bool DO
+							{ tmpLabel=create_label();
+								backtpatch(codigo,$5.listTrue,tmpLabel);
+								append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);
+							}sentencia END{
+								backtpatch(codigo,$9.nextlist,$<id.lexval>3);
+								append_new_quad(codigo,"GOTO"," "," ",$<id.lexval>3);
+								$$.nextlist=$5.listFalse;
+							}
+                  | DO {$<id.lexval>$=create_label();}
+										sentencia WHILE e_bool PYC {
+										backpatch(codigo,$8.listTrue,$<id.lexval>3);
+										$$.nextlist=$8.listFalse;
+									}
+                  | SEGUN {$<id.lexval>$=create_label();}  
+									LPAR variable RPAR DO
+									{	tmpLabel=create_label();
+										backtpatch(codigo,$5.listTrue,tmpLabel);
+										append_new_quad(codigo,"label",espacioG,espacioG,tmpLabel);}
+									casos predeterminado END{
+										backtpatch(codigo,$9.nextlist,$<id.lexval>3);
+										append_new_quad(codigo,"GOTO"," "," ",$<id.lexval>3);
+										$$.nextlist=$5.listFalse;	
+									}
+                  | variable IGUAL expresion PYC{
+										if(search_id_symbol(getTopSym(pSimbolos),$1.lexval) != -1 || search_id_symbol(TGS,$1.lexval) != -1 ){
+											simbol = init_sym();
+											simbol=search_id_symbol($1.lexval,getCima(pSimbolos));
+											if(simbol==NULL){
+												simbol=search_id_symbol(TGS,$1.lexval);
+											}
+											dir1=reducir ($3.tipoExp,simbol->tipo,$3.dirExp,codigo);
+											char *tmp=(char*)malloc(sizeof(char));
+											char *tmp2=(char*)malloc(sizeof(char));
+											sprintf(tmp, "%i", simbol->dir);
+											strcpy(tmp2,$1.lexval);
+											strcat(tmp2,"+");
+											strcat(tmp2,tmp);
+											append_new_quad(codigo,igual,dir1,espacioG,tmp2);
+									}else{
+											printf("Error (el idntificador  no se ha declarado)\n");
+										}
+										$$.nextlist=NULL;
+									}
+                  | WRITE expresion PYC {
+										append_new_quad(codigo,prt,$2.dirExp,espacioG,espacioG);
+                   						$$.nextlist=NULL;}
+                  | READ variable PYC{
+										append_new_quad(codigo,sc,espacioG,espacioG,$2.dirExp);
+										$$.nextlist=NULL;
+									}
+                  | DEV PYC{
+							if(funcType==3){
+								append_new_quad(codigo,ret,espacioG,espacioG,espacioG);
+							}else{
+								printf("la funcion debe retornar  algun valor de tipo:%d",funcType);
+							}
+	                     	$$.nextlist=NULL;
+							}
+                  | DEV expresion PYC {
+										if(funcType!=3)
+                    {
+                       dir1=reducir ($2.tipoExp,funcType,$2.dirExp,codigo);
+                       append_new_quad(codigo,ret,$2.dirExp,espacioG,espacioG);
+                       funcReturn=true;
+                    }
+                    else{
+                     printf("la funcion debe retornar  algun valor de tipo:%d",funcType);
+                      }
+                     $$.nextlist=NULL;
+									}
+                  | TERMINAR PYC {
+										indiceGlobal = init_index();
+                    char *tmp3=(char*)malloc(sizeof(char));
+                    sprintf(tmp3, "%i", indiceGlobal->valorMyIndex);
+                    agrega_cuadrupla(codigo, gooto, espacioG, espacioG, tmp3);
+                    $$.nextlist = init_list_index();
+                    append_index($$.listaIndice, indiceGlobal);
+									}
+                  | INICIO sentencias END {
+										sentencia.nextlist=sentencia1.nextlist;
+									};
 
 casos:            CASO NUM DOSP sentencia casos2{};
 
@@ -300,7 +408,7 @@ relacional:       relacional MENORQUE relacional {}
                 | relacional MAYORQUE relacional {}
                 | relacional MENORIGUAL relacional {}
                 | relacional MAYORIGUAL relacional {}
-                | relacional IDENTICO relacional {}
+                | relacional idNTICO relacional {}
                 | relacional DIFERENTE relacional {}
                 | expresion {};
 
