@@ -3,6 +3,8 @@
 #include<string.h>
 #include "cuadruplas.h"
 
+int contTemp = 0;
+
 /** Función:QUAD *init_quad();
 * Descripción: Reserva memoria para una nueva cuadrupla y la crea agregando
 *              a sus elementos los valores pasados por parametro.
@@ -108,4 +110,14 @@ QUAD *search_quad_index(CODE *c,char *i){
   }
   printf ("Codigo: El indice %s no se encuentra en el codigo", i);
   return NULL;
+}
+
+char* newTemp(){
+  contTemp++;
+   char *n=(char*)malloc(sizeof(char));
+  char *tem=(char*)malloc(sizeof(char));
+  strcpy(n,"tmp");
+  sprintf(tem, "%i", contTemp);
+  strcat(n,tem);
+  return n;
 }

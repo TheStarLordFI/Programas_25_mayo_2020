@@ -28,4 +28,6 @@ void append_new_quad(CODE *c, char* op, char* arg1, char* arg2, char* res);//Cre
 
 QUAD *search_quad_index(CODE *c,char *i); //busca un indice en quad
 
+char* newTemp();
+
 #endif

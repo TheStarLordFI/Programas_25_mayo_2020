@@ -604,31 +604,83 @@ relacional:     relacional MENORQUE relacional {
                 | expresion {$$.tipoRel=$1.tipoExp;
 	                          $$.dirRel=$1.dirExp;} ;
 
-expresion:        expresion MAS expresion {}
-                | expresion MENOS expresion{}
-                | expresion MUL expresion {}
-                | expresion DIV expresion {}
-                | expresion MODULO expresion {}
-                | LPAR expresion RPAR {}
-                | variable{}
-                | NUM{}
+expresion:        expresion MAS expresion {
+					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
+                    $$.dirExp = newTemp();
+                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp,codigo);
+                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp,codigo);
+                    append_new_quad(codigo, "+", dir1, dir2,$$.dirExp);
+				}
+                | expresion MENOS expresion{
+					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
+                    $$.dirExp = newTemp();
+                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
+                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
+                    append_new_quad(codigo, "-", dir1, dir2,$$.dirExp);
+				}
+                | expresion MUL expresion {
+					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
+                    $$.dirExp = newTemp();
+                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
+                	dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
+                    append_new_quad(codigo, "*", dir1, dir2,$$.dirExp);
+				}
+                | expresion DIV expresion {
+					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
+                    $$.dirExp = newTemp();
+                	dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
+                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
+                    append_new_quad(codigo, "/", dir1, dir2,$$.dirExp);
+				}
+                | expresion MODULO expresion {
+					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
+                    $$.dirExp = newTemp();
+                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
+                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
+                    append_new_quad(codigo, "%", dir1, dir2,$$.dirExp);
+				}
+                | LPAR expresion RPAR {
+					$$.dirExp = $2.dirExp;
+                    $$.tipoExp = $2.tipoExp;
+				}
+                | variable {}
+                | NUM{
+					$$.dirExp = $1.valor;
+                    $$.tipoExp = $1.tipe;
+				}
                 | CADENA{}
                 | CARACTER {};
                 
 
-variable:         ID variable_comp {};
+variable:     	ID variable_comp {};
 
-variable_comp:    dato_est_sim{} | arreglo{} | LPAR parametros RPAR{} ;
+variable_comp: 	dato_est_sim{} 
+				| arreglo{} 
+				| LPAR parametros RPAR{} ;
 
-dato_est_sim:     dato_est_sim PUNTO ID{} | {};
+dato_est_sim:  	dato_est_sim PUNTO ID{} 
+				| {};
 
-arreglo:           LCOR expresion RCOR{}
-                 | arreglo LCOR expresion RCOR {};
+arreglo:       	LCOR expresion RCOR{}
+            	| arreglo LCOR expresion RCOR {};
 
-parametros:        lista_param{} | {};
+parametros:    	lista_param{
+					$$.listArgs=$1.listArgs;
+				} 
+				| {$$.listArgs = NULL;};
 
-lista_param:       lista_param COMA expresion {}
-                  | expresion {};				  
+lista_param:    lista_param COMA expresion {
+					$$.listArgs=$1.listArgs;
+                    ARG* argx = init_arg($3.tipoExp);
+                    append_arg($$.listArgs, argx->arg);
+                    append_new_quad(codigo,"param",$3.dirExp," ", " ");
+				}
+                | expresion {
+					$$.listArgs = init_args();
+                    ARG* argx = init_arg($1.tipoExp);
+                    append_arg($$.listArgs, argx->arg);
+                    append_new_quad(codigo,"param",$1.dirExp," ", " ");
+				};				  
 
 
 %%
