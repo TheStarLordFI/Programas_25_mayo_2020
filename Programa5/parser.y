@@ -21,6 +21,7 @@ void yyerror(char *s);
 extern int yylineno;
 extern int yylex();
 extern char* yytext;
+void print_code(CODE *c);
 
 /*Se deben declarar las estructuras que para nuestro proyecto se tienen.
 * Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
@@ -187,7 +188,7 @@ char *tmpEtq;
 %type declaraciones
 %type lista_var
 %type funciones
-%type<listIndice_C> casos
+%type<listIndice_C> casos casos2
 %type<listIndice_P> predeterminado
 %type<varComp> variable_comp
 %type<datoEst> dato_est_sim
@@ -206,14 +207,14 @@ programa:        {printf("==========================P r o g r a m a=============
                   push_st(pSimbolos,TGS);
                   push_tt(pTipos,TGT);
                   tabCadenas = crearTablaCadenas();
-                  } declaraciones funciones {/*imprimirCodigo(codigo);*/};
+                  } declaraciones funciones {print_code(codigo);};
 				  
 declaraciones:    tipo {typeGBL  = $1.valorTipo;} lista_var PYC declaraciones
                 | tipo_registro {typeGBL  = $1.valorTipo;} lista_var PYC declaraciones
                 | {};
 
 tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
-							   	  init_type_tab(TT1);
+							   	  TT1 = init_type_tab(TT1);
 								  structDir = crearDir();
 								  structDir->info = dir;
 								  pushPDir(structDir, pDirecciones);
@@ -271,7 +272,7 @@ funciones:        DEF tipo ID {if(search_id_symbol(TGS,$3.lexval) == -1){
 									funcReturn = false;
 									dir = 0;
 									TS1 = init_sym_tab();
-							   	  	init_type_tab(TT1);
+							   	  	TT1 = init_type_tab(TT1);
 									push_tt(pTipos,TT1);
 								 	push_st(pSimbolos, TS1);
 									append_new_quad(codigo,"label","-","-",$3.lexval);
@@ -366,12 +367,14 @@ sentencia:        IF e_bool THEN sentencia END {tmpLabel=create_label();
 												   $$.nextlist=$4.listFalse;
 													}
                   | SEGUN LPAR variable RPAR DO casos predeterminado END{
+					  												int i;
 																	L1=create_label();
 																	prueba = combinar($6.prueba, $7.prueba);
 																	backpatch(codigo,$6.nextlist,L1);
+																	sustituir("??",$3.idVar,prueba,codigo);
 																	}
                   | variable IGUAL expresion PYC{
-										if(search_id_symbol(getTopSym(pSimbolos),$1.idVar) != -1 || search_id_symbol(TGS,$1.idVar) != -1 ){
+										if((search_id_symbol(getTopSym(pSimbolos),$1.idVar) != -1) || (search_id_symbol(TGS,$1.idVar) != -1 )){
 											simbol = init_sym();
 											simbol=search_SYM(getTopSym(pSimbolos),$1.idVar);
 											if(simbol==NULL){
@@ -385,23 +388,74 @@ sentencia:        IF e_bool THEN sentencia END {tmpLabel=create_label();
 											strcat(tmp2,"+");
 											strcat(tmp2,tmp);
 											append_new_quad(codigo,"=",dir1,"-",tmp2);
-									}else{
-											printf("Error (el idntificador  no se ha declarado)\n");
+										}else{
+											printf("Error => El idntificador  no se ha declarado\n");
 										}
 										$$.nextlist=NULL;
 									}
-                  | WRITE expresion PYC {}
-                  | DEV PYC{}
-                  | DEV expresion PYC {}
-                  | TERMINAR PYC {}
-                  | INICIO sentencias END {};
+					| WRITE expresion PYC{
+									append_new_quad(codigo,"print",$2.dirExp,"-","-");
+									$$.nextlist = NULL;
+								}
+                  | READ variable PYC{
+									append_new_quad(codigo,"scan","-","-",$2.idVar); 
+									$$.nextlist = NULL;
+								}
+				  | DEV PYC {	
+						if(funcType==3){
+							append_new_quad(codigo,"return","-","-","-");
+						}else{
+							printf("la funcion debe retornar  algun valor de tipo ==> %d",funcType);
+						}
+						$$.nextlist=NULL;
+					}
+                  | DEV expresion PYC { 
+					  					if(funcType!=3){
+											dir1= reducir($2.dirExp,$2.tipoExp,funcType,codigo);
+											append_new_quad(codigo,"return",$2.dirExp,"-","-");
+											funcReturn=true;
+										}else{
+                    						 printf("la funcion debe retornar  algun valor de tipo ==>%d",funcType);
+                      					}
+										$$.nextlist=NULL;
+									}
+                  | TERMINAR PYC {	
+					  				indiceGlobal = init_index();
+									char *tmp3=(char*)malloc(sizeof(char));
+									sprintf(tmp3, "%i", indiceGlobal->indice);
+									append_new_quad(codigo, "goto", "-", "-", tmp3);
+									$$.nextlist = init_list_index(indiceGlobal);
+									append_index($$.nextlist, indiceGlobal);
+								}
+                  | INICIO sentencias END { 
+					  						$$.nextlist=$2.nextlist;
+										};
 				  
+casos:            CASO NUM DOSP sentencia casos2{
+										$$.nextlist = combinar($$.nextlist, $4.nextlist);
+										char *label_C = create_label();
+										/*Indica el inicio del código para la sentencia*/
+										$$.prueba = $5.prueba;
+										//sustituir_c()
+										//(if ”??” ”==” num.dir ”goto” L )
+									};
 
-casos:            CASO NUM DOSP sentencia casos2{};
+casos2:           casos{
+						//casos.prueba = newCode()
+						char *LT = create_label();
+						/*Indica el inicio del código para la sentencia*/
+						//genCode(”label” L)
+						//casos.prueba.append(if ”??” ”==” num.dir ”goto” L )
+						} 
+				| {};
 
-casos2:           casos{} | {} ;
-
-predeterminado:   PRED DOSP sentencia{} | {};
+predeterminado:   PRED DOSP sentencia{
+									//predeterminado.prueba = newCode()
+									char *lll = create_label();
+									/*Indica el inicio del código para la sentencia*/
+									//genCode(”label” L)
+									//predeterminado.prueba.append(”goto” L )
+									} | {};
 
 e_bool:         e_bool OR {
 					tmpEtq = create_label();
@@ -462,12 +516,93 @@ relacional:     relacional MENORQUE relacional {
 					append_new_quad(codigo,"<", dir1, dir2, tmpIndGlobal);
 					append_new_quad(codigo,"goto", "-", "-", tmpIndAux);
 				}
-                | relacional MAYORQUE relacional {}
-                | relacional MENORIGUAL relacional {}
-                | relacional MAYORIGUAL relacional {}
-                | relacional IDENTICO relacional {}
-                | relacional DIFERENTE relacional {}
-                | expresion {};
+                | relacional MAYORQUE relacional {
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									$$.listRelTrue = init_list_index(indiceGlobal);
+									$$.listRelFalse = init_list_index(indiceAux);
+									append_index($$.listRelTrue, indiceGlobal);
+									append_index($$.listRelFalse, indiceAux);
+									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
+									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
+									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, ">", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
+                | relacional MENORIGUAL relacional {
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									$$.listRelTrue = init_list_index(indiceGlobal);
+									$$.listRelFalse = init_list_index(indiceAux);
+									append_index($$.listRelTrue, indiceGlobal);
+									append_index($$.listRelFalse, indiceAux);
+									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
+									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
+									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, "<=", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
+                | relacional MAYORIGUAL relacional {
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									$$.listRelTrue = init_list_index(indiceGlobal);
+									$$.listRelFalse = init_list_index(indiceAux);
+									append_index($$.listRelTrue, indiceGlobal);
+									append_index($$.listRelFalse, indiceAux);
+									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
+									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
+									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, ">=", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
+                | relacional IDENTICO relacional {
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									$$.listRelTrue = init_list_index(indiceGlobal);
+									$$.listRelFalse = init_list_index(indiceAux);
+									append_index($$.listRelTrue, indiceGlobal);
+									append_index($$.listRelFalse, indiceAux);
+									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
+									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
+									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, "==", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
+                | relacional DIFERENTE relacional {
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									$$.listRelTrue = init_list_index(indiceGlobal);
+									$$.listRelFalse = init_list_index(indiceAux);
+									append_index($$.listRelTrue, indiceGlobal);
+									append_index($$.listRelFalse, indiceAux);
+									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
+									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
+									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, "<>", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
+                | expresion {$$.tipoRel=$1.tipoExp;
+	                          $$.dirRel=$1.dirExp;} ;
 
 expresion:        expresion MAS expresion {}
                 | expresion MENOS expresion{}
@@ -499,4 +634,15 @@ lista_param:       lista_param COMA expresion {}
 %%
 void yyerror(char *msg){
 	printf("%s, linea: %d, token: %s\n",msg, yylineno, yytext);
+}
+
+void print_code(CODE *c){
+	QUAD *q;
+	int i;
+	printf("=========================CODIGO DE 3 DIRECCIONES=========================\n");
+	q=c->head;
+	for(i=0; i < c->num_instru; i++){
+		printf("|%s\t|%s\t|%s\t|%s\t|\n",q->op,q->arg1,q->arg2,q->res);
+		q=q->next;
+	}
 }

@@ -492,7 +492,7 @@ void finish_args(ARGS *s){
 
 /*
 * Función: getTopSym
-* Descripción: Libera memoria para una lista ARGS
+* Descripción: Retorna la cima de la pila de simbolos 
 * Autor: Morales Garcia Luis
 * Fecha de creación: 31 de mayo 2020
 */

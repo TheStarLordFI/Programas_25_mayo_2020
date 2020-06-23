@@ -129,7 +129,29 @@ TYPTAB *init_type_tab(TYPTAB *t){
 * Fecha de creación: 31 de mayo 2020
 */
 TYPTAB *append_natives_types(TYPTAB *tabTipos){
-  int i, aux;
+   printf("Agregando tipos nativos...");
+  int i;
+  int aux=0;
+  TYP *tipoAux;
+  TB *tipoB;
+  char arrTiposNativos[7][5] = {"ent", "real", "car", "sin", "dreal"};
+  int tamBytesNativos[5] = {4, 4, 1, 0, 8};
+
+  for(i=0; i<5; i++){
+    //TB *tipoB = init_type_base(tipoB);
+    tipoAux->id = tabTipos->num;
+    strcpy(tipoAux->nombre, &arrTiposNativos[i][0]);
+    tipoAux->tam = tamBytesNativos[i];
+    tipoAux->tb = tipoB;
+    tipoAux->tb->tipo.tipo= -1; //significa que es un tipo de base nativo
+    aux = append_type(tabTipos,tipoAux);
+    if(aux!=0){
+      printf("T Base agregado\n");
+    }else{
+      printf("T Base NO agregado\n");
+    }
+  }
+  /*int i, aux;
   TYP *tipoAux;
   TB *tipoB;
 
@@ -145,7 +167,7 @@ TYPTAB *append_natives_types(TYPTAB *tabTipos){
     tipoAux->tb->tipo.tipo= -1; //significa que es un tipo de base nativo
     //aux = insertarTipo(tabTipos, tipoAux);
     init_type_base();
-  }
+  }*/
   return tabTipos;
 }
 
@@ -302,6 +324,12 @@ TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos){
   return type;
 }
 
+/*
+* Función: getTopType
+* Descripción: Retorna la cima de la pila de tipos
+* Autor: Osmar Juarez Aguilar
+* Fecha de creación: 12 de junio 2020
+*/
 TYPTAB *getTopType(TSTACK *pilaTT){
   return pilaTT->top;
 }

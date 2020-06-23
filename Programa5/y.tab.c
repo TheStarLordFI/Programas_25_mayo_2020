@@ -35,6 +35,7 @@ void yyerror(char *s);
 extern int yylineno;
 extern int yylex();
 extern char* yytext;
+void print_code(CODE *c);
 
 /*Se deben declarar las estructuras que para nuestro proyecto se tienen.
 * Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
@@ -74,7 +75,7 @@ char *L1, *L2; /*L temporales*/
 char IDGBL[32];
 char *estTemp;/*nombre de la tabla de tipos*/
 char *tmpEtq;
-#line 65 "parser.y"
+#line 66 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -159,7 +160,7 @@ typedef union{
 
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 163 "y.tab.c"
+#line 164 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -247,26 +248,26 @@ extern int YYPARSE_DECL();
 #define YYERRCODE 256
 typedef short YYINT;
 static const YYINT yylhs[] = {                           -1,
-   26,    0,   27,   19,   28,   19,   19,   29,   30,   14,
-   31,    1,    2,    2,    2,    2,    2,    3,    3,   20,
-   20,   32,   33,   21,   21,   11,   11,   10,   10,   13,
-   15,   16,   16,   34,    6,    6,    5,    5,    5,    5,
-    5,    5,    5,    5,    5,    5,    5,   22,   35,   35,
-   23,   23,   36,    7,   37,    7,    7,    7,    7,    7,
-    8,    8,    8,    8,    8,    8,    8,    4,    4,    4,
-    4,    4,    4,    4,    4,    4,    4,   17,   24,   24,
-   24,   25,   25,   18,   18,   12,   12,    9,    9,
+   27,    0,   28,   19,   29,   19,   19,   30,   31,   14,
+   32,    1,    2,    2,    2,    2,    2,    3,    3,   20,
+   20,   33,   34,   21,   21,   11,   11,   10,   10,   13,
+   15,   16,   16,   35,    6,    6,    5,    5,    5,    5,
+    5,    5,    5,    5,    5,    5,    5,    5,   22,   23,
+   23,   24,   24,   36,    7,   37,    7,    7,    7,    7,
+    7,    8,    8,    8,    8,    8,    8,    8,    4,    4,
+    4,    4,    4,    4,    4,    4,    4,    4,   17,   25,
+   25,   25,   26,   26,   18,   18,   12,   12,    9,    9,
 };
 static const YYINT yylen[] = {                            2,
     0,    3,    0,    5,    0,    5,    0,    0,    0,    6,
     0,    3,    1,    1,    1,    1,    1,    4,    0,    3,
     1,    0,    0,   13,    0,    1,    1,    3,    1,    2,
     2,    3,    0,    0,    3,    1,    5,    7,    5,    5,
-    8,    4,    3,    2,    3,    2,    3,    5,    1,    0,
-    3,    0,    0,    4,    0,    4,    2,    1,    1,    1,
-    3,    3,    3,    3,    3,    3,    1,    3,    3,    3,
-    3,    3,    3,    1,    1,    1,    1,    2,    1,    1,
-    3,    3,    0,    3,    4,    1,    0,    3,    1,
+    8,    4,    3,    3,    2,    3,    2,    3,    5,    1,
+    0,    3,    0,    0,    4,    0,    4,    2,    1,    1,
+    1,    3,    3,    3,    3,    3,    3,    1,    3,    3,
+    3,    3,    3,    3,    1,    1,    1,    1,    2,    1,
+    1,    3,    3,    0,    3,    4,    1,    0,    3,    1,
 };
 static const YYINT yydefred[] = {                         1,
     0,    0,    0,   13,   14,   15,   17,   16,    3,   11,
@@ -275,155 +276,157 @@ static const YYINT yydefred[] = {                         1,
    22,    0,   20,    4,    0,    6,    0,   10,   18,    0,
     0,    0,    0,    0,   29,    0,    0,   31,    0,    0,
    30,    0,   28,    0,   32,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,   36,    0,    0,    0,    0,
-    0,   78,    0,   77,   76,   75,   59,   60,    0,    0,
-    0,    0,    0,   74,    0,    0,    0,    0,   46,    0,
-   44,    0,   23,    0,    0,    0,    0,    0,    0,    0,
-    0,   57,    0,    0,    0,    0,    0,    0,    0,   53,
-   55,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-   47,   43,   45,    0,   35,    0,    0,   81,   84,    0,
-   82,   73,    0,    0,   70,   71,   72,    0,    0,    0,
-    0,    0,   61,   63,   64,   62,    0,    0,    0,   24,
-   42,    0,   85,   37,    0,    0,   56,   40,   39,    0,
-    0,    0,    0,   38,    0,    0,    0,    0,    0,   41,
-    0,   51,   49,   48,
+    0,    0,    0,    0,    0,    0,   36,    0,    0,    0,
+    0,    0,   79,    0,   78,   77,   76,   60,   61,    0,
+    0,    0,    0,    0,   75,    0,    0,    0,    0,   47,
+    0,    0,   45,    0,   23,    0,    0,    0,    0,    0,
+    0,    0,    0,   58,    0,    0,    0,    0,    0,    0,
+    0,   54,   56,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,   48,   43,   44,   46,    0,   35,    0,    0,
+   82,   85,    0,   83,   74,    0,    0,   71,   72,   73,
+    0,    0,    0,    0,    0,   62,   64,   65,   63,    0,
+    0,    0,   24,   42,    0,   86,   37,    0,    0,   57,
+   40,   39,    0,    0,    0,    0,   38,    0,    0,    0,
+    0,    0,   41,    0,   52,   50,   49,
 };
 static const YYINT yydgoto[] = {                          1,
-    9,   10,   23,   81,   66,   67,   82,   83,   97,   43,
-   44,   98,   45,   11,   46,   48,   84,   71,   12,   21,
-   18,  163,  167,   72,   73,    2,   14,   16,   19,   32,
-   15,   37,  124,   94,  174,  139,  140,
+    9,   10,   23,   82,   67,   68,   83,   84,   99,   43,
+   44,  100,   45,   11,   46,   48,   85,   72,   12,   21,
+   18,  166,  177,  170,   73,   74,    2,   14,   16,   19,
+   32,   15,   37,  127,   96,  142,  143,
 };
 static const YYINT yysindex[] = {                         0,
-    0,  -24, -272,    0,    0,    0,    0,    0,    0,    0,
-    0, -244,    0, -253, -287, -253,  119,    0,  -24,    0,
- -188, -239,    0, -179, -227,    0, -217,  -24, -252,  -24,
-    0, -201,    0,    0, -287,    0, -219,    0,    0,  124,
-    0, -241, -199, -223,    0, -171, -206,    0,  119, -165,
-    0, -241,    0,  -24,    0,   35, -166, -232,   35, -232,
- -195,   35, -169, -255, -242,    0, -127, -111, -255, -255,
- -126,    0,  -86,    0,    0,    0,    0,    0, -232, -255,
-   92, -240,   76,    0,  -89,  -60,  -90,  -70,    0,   55,
-    0,   60,    0,   35, -255,   92,  -75,  -91, -157, -255,
-  -53,    0,  -94, -255, -255, -255, -255, -255,   35,    0,
-    0, -255, -255, -255, -255, -255, -255, -232,   35,  -88,
-    0,    0,    0, -244,    0,   65, -255,    0,    0, -125,
-    0,    0, -154, -154,    0,    0,    0, -271, -232, -232,
-  101,  101,    0,    0,    0,    0, -214,  -47,  -38,    0,
-    0,   92,    0,    0,   35,  -46,    0,    0,    0,  -37,
-  -33,  -11,  -23,    0,  -27,  -21,  -16,   35,   35,    0,
-  -37,    0,    0,    0,
+    0,  -21, -259,    0,    0,    0,    0,    0,    0,    0,
+    0, -237,    0, -243, -253, -243,  125,    0,  -21,    0,
+ -245, -214,    0, -185, -197,    0, -193,  -21, -226,  -21,
+    0, -202,    0,    0, -253,    0, -216,    0,    0,  130,
+    0, -205, -181, -221,    0, -158, -186,    0,  125, -128,
+    0, -205,    0,  -21,    0,   41, -196, -255,   41, -255,
+ -153,   41, -137, -222, -114, -230,    0, -106, -108, -222,
+ -222, -131,    0, -105,    0,    0,    0,    0,    0, -255,
+ -222,   98, -263,   82,    0,  -86, -194, -114,  -97,    0,
+   61,  -82,    0,   66,    0,   41, -222,   98,  -73,  -92,
+ -154, -222,  -50,    0,  -91, -222, -222, -222, -222, -222,
+   41,    0,    0, -222, -222, -222, -222, -222, -222, -255,
+   41,  -90,    0,    0,    0,    0, -237,    0,   71, -222,
+    0,    0, -122,    0,    0, -270, -270,    0,    0,    0,
+ -274, -255, -255,  107,  107,    0,    0,    0,    0,   -1,
+  -62,  -39,    0,    0,   98,    0,    0,   41,  -71,    0,
+    0,    0,  -46,  -44,  -31,  -35,    0,  -38,  -37,  -17,
+   41,   41,    0,  -46,    0,    0,    0,
 };
 static const YYINT yyrindex[] = {                         0,
     0,    2,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,  265,    0,    0,   -2,    0,    0,    0,   -7,    0,
+    0,  262,    0,    0,   -5,    0,    0,    0,  -13,    0,
     0,    0,    0,    0,    0,    0,    0,    1,    0,    1,
-    0,    0,    0,    0,   -2,    0,    0,    0,    0,    0,
- -259, -217,  -29,    0,    0,    0,    0,    0,    0,    0,
-    0, -217,    0,   51,    0,    0, -168,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,   67,    0,  -28,    0,
- -136,    0, -104,    0,    0,    0,    0,    0,    0,    0,
-   -3,    0, -180,    0,    0,    0,    0,   67,    0,    0,
-    0,    0,    0,    0,    0, -265,  -19,    0,    0,    0,
+    0,    0,    0,    0,   -5,    0,    0,    0,    0,    0,
+ -254, -193,  -36,    0,    0,    0,    0,    0,    0,    0,
+    0, -193,    0,   57,    0,    0, -165,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,   73,    0,  -33,
+    0, -133,    0, -101,    0,    0,    0,    0,    0,    0,
+    0,    5,    0, -201,    0,    0,    0,    0,   73,    0,
+    0,    0,    0,    0,    0,    0,    0, -220,  -24,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,  265,    0,    0,    0,    0,    0,    0,
-    0,    0,  -72,  -43,    0,    0,    0,    0,    0,    0,
- -197,   10,    0,    0,    0,    0,    0,    0,    0,    0,
-    0, -222,    0,    0,    0, -203,    0,    0,    0,    0,
-    0,    0,   16,    0,    0,    0,    0,    0,    0,    0,
- -109,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,  262,    0,    0,    0,
+    0,    0,    0,    0,    0,  -69,  -40,    0,    0,    0,
+    0,    0,    0, -178,   16,    0,    0,    0,    0,    0,
+    0,    0,    0,    0, -218,    0,    0,    0, -192,    0,
+    0,    0,    0,    0,    0,  -11,    0,    0,    0,    0,
+    0,    0,    0, -138,    0,    0,    0,
 };
 static const YYINT yygindex[] = {                         0,
-  278,  -20,  262,  -48,  -54,  236,  -52,  261,    0,    0,
-    0,    0,  256,    0,    0,  257,  -56,    0,   50,  294,
-  189,  143,    0,    0,    0,    0,    0,    0,    0,    0,
+  264,  -25,  255,  -48,  -54,  230,  -52,  265,    0,    0,
+    0,    0,  244,    0,    0,  251,  -56,    0,   44,  288,
+  184,  141,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,
 };
-#define YYTABLESIZE 397
-static const YYINT yytable[] = {                         68,
-    7,    7,   68,   13,   85,   68,  154,   86,   17,   74,
-   75,   76,   57,   17,   20,   90,   92,   22,   89,   42,
-   96,   99,   74,   75,   76,   57,  102,   29,   42,  109,
-  120,  103,   74,   75,   76,   57,  155,   68,   89,  125,
-   31,   77,   78,   91,   27,   17,  126,   80,  110,  111,
-   33,  130,   68,   35,  138,  133,  134,  135,  136,  137,
-   80,   88,   68,   47,  148,  147,   54,   54,   26,   79,
-   80,  158,   65,   65,  110,  111,   38,   34,  152,   36,
-   50,   88,   54,   40,   49,   54,  156,  157,   65,   58,
-   58,   65,   65,   65,   65,   27,   51,   28,   68,   52,
-  161,   83,   83,   56,   27,   58,   30,   87,   58,   58,
-   54,   68,   68,  171,  172,   83,   89,   83,   83,   83,
-   83,   83,   83,   83,   83,   83,   83,   83,   83,   83,
-   83,   83,   83,   80,   80,   83,   69,   83,   70,  104,
-  105,  106,  107,  108,  106,  107,  108,   80,  129,   80,
-   93,   80,   80,   80,   80,   80,   80,   80,   80,   80,
-   80,   80,   80,   80,   80,   79,   79,   80,   50,   80,
-   50,  104,  105,  106,  107,  108,   95,   57,  100,   79,
-  153,   79,  118,   79,   79,   79,   79,   79,   79,   79,
-   79,   79,   79,   79,   79,   79,   79,   68,   68,   79,
-  101,   79,  104,  105,  106,  107,  108,  121,  127,  132,
-  119,   68,  128,   68,  131,  149,   68,   68,   68,   68,
-   68,   68,   68,   68,   68,   68,   69,   69,  110,  111,
-  159,   68,  160,   68,    3,    4,    5,    6,    7,    8,
-   69,  162,   69,  111,  164,   69,   69,   69,   69,   69,
-   69,   69,   69,   69,   69,  165,  166,  168,    7,    7,
-   69,  170,   69,  169,   25,   19,   67,   67,    7,    7,
-    7,    7,    7,    7,   26,   87,    7,    7,    7,   66,
-   66,    7,   67,    7,   86,   67,   67,   67,   67,   67,
-   67,   67,   67,   52,   25,   66,   39,   88,   66,   66,
-   66,   66,   57,   58,   53,   59,   60,   61,   55,   24,
-   62,   63,  150,  173,    0,   64,    0,   65,    7,    7,
-    0,    7,    7,    7,    0,    0,    7,    7,    0,    0,
-    0,    7,    0,    7,   34,   34,    0,   34,   34,   34,
-  122,    0,   34,   34,    0,  123,    0,   34,    0,   34,
-  151,  104,  105,  106,  107,  108,  104,  105,  106,  107,
-  108,  104,  105,  106,  107,  108,  112,  113,  114,  115,
-  116,  117,  141,  142,  143,  144,  145,  146,    4,    5,
-    6,    7,    8,    4,    5,    6,   41,    8,  104,  105,
-  106,  107,  108,  114,  115,  116,  117,
+#define YYTABLESIZE 403
+static const YYINT yytable[] = {                         69,
+    7,    7,   69,  157,   86,   69,  111,   87,   92,   75,
+   76,   77,   57,   17,   42,   91,   13,   94,   78,   79,
+   17,   98,  101,   42,   20,  112,  113,  104,  108,  109,
+  110,  122,  105,  158,   75,   76,   77,   57,   27,   69,
+   28,  128,   75,   76,   77,   57,   80,   81,  129,   27,
+   17,   22,   29,  133,   69,   93,  141,  136,  137,  138,
+  139,  140,   26,   90,   69,   89,  151,  150,   59,   59,
+   31,   34,   81,   36,   33,   38,  121,   55,   55,   35,
+   81,  155,   50,   90,   59,   89,   40,   59,   59,  159,
+  160,   66,   66,   55,  112,  113,   55,   56,   27,   47,
+   30,   69,   49,  164,   84,   84,   70,   66,   71,   51,
+   66,   66,   66,   66,   69,   69,  174,  175,   84,   52,
+   84,   84,   84,   84,   84,   84,   84,   84,   84,   84,
+   84,   84,   84,   84,   84,   84,   81,   81,   84,   51,
+   84,   51,  106,  107,  108,  109,  110,   54,   90,   88,
+   81,  132,   81,   57,   81,   81,   81,   81,   81,   81,
+   81,   81,   81,   81,   81,   81,   81,   81,   80,   80,
+   81,   95,   81,  102,  106,  107,  108,  109,  110,   97,
+  123,  103,   80,  156,   80,  120,   80,   80,   80,   80,
+   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,
+   69,   69,   80,  125,   80,  106,  107,  108,  109,  110,
+  130,  131,  135,  152,   69,  162,   69,  134,  113,   69,
+   69,   69,   69,   69,   69,   69,   69,   69,   69,   70,
+   70,  163,  165,  167,   69,  168,   69,    3,    4,    5,
+    6,    7,    8,   70,  169,   70,  171,  172,   70,   70,
+   70,   70,   70,   70,   70,   70,   70,   70,    7,    7,
+  173,   25,   19,   70,    7,   70,   53,   26,    7,    7,
+   88,    7,    7,    7,   68,   68,    7,    7,    7,   87,
+   25,    7,    7,    7,  161,   67,   67,  112,  113,   39,
+   68,   89,   53,   68,   68,   68,   68,   68,   68,   68,
+   68,   67,   55,   24,   67,   67,   67,   67,   57,   58,
+  153,   59,   60,   61,  176,    0,   62,   63,    0,    0,
+    0,   64,   65,   66,    7,    7,    0,    7,    7,    7,
+    0,    0,    7,    7,    0,    0,    0,    7,    7,    7,
+   34,   34,    0,   34,   34,   34,  124,    0,   34,   34,
+    0,  126,    0,   34,   34,   34,  154,  106,  107,  108,
+  109,  110,  106,  107,  108,  109,  110,  106,  107,  108,
+  109,  110,  114,  115,  116,  117,  118,  119,  144,  145,
+  146,  147,  148,  149,    4,    5,    6,    7,    8,    4,
+    5,    6,   41,    8,  106,  107,  108,  109,  110,  116,
+  117,  118,  119,
 };
 static const YYINT yycheck[] = {                         56,
-    0,    0,   59,  276,   59,   62,  278,   60,  268,  265,
-  266,  267,  268,  258,  268,   64,   65,  305,  284,   40,
-   69,   70,  265,  266,  267,  268,   79,  267,   49,  270,
-   87,   80,  265,  266,  267,  268,  308,   94,  304,   94,
-  268,  274,  275,  286,  304,  305,   95,  303,  289,  290,
-  268,  100,  109,  306,  109,  104,  105,  106,  107,  108,
-  303,  284,  119,  305,  119,  118,  270,  271,   19,  302,
-  303,  286,  270,  271,  289,  290,  278,   28,  127,   30,
-  304,  304,  286,  303,  284,  289,  139,  140,  286,  270,
-  271,  289,  290,  291,  292,  284,  268,  286,  155,  306,
-  155,  270,  271,   54,  284,  286,  286,  303,  289,  290,
-  276,  168,  169,  168,  169,  284,  286,  286,  287,  288,
-  289,  290,  291,  292,  293,  294,  295,  296,  297,  298,
-  299,  300,  301,  270,  271,  304,  303,  306,  305,  297,
-  298,  299,  300,  301,  299,  300,  301,  284,  306,  286,
-  278,  288,  289,  290,  291,  292,  293,  294,  295,  296,
-  297,  298,  299,  300,  301,  270,  271,  304,  278,  306,
-  280,  297,  298,  299,  300,  301,  288,  268,  305,  284,
-  306,  286,  272,  288,  289,  290,  291,  292,  293,  294,
-  295,  296,  297,  298,  299,  300,  301,  270,  271,  304,
-  287,  306,  297,  298,  299,  300,  301,  278,  284,  304,
-  271,  284,  304,  286,  268,  304,  289,  290,  291,  292,
-  293,  294,  295,  296,  297,  298,  270,  271,  289,  290,
-  278,  304,  271,  306,  259,  260,  261,  262,  263,  264,
-  284,  279,  286,  290,  278,  289,  290,  291,  292,  293,
-  294,  295,  296,  297,  298,  267,  280,  285,  258,  258,
-  304,  278,  306,  285,    0,  268,  270,  271,  268,  269,
-  278,  271,  272,  273,  304,  304,  276,  277,  278,  270,
-  271,  281,  286,  283,  304,  289,  290,  291,  292,  293,
-  294,  295,  296,  278,   17,  286,   35,   62,  289,  290,
-  291,  292,  268,  269,   49,  271,  272,  273,   52,   16,
-  276,  277,  124,  171,   -1,  281,   -1,  283,  268,  269,
-   -1,  271,  272,  273,   -1,   -1,  276,  277,   -1,   -1,
-   -1,  281,   -1,  283,  268,  269,   -1,  271,  272,  273,
-  286,   -1,  276,  277,   -1,  286,   -1,  281,   -1,  283,
-  286,  297,  298,  299,  300,  301,  297,  298,  299,  300,
-  301,  297,  298,  299,  300,  301,  291,  292,  293,  294,
-  295,  296,  112,  113,  114,  115,  116,  117,  260,  261,
-  262,  263,  264,  260,  261,  262,  263,  264,  297,  298,
-  299,  300,  301,  293,  294,  295,  296,
+    0,    0,   59,  278,   59,   62,  270,   60,   65,  265,
+  266,  267,  268,  268,   40,   64,  276,   66,  274,  275,
+  258,   70,   71,   49,  268,  289,  290,   80,  299,  300,
+  301,   88,   81,  308,  265,  266,  267,  268,  284,   96,
+  286,   96,  265,  266,  267,  268,  302,  303,   97,  304,
+  305,  305,  267,  102,  111,  286,  111,  106,  107,  108,
+  109,  110,   19,  284,  121,  284,  121,  120,  270,  271,
+  268,   28,  303,   30,  268,  278,  271,  270,  271,  306,
+  303,  130,  304,  304,  286,  304,  303,  289,  290,  142,
+  143,  270,  271,  286,  289,  290,  289,   54,  284,  305,
+  286,  158,  284,  158,  270,  271,  303,  286,  305,  268,
+  289,  290,  291,  292,  171,  172,  171,  172,  284,  306,
+  286,  287,  288,  289,  290,  291,  292,  293,  294,  295,
+  296,  297,  298,  299,  300,  301,  270,  271,  304,  278,
+  306,  280,  297,  298,  299,  300,  301,  276,  286,  303,
+  284,  306,  286,  268,  288,  289,  290,  291,  292,  293,
+  294,  295,  296,  297,  298,  299,  300,  301,  270,  271,
+  304,  278,  306,  305,  297,  298,  299,  300,  301,  288,
+  278,  287,  284,  306,  286,  272,  288,  289,  290,  291,
+  292,  293,  294,  295,  296,  297,  298,  299,  300,  301,
+  270,  271,  304,  286,  306,  297,  298,  299,  300,  301,
+  284,  304,  304,  304,  284,  278,  286,  268,  290,  289,
+  290,  291,  292,  293,  294,  295,  296,  297,  298,  270,
+  271,  271,  279,  278,  304,  267,  306,  259,  260,  261,
+  262,  263,  264,  284,  280,  286,  285,  285,  289,  290,
+  291,  292,  293,  294,  295,  296,  297,  298,  258,  258,
+  278,    0,  268,  304,  278,  306,  278,  304,  268,  269,
+  304,  271,  272,  273,  270,  271,  276,  277,  278,  304,
+   17,  281,  282,  283,  286,  270,  271,  289,  290,   35,
+  286,   62,   49,  289,  290,  291,  292,  293,  294,  295,
+  296,  286,   52,   16,  289,  290,  291,  292,  268,  269,
+  127,  271,  272,  273,  174,   -1,  276,  277,   -1,   -1,
+   -1,  281,  282,  283,  268,  269,   -1,  271,  272,  273,
+   -1,   -1,  276,  277,   -1,   -1,   -1,  281,  282,  283,
+  268,  269,   -1,  271,  272,  273,  286,   -1,  276,  277,
+   -1,  286,   -1,  281,  282,  283,  286,  297,  298,  299,
+  300,  301,  297,  298,  299,  300,  301,  297,  298,  299,
+  300,  301,  291,  292,  293,  294,  295,  296,  114,  115,
+  116,  117,  118,  119,  260,  261,  262,  263,  264,  260,
+  261,  262,  263,  264,  297,  298,  299,  300,  301,  293,
+  294,  295,  296,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
@@ -495,6 +498,7 @@ static const char *const yyrule[] = {
 "sentencia : SEGUN LPAR variable RPAR DO casos predeterminado END",
 "sentencia : variable IGUAL expresion PYC",
 "sentencia : WRITE expresion PYC",
+"sentencia : READ variable PYC",
 "sentencia : DEV PYC",
 "sentencia : DEV expresion PYC",
 "sentencia : TERMINAR PYC",
@@ -578,12 +582,23 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 499 "parser.y"
+#line 634 "parser.y"
 
 void yyerror(char *msg){
 	printf("%s, linea: %d, token: %s\n",msg, yylineno, yytext);
 }
-#line 587 "y.tab.c"
+
+void print_code(CODE *c){
+	QUAD *q;
+	int i;
+	printf("=========================CODIGO DE 3 DIRECCIONES=========================\n");
+	q=c->head;
+	for(i=0; i < c->num_instru; i++){
+		printf("|%s\t|%s\t|%s\t|%s\t|\n",q->op,q->arg1,q->arg2,q->res);
+		q=q->next;
+	}
+}
+#line 602 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -786,7 +801,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 198 "parser.y"
+#line 199 "parser.y"
 	{printf("==========================P r o g r a m a==========================\n");
                   dir = 0;
                   codigo = init_code();
@@ -801,25 +816,25 @@ case 1:
                   }
 break;
 case 2:
-#line 209 "parser.y"
-	{/*imprimirCodigo(codigo);*/}
+#line 210 "parser.y"
+	{print_code(codigo);}
 break;
 case 3:
-#line 211 "parser.y"
-	{typeGBL  = yystack.l_mark[0].tipo.valorTipo;}
-break;
-case 5:
 #line 212 "parser.y"
 	{typeGBL  = yystack.l_mark[0].tipo.valorTipo;}
 break;
-case 7:
+case 5:
 #line 213 "parser.y"
+	{typeGBL  = yystack.l_mark[0].tipo.valorTipo;}
+break;
+case 7:
+#line 214 "parser.y"
 	{}
 break;
 case 8:
-#line 215 "parser.y"
+#line 216 "parser.y"
 	{TS1 = init_sym_tab();
-							   	  init_type_tab(TT1);
+							   	  TT1 = init_type_tab(TT1);
 								  structDir = crearDir();
 								  structDir->info = dir;
 								  pushPDir(structDir, pDirecciones);
@@ -828,7 +843,7 @@ case 8:
 								  push_st(pSimbolos, TS1);}
 break;
 case 9:
-#line 222 "parser.y"
+#line 223 "parser.y"
 	{
 									  TT1 = pop_tt(pTipos);
 								      TS1 = pop_st(pSimbolos);
@@ -839,41 +854,41 @@ case 9:
 									  typeTemp = append_type(getTopType(pTipos), newTYP);}
 break;
 case 10:
-#line 229 "parser.y"
+#line 230 "parser.y"
 	{
 										  yyval.tipo.valorTipo=typeTemp;
 									  }
 break;
 case 11:
-#line 233 "parser.y"
+#line 234 "parser.y"
 	{baseGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 12:
-#line 233 "parser.y"
+#line 234 "parser.y"
 	{yyval.tipo.valorTipo=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 13:
-#line 235 "parser.y"
+#line 236 "parser.y"
 	{yyval.tipo.valorTipo=0;}
 break;
 case 14:
-#line 236 "parser.y"
+#line 237 "parser.y"
 	{yyval.tipo.valorTipo=1;}
 break;
 case 15:
-#line 237 "parser.y"
+#line 238 "parser.y"
 	{yyval.tipo.valorTipo=4;}
 break;
 case 16:
-#line 238 "parser.y"
+#line 239 "parser.y"
 	{yyval.tipo.valorTipo=2;}
 break;
 case 17:
-#line 239 "parser.y"
+#line 240 "parser.y"
 	{yyval.tipo.valorTipo=3;}
 break;
 case 18:
-#line 241 "parser.y"
+#line 242 "parser.y"
 	{
 					if(yystack.l_mark[-2].num.tipe==0){
                         int n = atoi(yystack.l_mark[-2].num.valor);
@@ -894,19 +909,19 @@ case 18:
 				}
 break;
 case 19:
-#line 259 "parser.y"
+#line 260 "parser.y"
 	{}
 break;
 case 20:
-#line 261 "parser.y"
+#line 262 "parser.y"
 	{}
 break;
 case 21:
-#line 261 "parser.y"
+#line 262 "parser.y"
 	{}
 break;
 case 22:
-#line 263 "parser.y"
+#line 264 "parser.y"
 	{if(search_id_symbol(TGS,yystack.l_mark[0].id.lexval) == -1){
 									simbol = init_sym();
 									simbol = set_sym(simbol,yystack.l_mark[0].id.lexval,-1,yystack.l_mark[-1].tipo.valorTipo,"func",NULL,TGS,TGT);
@@ -918,7 +933,7 @@ case 22:
 									funcReturn = false;
 									dir = 0;
 									TS1 = init_sym_tab();
-							   	  	init_type_tab(TT1);
+							   	  	TT1 = init_type_tab(TT1);
 									push_tt(pTipos,TT1);
 								 	push_st(pSimbolos, TS1);
 									append_new_quad(codigo,"label","-","-",yystack.l_mark[0].id.lexval);
@@ -927,7 +942,7 @@ case 22:
 					}
 break;
 case 23:
-#line 280 "parser.y"
+#line 281 "parser.y"
 	{
 						tmpEtq = create_label();
 						backpatch(codigo,yystack.l_mark[-1].listIndice_S.nextlist,tmpEtq);
@@ -945,19 +960,19 @@ case 23:
 					}
 break;
 case 25:
-#line 294 "parser.y"
+#line 295 "parser.y"
 	{}
 break;
 case 26:
-#line 296 "parser.y"
+#line 297 "parser.y"
 	{yyval.eListARGS.listArgs=yystack.l_mark[0].eListARGS.listArgs;}
 break;
 case 27:
-#line 297 "parser.y"
+#line 298 "parser.y"
 	{yyval.eListARGS.listArgs=NULL;}
 break;
 case 28:
-#line 299 "parser.y"
+#line 300 "parser.y"
 	{
 					yyval.eListARGS.listArgs = yystack.l_mark[-2].eListARGS.listArgs;
 					argx = init_arg(yystack.l_mark[0].tipo.valorTipo);
@@ -965,7 +980,7 @@ case 28:
 				}
 break;
 case 29:
-#line 304 "parser.y"
+#line 305 "parser.y"
 	{
 					yyval.eListARGS.listArgs = init_args();
                     ARG* argx = init_arg(yystack.l_mark[0].tipo.valorTipo);
@@ -973,7 +988,7 @@ case 29:
 				}
 break;
 case 30:
-#line 310 "parser.y"
+#line 311 "parser.y"
 	{
 					if( search_id_symbol(pSimbolos->top,yystack.l_mark[0].id.lexval) == -1){
                           simbol = init_sym();
@@ -987,11 +1002,11 @@ case 30:
 				}
 break;
 case 31:
-#line 322 "parser.y"
+#line 323 "parser.y"
 	{baseGBL = yystack.l_mark[-1].tipo.valorTipo;}
 break;
 case 32:
-#line 324 "parser.y"
+#line 325 "parser.y"
 	{
 					TYP *tp = init_type();
                     tp = set_typ(tp,"array",yystack.l_mark[0].tipo.valorTipo,getTopType(pTipos));
@@ -999,11 +1014,11 @@ case 32:
 				}
 break;
 case 33:
-#line 328 "parser.y"
+#line 329 "parser.y"
 	{yyval.tipo.valorTipo=baseGBL;}
 break;
 case 34:
-#line 330 "parser.y"
+#line 331 "parser.y"
 	{
 					tmpEtq=create_label();
                     backpatch(codigo,yystack.l_mark[0].listIndice_S.nextlist,tmpEtq);
@@ -1011,15 +1026,15 @@ case 34:
 				}
 break;
 case 35:
-#line 334 "parser.y"
-	{yyval.listIndice_S.nextlist=yystack.l_mark[0].listIndice_S.nextlist;}
-break;
-case 36:
 #line 335 "parser.y"
 	{yyval.listIndice_S.nextlist=yystack.l_mark[0].listIndice_S.nextlist;}
 break;
+case 36:
+#line 336 "parser.y"
+	{yyval.listIndice_S.nextlist=yystack.l_mark[0].listIndice_S.nextlist;}
+break;
 case 37:
-#line 337 "parser.y"
+#line 338 "parser.y"
 	{tmpLabel=create_label();
 												backpatch(codigo,yystack.l_mark[-3].eBool.listTrue,tmpLabel);
 												append_new_quad(codigo,"label","-","-",tmpLabel);
@@ -1027,7 +1042,7 @@ case 37:
 											    }
 break;
 case 38:
-#line 342 "parser.y"
+#line 343 "parser.y"
 	{
 															tmpLabel=create_label();
 															backpatch(codigo,yystack.l_mark[-5].eBool.listTrue,tmpLabel);
@@ -1039,7 +1054,7 @@ case 38:
 															}
 break;
 case 39:
-#line 351 "parser.y"
+#line 352 "parser.y"
 	{
 													L1=create_label();
 													L2=create_label();
@@ -1054,24 +1069,26 @@ case 39:
 												}
 break;
 case 40:
-#line 364 "parser.y"
+#line 365 "parser.y"
 	{tmpLabel=create_label();
 												   backpatch(codigo,yystack.l_mark[-1].eBool.listTrue,tmpLabel);
 												   yyval.listIndice_S.nextlist=yystack.l_mark[-1].eBool.listFalse;
 													}
 break;
 case 41:
-#line 368 "parser.y"
+#line 369 "parser.y"
 	{
+					  												int i;
 																	L1=create_label();
 																	prueba = combinar(yystack.l_mark[-2].listIndice_C.prueba, yystack.l_mark[-1].listIndice_P.prueba);
 																	backpatch(codigo,yystack.l_mark[-2].listIndice_C.nextlist,L1);
+																	sustituir("??",yystack.l_mark[-5].var.idVar,prueba,codigo);
 																	}
 break;
 case 42:
-#line 373 "parser.y"
+#line 376 "parser.y"
 	{
-										if(search_id_symbol(getTopSym(pSimbolos),yystack.l_mark[-3].var.idVar) != -1 || search_id_symbol(TGS,yystack.l_mark[-3].var.idVar) != -1 ){
+										if((search_id_symbol(getTopSym(pSimbolos),yystack.l_mark[-3].var.idVar) != -1) || (search_id_symbol(TGS,yystack.l_mark[-3].var.idVar) != -1 )){
 											simbol = init_sym();
 											simbol=search_SYM(getTopSym(pSimbolos),yystack.l_mark[-3].var.idVar);
 											if(simbol==NULL){
@@ -1085,95 +1102,149 @@ case 42:
 											strcat(tmp2,"+");
 											strcat(tmp2,tmp);
 											append_new_quad(codigo,"=",dir1,"-",tmp2);
-									}else{
-											printf("Error (el idntificador  no se ha declarado)\n");
+										}else{
+											printf("Error => El idntificador  no se ha declarado\n");
 										}
 										yyval.listIndice_S.nextlist=NULL;
 									}
 break;
 case 43:
-#line 393 "parser.y"
-	{}
+#line 396 "parser.y"
+	{
+									append_new_quad(codigo,"print",yystack.l_mark[-1].eExpr.dirExp,"-","-");
+									yyval.listIndice_S.nextlist = NULL;
+								}
 break;
 case 44:
-#line 394 "parser.y"
-	{}
+#line 400 "parser.y"
+	{
+									append_new_quad(codigo,"scan","-","-",yystack.l_mark[-1].var.idVar); 
+									yyval.listIndice_S.nextlist = NULL;
+								}
 break;
 case 45:
-#line 395 "parser.y"
-	{}
+#line 404 "parser.y"
+	{	
+						if(funcType==3){
+							append_new_quad(codigo,"return","-","-","-");
+						}else{
+							printf("la funcion debe retornar  algun valor de tipo ==> %d",funcType);
+						}
+						yyval.listIndice_S.nextlist=NULL;
+					}
 break;
 case 46:
-#line 396 "parser.y"
-	{}
+#line 412 "parser.y"
+	{ 
+					  					if(funcType!=3){
+											dir1= reducir(yystack.l_mark[-1].eExpr.dirExp,yystack.l_mark[-1].eExpr.tipoExp,funcType,codigo);
+											append_new_quad(codigo,"return",yystack.l_mark[-1].eExpr.dirExp,"-","-");
+											funcReturn=true;
+										}else{
+                    						 printf("la funcion debe retornar  algun valor de tipo ==>%d",funcType);
+                      					}
+										yyval.listIndice_S.nextlist=NULL;
+									}
 break;
 case 47:
-#line 397 "parser.y"
-	{}
+#line 422 "parser.y"
+	{	
+					  				indiceGlobal = init_index();
+									char *tmp3=(char*)malloc(sizeof(char));
+									sprintf(tmp3, "%i", indiceGlobal->indice);
+									append_new_quad(codigo, "goto", "-", "-", tmp3);
+									yyval.listIndice_S.nextlist = init_list_index(indiceGlobal);
+									append_index(yyval.listIndice_S.nextlist, indiceGlobal);
+								}
 break;
 case 48:
-#line 400 "parser.y"
-	{}
+#line 430 "parser.y"
+	{ 
+					  						yyval.listIndice_S.nextlist=yystack.l_mark[-1].listIndice_S.nextlist;
+										}
 break;
 case 49:
-#line 402 "parser.y"
-	{}
+#line 434 "parser.y"
+	{
+										yyval.listIndice_C.nextlist = combinar(yyval.listIndice_C.nextlist, yystack.l_mark[-1].listIndice_S.nextlist);
+										char *label_C = create_label();
+										/*Indica el inicio del código para la sentencia*/
+										yyval.listIndice_C.prueba = yystack.l_mark[0].listIndice_C.prueba;
+										/*sustituir_c()*/
+										/*(if ”??” ”==” num.dir ”goto” L )*/
+									}
 break;
 case 50:
-#line 402 "parser.y"
-	{}
+#line 443 "parser.y"
+	{
+						/*casos.prueba = newCode()*/
+						char *LT = create_label();
+						/*Indica el inicio del código para la sentencia*/
+						/*genCode(”label” L)*/
+						/*casos.prueba.append(if ”??” ”==” num.dir ”goto” L )*/
+						}
 break;
 case 51:
-#line 404 "parser.y"
+#line 450 "parser.y"
 	{}
 break;
 case 52:
-#line 404 "parser.y"
-	{}
+#line 452 "parser.y"
+	{
+									/*predeterminado.prueba = newCode()*/
+									char *lll = create_label();
+									/*Indica el inicio del código para la sentencia*/
+									/*genCode(”label” L)*/
+									/*predeterminado.prueba.append(”goto” L )*/
+									}
 break;
 case 53:
-#line 406 "parser.y"
+#line 458 "parser.y"
+	{}
+break;
+case 54:
+#line 460 "parser.y"
 	{
 					tmpEtq = create_label();
 					backpatch(codigo,yystack.l_mark[-1].eBool.listFalse,tmpEtq);
 					append_new_quad(codigo,"label","-","-",tmpEtq);
 				}
 break;
-case 54:
-#line 410 "parser.y"
+case 55:
+#line 464 "parser.y"
 	{
 					yyval.eBool.listTrue=combinar(yystack.l_mark[-3].eBool.listTrue,yystack.l_mark[0].eBool.listTrue);
 					yyval.eBool.listFalse=yystack.l_mark[0].eBool.listFalse;
 				}
 break;
-case 55:
-#line 414 "parser.y"
+case 56:
+#line 468 "parser.y"
 	{
 					tmpEtq=create_label();
 					backpatch(codigo,yystack.l_mark[-1].eBool.listTrue,tmpEtq);
 					append_new_quad(codigo,"label","-","-",tmpEtq);
 				}
 break;
-case 56:
-#line 419 "parser.y"
+case 57:
+#line 473 "parser.y"
 	{
 					yyval.eBool.listTrue=yystack.l_mark[0].eBool.listTrue;
 					yyval.eBool.listFalse=combinar(yystack.l_mark[-3].eBool.listFalse,yystack.l_mark[0].eBool.listFalse);}
 break;
-case 57:
-#line 422 "parser.y"
+case 58:
+#line 476 "parser.y"
 	{
 					yyval.eBool.listTrue=yystack.l_mark[0].eBool.listFalse;
 					yyval.eBool.listFalse=yystack.l_mark[0].eBool.listTrue;}
 break;
-case 58:
-#line 425 "parser.y"
+case 59:
+#line 479 "parser.y"
 	{
 					yyval.eBool.listTrue=yystack.l_mark[0].rel.listRelTrue;
 					yyval.eBool.listFalse=yystack.l_mark[0].rel.listRelFalse;}
 break;
-case 59:
-#line 428 "parser.y"
+case 60:
+#line 482 "parser.y"
 	{
 					indiceGlobal = init_index();
 					yyval.eBool.listFalse=init_list_index(NULL); 
@@ -1183,8 +1254,8 @@ case 59:
 					sprintf(tmp, "%i", indiceGlobal->indice);
 					append_new_quad(codigo,"goto","-","-",tmp);}
 break;
-case 60:
-#line 436 "parser.y"
+case 61:
+#line 490 "parser.y"
 	{
 					indiceGlobal = init_index();
 					yyval.eBool.listFalse=init_list_index(NULL); 
@@ -1195,8 +1266,8 @@ case 60:
 					append_new_quad(codigo,"goto","-","-",tmp);
 				}
 break;
-case 61:
-#line 446 "parser.y"
+case 62:
+#line 500 "parser.y"
 	{
 					yyval.rel.listRelTrue = init_list_index(NULL);
 					yyval.rel.listRelFalse = init_list_index(NULL);
@@ -1217,119 +1288,200 @@ case 61:
 					append_new_quad(codigo,"goto", "-", "-", tmpIndAux);
 				}
 break;
-case 62:
-#line 465 "parser.y"
-	{}
-break;
 case 63:
-#line 466 "parser.y"
-	{}
+#line 519 "parser.y"
+	{
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
+									yyval.rel.listRelFalse = init_list_index(indiceAux);
+									append_index(yyval.rel.listRelTrue, indiceGlobal);
+									append_index(yyval.rel.listRelFalse, indiceAux);
+									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
+									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, ">", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
 break;
 case 64:
-#line 467 "parser.y"
-	{}
+#line 536 "parser.y"
+	{
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
+									yyval.rel.listRelFalse = init_list_index(indiceAux);
+									append_index(yyval.rel.listRelTrue, indiceGlobal);
+									append_index(yyval.rel.listRelFalse, indiceAux);
+									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
+									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, "<=", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
 break;
 case 65:
-#line 468 "parser.y"
-	{}
+#line 553 "parser.y"
+	{
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
+									yyval.rel.listRelFalse = init_list_index(indiceAux);
+									append_index(yyval.rel.listRelTrue, indiceGlobal);
+									append_index(yyval.rel.listRelFalse, indiceAux);
+									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
+									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, ">=", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
 break;
 case 66:
-#line 469 "parser.y"
-	{}
+#line 570 "parser.y"
+	{
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
+									yyval.rel.listRelFalse = init_list_index(indiceAux);
+									append_index(yyval.rel.listRelTrue, indiceGlobal);
+									append_index(yyval.rel.listRelFalse, indiceAux);
+									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
+									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, "==", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
 break;
 case 67:
-#line 470 "parser.y"
-	{}
+#line 587 "parser.y"
+	{
+									indiceGlobal = init_index();
+									indiceAux = init_index();
+									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
+									yyval.rel.listRelFalse = init_list_index(indiceAux);
+									append_index(yyval.rel.listRelTrue, indiceGlobal);
+									append_index(yyval.rel.listRelFalse, indiceAux);
+									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
+									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
+									char *tmpIndGlobal=(char*)malloc(sizeof(char));
+									char *tmpIndAux=(char*)malloc(sizeof(char));
+									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
+									sprintf(tmpIndAux, "%i", indiceAux->indice);
+									append_new_quad(codigo, "<>", dir1, dir2, tmpIndGlobal);
+									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
+								}
 break;
 case 68:
-#line 472 "parser.y"
-	{}
+#line 604 "parser.y"
+	{yyval.rel.tipoRel=yystack.l_mark[0].eExpr.tipoExp;
+	                          yyval.rel.dirRel=yystack.l_mark[0].eExpr.dirExp;}
 break;
 case 69:
-#line 473 "parser.y"
+#line 607 "parser.y"
 	{}
 break;
 case 70:
-#line 474 "parser.y"
+#line 608 "parser.y"
 	{}
 break;
 case 71:
-#line 475 "parser.y"
+#line 609 "parser.y"
 	{}
 break;
 case 72:
-#line 476 "parser.y"
+#line 610 "parser.y"
 	{}
 break;
 case 73:
-#line 477 "parser.y"
+#line 611 "parser.y"
 	{}
 break;
 case 74:
-#line 478 "parser.y"
+#line 612 "parser.y"
 	{}
 break;
 case 75:
-#line 479 "parser.y"
+#line 613 "parser.y"
 	{}
 break;
 case 76:
-#line 480 "parser.y"
+#line 614 "parser.y"
 	{}
 break;
 case 77:
-#line 481 "parser.y"
+#line 615 "parser.y"
 	{}
 break;
 case 78:
-#line 484 "parser.y"
+#line 616 "parser.y"
 	{}
 break;
 case 79:
-#line 486 "parser.y"
+#line 619 "parser.y"
 	{}
 break;
 case 80:
-#line 486 "parser.y"
+#line 621 "parser.y"
 	{}
 break;
 case 81:
-#line 486 "parser.y"
+#line 621 "parser.y"
 	{}
 break;
 case 82:
-#line 488 "parser.y"
+#line 621 "parser.y"
 	{}
 break;
 case 83:
-#line 488 "parser.y"
+#line 623 "parser.y"
 	{}
 break;
 case 84:
-#line 490 "parser.y"
+#line 623 "parser.y"
 	{}
 break;
 case 85:
-#line 491 "parser.y"
+#line 625 "parser.y"
 	{}
 break;
 case 86:
-#line 493 "parser.y"
+#line 626 "parser.y"
 	{}
 break;
 case 87:
-#line 493 "parser.y"
+#line 628 "parser.y"
 	{}
 break;
 case 88:
-#line 495 "parser.y"
+#line 628 "parser.y"
 	{}
 break;
 case 89:
-#line 496 "parser.y"
+#line 630 "parser.y"
 	{}
 break;
-#line 1333 "y.tab.c"
+case 90:
+#line 631 "parser.y"
+	{}
+break;
+#line 1485 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

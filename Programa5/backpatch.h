@@ -27,5 +27,6 @@ LINDEX *combinar(LINDEX *l1,LINDEX *l2); // Retorna una lista ligada de la conca
 char *create_label();//crea una nueva etiqueta
 
 void backpatch(CODE *c, LINDEX *l, char *label); // Reemplaza label en cada aparicion de un indice en la cuadruplas del codigo c
-
+void sustituir(char *label, char *var, LINDEX *l, CODE *c);//remplaza una etiqueta por una cadena pasada por parametro  en cada aparicion de un indice en la cuadruplas del codigo c
+void sustituir_cc(char *label, char *var, LINDEX *l, CODE *c);
 #endif

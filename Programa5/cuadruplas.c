@@ -87,6 +87,7 @@ void append_new_quad(CODE *c, char* op, char* arg1, char* arg2, char* res){
       c->tail->next = new_quad;
       c->tail       = new_quad;
     }
+    append_quad(c,new_quad);//se agrega la cuadrupla creada
     c->num_instru++;
 }
 

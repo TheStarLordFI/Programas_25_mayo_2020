@@ -173,3 +173,51 @@ void backpatch(CODE *c, LINDEX *l, char *label){
         }
     }
 }
+
+/*
+* Función:sustituir
+* Descripción: Reemplaza una etiqueta en cada aparicion de un indice en la cuadruplas del codigo c
+* Autor: OJA
+* Fecha de creación: 19 de junio 2020
+*/
+void sustituir(char *label, char *var, LINDEX *l, CODE *c){
+    QUAD *q = (QUAD*)malloc(sizeof(QUAD));
+    INDEX *i;
+    char *tmp=(char*)malloc(sizeof(char));
+ 
+    if(l!=NULL){
+        i = l->head;
+        while(i != NULL){
+            sprintf(tmp, "%i", i->indice);
+            q = search_quad_index(c,tmp);
+            if (q->arg1==var){
+                strcpy(q->op, label);
+            }
+            i = i->next;
+        }
+    }
+}
+
+/*
+* Función:sustituir_cc
+* Descripción: Reemplaza una etiqueta en cada aparicion de un indice en la cuadruplas del codigo c
+* Autor: OJA
+* Fecha de creación: 19 de junio 2020
+*/
+void sustituir_cc(char *label, char *var, LINDEX *l, CODE *c){
+    QUAD *q = (QUAD*)malloc(sizeof(QUAD));
+    INDEX *i;
+    char *tmp=(char*)malloc(sizeof(char));
+ 
+    if(l!=NULL){
+        i = l->head;
+        while(i != NULL){
+            sprintf(tmp, "%i", i->indice);
+            q = search_quad_index(c,tmp);
+            if (q->arg1==var){
+                strcpy(q->op, label);
+            }
+            i = i->next;
+        }
+    }
+}
