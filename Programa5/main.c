@@ -1,5 +1,8 @@
 #include<stdio.h>
-extern int yylex();
+#include<stdlib.h>
+#include "cuadruplas.h"
+extern int yyparse();
+extern void print_code(CODE *c);
 extern FILE *yyin;
 
 int main (int argc, char** argv){
@@ -15,11 +18,7 @@ int main (int argc, char** argv){
     }
 
     yyin = f;
-    int tok = yylex();
-    while(tok != 0){
-        printf("%d\n",tok);
-        tok = yylex();
-    }  
+    yyparse();
     fclose(yyin);
     return 0;
 }

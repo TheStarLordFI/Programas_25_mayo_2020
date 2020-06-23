@@ -1,6 +1,6 @@
-ent carga_temp;
-car [2]arrUni;
-car [2][10]matriz;
+ent carga_temp,t1;
+car [2]arrUni,tc;
+car [2][10]matriz,t2;
 inicio dreal varReg;
 
 def ent prueba1(sin) inicio
@@ -48,4 +48,3 @@ carga_temp := 8;
 escribir  0
 devolver 1
 fin
-

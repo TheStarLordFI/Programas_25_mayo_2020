@@ -43,7 +43,7 @@ ARG *argx;
 ARG *arg; 
 ARG *arg2; 
 TYP *newTipo; 
-CODE* codigo; 
+CODE *codigo; 
 ARGS *ListaArg; 
 INDEX *indiceGlobal, *indiceAux; 
 LINDEX *prueba;
