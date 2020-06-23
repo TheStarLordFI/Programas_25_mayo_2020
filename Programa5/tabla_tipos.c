@@ -25,10 +25,12 @@ void push_tt( TSTACK *s , TYPTAB *tt){
 
 int append_type(TYPTAB *tt, TYP *t){
   int insertado = -1;
+  printf("append_type\n");
   if(tt->head == NULL){
     tt->head = t;
     tt->tail = t;
     insertado = 1;
+    printf("append_type_1\n");
     //imprimeTT(*tabTipos);
   } else {
     (tt->tail)->next=t;
@@ -112,8 +114,7 @@ TB *getTipoBase(TYPTAB *t , int id){
 * Autor: Rodríguez Sánchez José Andrés
 * Fecha de creación: 31 Mayo 2020
 */
-TYPTAB *init_type_tab(TYPTAB *t){
-  TYPTAB *tabTipos;
+TYPTAB *init_type_tab(TYPTAB *tabTipos){
   tabTipos=(TYPTAB *)malloc(sizeof(TYPTAB));
   tabTipos->num = 0;
   tabTipos->head = NULL;
@@ -129,45 +130,31 @@ TYPTAB *init_type_tab(TYPTAB *t){
 * Fecha de creación: 31 de mayo 2020
 */
 TYPTAB *append_natives_types(TYPTAB *tabTipos){
-   printf("Agregando tipos nativos...");
+  printf("Agregando tipos nativos\n");
   int i;
   int aux=0;
-  TYP *tipoAux;
-  TB *tipoB;
+  TB *tipoB = (TB *)malloc(sizeof(TB));
   char arrTiposNativos[7][5] = {"ent", "real", "car", "sin", "dreal"};
   int tamBytesNativos[5] = {4, 4, 1, 0, 8};
+  TYP *tipoAux;
 
   for(i=0; i<5; i++){
-    //TB *tipoB = init_type_base(tipoB);
+    tipoAux=(TYP *)malloc(sizeof(TYP));
+    //tipoB = init_type_base(tipoB);
     tipoAux->id = tabTipos->num;
+    //printf("%d\n", tipoAux->id);
     strcpy(tipoAux->nombre, &arrTiposNativos[i][0]);
+    //printf("%s\n", tipoAux->nombre);
     tipoAux->tam = tamBytesNativos[i];
     tipoAux->tb = tipoB;
     tipoAux->tb->tipo.tipo= -1; //significa que es un tipo de base nativo
     aux = append_type(tabTipos,tipoAux);
-    if(aux!=0){
-      printf("T Base agregado\n");
+    if(aux!=-1){
+      printf("Tipo nativo agregado\n");
     }else{
-      printf("T Base NO agregado\n");
+      printf("ERROR => Tipo nativo NO agregado\n");
     }
   }
-  /*int i, aux;
-  TYP *tipoAux;
-  TB *tipoB;
-
-  char arrTiposNativos[7][5] = {"ent", "real", "car", "sin", "dreal"};
-  int tamBytesNativos[5] = {4, 4, 1, 0, 8};
-
-  for(i=0; i<5; i++){
-    //tipoB = init_type_base();
-    //tipoAux = *tipoB;
-    tipoAux->id = tabTipos->num;
-    strcpy(tipoAux->nombre, &arrTiposNativos[i][0]);
-    tipoAux->tam = tamBytesNativos[i];
-    tipoAux->tb->tipo.tipo= -1; //significa que es un tipo de base nativo
-    //aux = insertarTipo(tabTipos, tipoAux);
-    init_type_base();
-  }*/
   return tabTipos;
 }
 
