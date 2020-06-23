@@ -582,7 +582,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 634 "parser.y"
+#line 686 "parser.y"
 
 void yyerror(char *msg){
 	printf("%s, linea: %d, token: %s\n",msg, yylineno, yytext);
@@ -1395,93 +1395,141 @@ case 68:
 break;
 case 69:
 #line 607 "parser.y"
-	{}
+	{
+					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
+                    yyval.eExpr.dirExp = newTemp();
+                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp,codigo);
+                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp,codigo);
+                    append_new_quad(codigo, "+", dir1, dir2,yyval.eExpr.dirExp);
+				}
 break;
 case 70:
-#line 608 "parser.y"
-	{}
+#line 614 "parser.y"
+	{
+					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
+                    yyval.eExpr.dirExp = newTemp();
+                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                    append_new_quad(codigo, "-", dir1, dir2,yyval.eExpr.dirExp);
+				}
 break;
 case 71:
-#line 609 "parser.y"
-	{}
+#line 621 "parser.y"
+	{
+					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
+                    yyval.eExpr.dirExp = newTemp();
+                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                	dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                    append_new_quad(codigo, "*", dir1, dir2,yyval.eExpr.dirExp);
+				}
 break;
 case 72:
-#line 610 "parser.y"
-	{}
+#line 628 "parser.y"
+	{
+					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
+                    yyval.eExpr.dirExp = newTemp();
+                	dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                    append_new_quad(codigo, "/", dir1, dir2,yyval.eExpr.dirExp);
+				}
 break;
 case 73:
-#line 611 "parser.y"
-	{}
+#line 635 "parser.y"
+	{
+					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
+                    yyval.eExpr.dirExp = newTemp();
+                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
+                    append_new_quad(codigo, "%", dir1, dir2,yyval.eExpr.dirExp);
+				}
 break;
 case 74:
-#line 612 "parser.y"
-	{}
+#line 642 "parser.y"
+	{
+					yyval.eExpr.dirExp = yystack.l_mark[-1].eExpr.dirExp;
+                    yyval.eExpr.tipoExp = yystack.l_mark[-1].eExpr.tipoExp;
+				}
 break;
 case 75:
-#line 613 "parser.y"
+#line 646 "parser.y"
 	{}
 break;
 case 76:
-#line 614 "parser.y"
-	{}
+#line 647 "parser.y"
+	{
+					yyval.eExpr.dirExp = yystack.l_mark[0].num.valor;
+                    yyval.eExpr.tipoExp = yystack.l_mark[0].num.tipe;
+				}
 break;
 case 77:
-#line 615 "parser.y"
+#line 651 "parser.y"
 	{}
 break;
 case 78:
-#line 616 "parser.y"
+#line 652 "parser.y"
 	{}
 break;
 case 79:
-#line 619 "parser.y"
+#line 655 "parser.y"
 	{}
 break;
 case 80:
-#line 621 "parser.y"
+#line 657 "parser.y"
 	{}
 break;
 case 81:
-#line 621 "parser.y"
+#line 658 "parser.y"
 	{}
 break;
 case 82:
-#line 621 "parser.y"
+#line 659 "parser.y"
 	{}
 break;
 case 83:
-#line 623 "parser.y"
+#line 661 "parser.y"
 	{}
 break;
 case 84:
-#line 623 "parser.y"
+#line 662 "parser.y"
 	{}
 break;
 case 85:
-#line 625 "parser.y"
+#line 664 "parser.y"
 	{}
 break;
 case 86:
-#line 626 "parser.y"
+#line 665 "parser.y"
 	{}
 break;
 case 87:
-#line 628 "parser.y"
-	{}
+#line 667 "parser.y"
+	{
+					yyval.eListARGS.listArgs=yystack.l_mark[0].eListARGS.listArgs;
+				}
 break;
 case 88:
-#line 628 "parser.y"
-	{}
+#line 670 "parser.y"
+	{yyval.eListARGS.listArgs = NULL;}
 break;
 case 89:
-#line 630 "parser.y"
-	{}
+#line 672 "parser.y"
+	{
+					yyval.eListARGS.listArgs=yystack.l_mark[-2].eListARGS.listArgs;
+                    ARG* argx = init_arg(yystack.l_mark[0].eExpr.tipoExp);
+                    append_arg(yyval.eListARGS.listArgs, argx->arg);
+                    append_new_quad(codigo,"param",yystack.l_mark[0].eExpr.dirExp," ", " ");
+				}
 break;
 case 90:
-#line 631 "parser.y"
-	{}
+#line 678 "parser.y"
+	{
+					yyval.eListARGS.listArgs = init_args();
+                    ARG* argx = init_arg(yystack.l_mark[0].eExpr.tipoExp);
+                    append_arg(yyval.eListARGS.listArgs, argx->arg);
+                    append_new_quad(codigo,"param",yystack.l_mark[0].eExpr.dirExp," ", " ");
+				}
 break;
-#line 1485 "y.tab.c"
+#line 1533 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

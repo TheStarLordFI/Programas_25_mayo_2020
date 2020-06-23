@@ -5,13 +5,15 @@ lexer:
 parser:
 	byacc -d parser.y
 allC:
-	gcc lex.yy.c y.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c -o exe
+	gcc lex.yy.c y.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c main.c -o exe
 all:
 	flex lexer.l
-	bison -d parser.y
-	gcc lex.yy.c parser.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c main.c -o exe
-exec:
+	byacc -d parser.y
+	gcc lex.yy.c y.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c main.c -o exe
+exec2:
 	./exe
+exec:
+	./exe entrada
 clean:
 	rm -rf exe
 	rm -rf lex.yy.c 
