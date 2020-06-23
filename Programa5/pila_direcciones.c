@@ -13,6 +13,7 @@ DIR *crearDir(){
   direccion = (DIR *)malloc(sizeof(DIR));
   direccion->info = 0;
   direccion->sig = NULL;
+  return direccion;
 }
 
 /*
