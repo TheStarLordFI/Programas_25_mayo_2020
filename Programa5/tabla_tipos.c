@@ -25,13 +25,10 @@ void push_tt( TSTACK *s , TYPTAB *tt){
 
 int append_type(TYPTAB *tt, TYP *t){
   int insertado = -1;
-  printf("append_type\n");
   if(tt->head == NULL){
     tt->head = t;
     tt->tail = t;
     insertado = 1;
-    printf("append_type_1\n");
-    //imprimeTT(*tabTipos);
   } else {
     (tt->tail)->next=t;
     tt->tail=t;
@@ -80,11 +77,11 @@ void clear_type_tab(TYPTAB *tt){
 void print_tab_type(TYPTAB *t){
   TYP *tipoDato;
   tipoDato=t->head;
-  printf("\n------------------------------------------\n");
-  printf("|            	TABLA  DE  TIPOS            	|\n");
-  printf("--------------------------------------------\n");
-  printf(" |   ID   |   TIPO   |   TAM   |   T_BASE   | \n");
-  printf("--------------------------------------------\n");
+  printf("-------------------------------------\n");
+  printf(" |         TABLA  DE  TIPOS         |\n");
+  printf("-------------------------------------\n");
+  printf(" |  ID  |  TIPO  |  TAM  |  T_BASE  | \n");
+  printf("-------------------------------------\n");
   while(tipoDato!=NULL){
     if (tipoDato->tb->is_est == 0 || tipoDato->tb->is_est == -1){
       printf(" |%i\t|%s\t|%i\t|-\t|\n",tipoDato->id,tipoDato->nombre,tipoDato->tam);

@@ -21,7 +21,7 @@ void yyerror(char *s);
 extern int yylineno;
 extern int yylex();
 extern char* yytext;
-void print_code(CODE *c);
+void print_code(struct code *c);
 
 /*Se deben declarar las estructuras que para nuestro proyecto se tienen.
 * Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
@@ -202,15 +202,22 @@ programa:        {printf("==========================P r o g r a m a=============
                   pDirecciones = crearPilaDir();
                   pSimbolos = init_sym_tab_stack();
                   pTipos = init_type_tab_stack();
-                  init_type_tab(TGT);
+                  TGT = init_type_tab(TGT);
+				  printf(">>>>>>Tabla general de tipos>>>>>>\n");
+				  print_tab_type(TGT);
                   TGS = init_sym_tab();
+				  //print_tab_sym(TGS);
                   push_st(pSimbolos,TGS);
                   push_tt(pTipos,TGT);
                   tabCadenas = crearTablaCadenas();
-                  } declaraciones funciones {print_code(codigo);};
+				  //print_tab_sym(TGS);
+                  }declaraciones{
+					  			print_tab_sym(TGS);
+								print_tab_type(TGT);
+				  } funciones{print_code(codigo);};
 				  
-declaraciones:    tipo {typeGBL  = $1.valorTipo;} lista_var PYC declaraciones
-                | tipo_registro {typeGBL  = $1.valorTipo;} lista_var PYC declaraciones
+declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC declaraciones
+                | tipo_registro {typeGBL=$1.valorTipo;} lista_var PYC declaraciones
                 | {};
 
 tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
@@ -688,12 +695,11 @@ void yyerror(char *msg){
 	printf("%s, linea: %d, token: %s\n",msg, yylineno, yytext);
 }
 
-void print_code(CODE *c){
-	QUAD *q;
-	int i;
+void print_code(struct code *c){
+	struct cuad *q =(struct cuad *)malloc(sizeof(struct cuad)); 
 	printf("=========================CODIGO DE 3 DIRECCIONES=========================\n");
 	q=c->head;
-	for(i=0; i < c->num_instru; i++){
+	while(q!=NULL){
 		printf("|%s\t|%s\t|%s\t|%s\t|\n",q->op,q->arg1,q->arg2,q->res);
 		q=q->next;
 	}
