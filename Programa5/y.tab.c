@@ -24,7 +24,7 @@
 #include <stdbool.h>
 #include "tabla_simbolos.h"
 #include "tabla_tipos.h"
-#include "cuadruplas.h"
+/*#include "cuadruplas.h"*/
 #include "backpatch.h"
 #include "tipos.h"
 #include "tabla_cadenas.h"
@@ -83,6 +83,7 @@ char *tmpEtq;
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 typedef union{
+	int valExt;
 	struct{
     	int valorTipo;
   	}tipo;
@@ -160,7 +161,7 @@ typedef union{
 
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 164 "y.tab.c"
+#line 165 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -245,194 +246,92 @@ extern int YYPARSE_DECL();
 #define RPAR 306
 #define SITEMP 307
 #define SINO 308
+#define expresion 309
+#define sentencia 310
+#define sentencias 311
+#define e_bool 312
+#define relacional 313
+#define lista_param 314
+#define lista_arg 315
+#define argumentos 316
+#define parametros 317
+#define arg 318
+#define tipo_arg 319
+#define param_arr 320
+#define variable 321
+#define arreglo 322
+#define funciones 323
+#define casos 324
+#define casos2 325
+#define predeterminado 326
+#define variable_comp 327
+#define dato_est_sim 328
 #define YYERRCODE 256
 typedef short YYINT;
 static const YYINT yylhs[] = {                           -1,
-   28,    0,   29,   30,   19,   31,   32,   19,   19,   33,
-   14,   34,    1,    2,    2,    2,    2,    2,    3,    3,
-   35,   20,   21,   21,   36,   37,   22,   22,   11,   11,
-   10,   10,   13,   15,   16,   16,   38,    6,    6,    5,
-    5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
-    5,   23,   24,   24,   25,   25,   39,    7,   40,    7,
-    7,    7,    7,    7,    8,    8,    8,    8,    8,    8,
-    8,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-    4,   17,   26,   26,   26,   27,   27,   18,   18,   12,
-   12,    9,    9,
+    8,    0,    9,   10,    5,   11,   12,    5,    5,   13,
+    4,   14,    1,    2,    2,    2,    2,    2,   15,    3,
+    3,   16,    6,   17,    7,    7,
 };
 static const YYINT yylen[] = {                            2,
     0,    3,    0,    0,    6,    0,    0,    6,    0,    0,
-    5,    0,    3,    1,    1,    1,    1,    1,    4,    0,
-    0,    3,    3,    0,    0,    0,   13,    0,    1,    1,
-    3,    1,    2,    2,    3,    0,    0,    3,    1,    5,
-    7,    5,    5,    8,    4,    3,    3,    2,    3,    2,
-    3,    5,    1,    0,    3,    0,    0,    4,    0,    4,
-    2,    1,    1,    1,    3,    3,    3,    3,    3,    3,
-    1,    3,    3,    3,    3,    3,    3,    1,    1,    1,
-    1,    2,    1,    1,    3,    3,    0,    3,    4,    1,
-    0,    3,    1,
+    5,    0,    3,    1,    1,    1,    1,    1,    0,    5,
+    0,    0,    3,    0,    4,    0,
 };
 static const YYINT yydefred[] = {                         1,
     0,    0,    0,   14,   15,   16,   18,   17,    3,   12,
-    6,    0,   10,   21,    0,   21,    0,    2,    0,    0,
-    0,    0,   13,    0,    0,    0,    4,    0,    0,    7,
-   25,   11,    0,    0,   22,    0,    0,    0,    5,    0,
-   19,    8,    0,   23,    0,    0,    0,    0,   32,    0,
-    0,   34,    0,    0,   33,    0,   31,    0,   35,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-   39,    0,    0,    0,   64,   63,   81,   80,   79,    0,
-    0,    0,    0,    0,   78,    0,    0,    0,    0,   48,
-    0,    0,   50,    0,    0,    0,   82,    0,   26,    0,
-    0,   51,   61,    0,    0,    0,    0,    0,    0,    0,
-   57,   59,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,   46,   49,   47,    0,    0,    0,    0,    0,    0,
-    0,   38,    0,   77,    0,    0,   74,   75,   76,    0,
-    0,    0,   69,   70,   65,   67,   68,   66,    0,    0,
-    0,   88,    0,   85,    0,   86,   27,   45,   40,    0,
-    0,   60,   42,   43,    0,    0,   89,    0,    0,    0,
-   41,    0,    0,    0,    0,    0,   44,    0,   55,   53,
-   52,
+    6,    0,   10,    0,    0,    0,    2,    0,   22,    0,
+    0,   13,    0,    0,    0,    4,   19,    7,   11,    0,
+   23,    0,    0,    0,   24,    5,    0,    8,    0,   20,
+   25,
 };
 static const YYINT yydgoto[] = {                          1,
-    9,   10,   23,   82,   71,   72,   83,   84,  127,   47,
-   48,  128,   49,   11,   50,   52,   85,   96,   12,   20,
-   35,   18,  170,  181,  174,   97,   98,    2,   14,   33,
-   16,   37,   19,   15,   21,   38,  131,  100,  141,  142,
+    9,   10,   22,   11,   12,   20,   31,    2,   14,   32,
+   16,   34,   18,   15,   33,   25,   39,
 };
 static const YYINT yysindex[] = {                         0,
-    0,  -77, -252,    0,    0,    0,    0,    0,    0,    0,
-    0, -251,    0,    0, -284,    0,   16,    0,  -77, -236,
- -253, -224,    0, -190, -196, -182,    0, -194, -208,    0,
-    0,    0,  -77, -185,    0, -284,  -77, -207,    0, -194,
-    0,    0,   36,    0,    0, -205, -183, -193,    0, -181,
- -189,    0,   16, -144,    0, -205,    0,  -77,    0,  -76,
-  -76,  -27,  -27,  -76, -187, -124, -245, -166, -137, -289,
-    0, -120, -146, -116,    0,    0,    0,    0,    0,  -27,
- -124,  -46, -246,   72,    0, -204, -119, -166, -217,    0,
- -191, -111,    0, -124, -124, -142,    0, -138,    0,  -76,
- -124,    0,    0, -143, -124, -124, -124, -124, -124,  -76,
-    0,    0, -124, -124, -124, -124, -124, -124,  -76,  -27,
- -110,    0,    0,    0,  -57,  -46,  -89, -108, -124,  -58,
- -251,    0, -148,    0, -209, -209,    0,    0,    0, -258,
-  -27,  -27,    0,    0,    0,    0,    0,    0,  -37, -237,
-  -40,    0, -124,    0,  -12,    0,    0,    0,    0,  -76,
-  -44,    0,    0,    0,  -13,  -46,    0,    2,  -10,    4,
-    0,    6,    8,   29,  -76,  -76,    0,  -13,    0,    0,
+    0, -259, -256,    0,    0,    0,    0,    0,    0,    0,
+    0, -319,    0, -277, -298, -277,    0, -259,    0, -251,
+ -276,    0, -250, -249, -274,    0,    0,    0,    0, -272,
+    0, -259, -290, -259,    0,    0, -298,    0, -274,    0,
     0,
 };
 static const YYINT yyrindex[] = {                         0,
-    0,    3,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,  276,    0,    0,   17,    0,    0,    0,   30,    0,
-    0,    0,    0,    0,    0,    0,    0,   44,    0,    0,
-    0,    0,    1,    0,    0,   17,    1,    0,    0,   44,
-    0,    0,    0,    0, -229,   37,   14,    0,    0,    0,
-    0,    0,    0,    0,    0,   37,    0,   71,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0, -164,
-    0,   89,    0,   89,    0,    0,    0,    0,    0,    0,
-    0,   34,    0, -241,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,   25, -121,    0,  -78,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0, -272,   26,    0,    0,    0,
-  276,    0,    0,    0,  -59,   15,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
- -231,    0,    0,    0,    0, -230,    0,    0,    0,   73,
-    0,    0,    0,    0,    0,    0,    0, -254,    0,    0,
+    0, -309,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0, -266,    0,    0, -237,    0,    0,
+    0,    0,    0,    0, -251,    0,    0,    0,    0,    0,
+    0, -260,    0, -260,    0,    0, -266,    0, -251,    0,
     0,
 };
 static const YYINT yygindex[] = {                         0,
-  318,   21,  307,  -36,  -64,  283,  -54,  259,    0,    0,
-    0,    0,  292,    0,    0,  290,  -56,    0,   -9,  331,
-  309,  219,  173,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,  -13,    0,  -17,    9,  -12,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,
+};
+#define YYTABLESIZE 63
+static const YYINT yytable[] = {                          9,
+   24,    3,   13,   17,   19,   21,   26,   28,   27,   35,
+   29,   30,   37,    9,   36,   21,   38,    4,    5,    6,
+    7,    8,    9,   40,   23,    0,   41,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    9,
 };
-#define YYTABLESIZE 377
-static const YYINT yytable[] = {                         87,
-    9,  159,    9,   73,   73,   54,   13,   73,   86,   26,
-   17,   92,   90,   93,   94,   95,   62,  110,   54,   22,
-  164,   27,   62,   39,   62,  103,   58,   42,   28,   89,
-   91,  121,   58,   93,   58,  132,   70,   77,   78,   79,
-  122,  111,  112,   73,  104,  140,   62,   62,   60,  160,
-  111,  112,   18,   73,  149,   92,   58,  125,  126,   81,
-   29,  119,   73,   46,  133,  150,  123,   30,  135,  136,
-  137,  138,  139,   46,   18,   92,   30,   32,  105,  106,
-  107,  108,  109,  111,  112,   31,  161,  162,  107,  108,
-  109,   34,  155,   87,   36,  168,   40,   43,   51,   87,
-   55,   87,   53,   73,  105,  106,  107,  108,  109,  158,
-  178,  179,   54,   56,   58,   70,  166,   88,   73,   73,
-   93,   87,   87,   87,   87,   87,   87,   87,   87,   87,
-   87,   87,   87,   87,   87,   87,   84,   87,   87,   99,
-  101,   87,   84,  102,   84,  120,  124,  105,  106,  107,
-  108,  109,  105,  106,  107,  108,  109,   70,   77,   78,
-   79,  129,  134,  130,   84,   84,   84,   84,   84,   84,
-   84,   84,   84,   84,   84,   84,   84,   84,   84,   83,
-   81,   84,   61,    3,   84,   83,   62,   83,   63,   64,
-   65,   66,   67,   68,   69,  151,  153,  154,   72,    4,
-    5,    6,    7,    8,   72,   70,   72,   83,   83,   83,
-   83,   83,   83,   83,   83,   83,   83,   83,   83,   83,
-   83,   83,  163,  156,   83,  165,   72,   83,   72,   72,
-   72,   72,   72,   72,   72,   72,   72,   72,  105,  106,
-  107,  108,  109,   72,  112,  152,   72,   75,   76,  105,
-  106,  107,  108,  109,   70,   77,   78,   79,  169,    9,
-    9,  171,    9,    9,    9,    9,    9,    9,    9,    9,
-    9,    9,   73,   80,  172,   28,  173,   81,   73,  175,
-   73,  176,    9,  105,  106,  107,  108,  109,  177,    9,
-  167,   71,    4,    5,    6,    7,    8,   71,   20,   71,
-   73,   24,   73,   73,   73,   73,   73,   73,   73,   73,
-   73,   73,    4,    5,    6,   45,    8,   73,   36,   29,
-   73,   71,   71,   71,   71,   71,   71,   71,   71,    9,
-   91,   90,   56,    9,   25,    9,    9,    9,    9,    9,
-    9,    9,   41,   74,   57,   59,   24,   37,   44,  157,
-  180,   37,    9,   37,   37,   37,   37,   37,   37,   37,
-    0,  113,  114,  115,  116,  117,  118,    0,    0,    0,
-   37,  143,  144,  145,  146,  147,  148,
-};
-static const YYINT yycheck[] = {                         64,
-    0,  260,    0,   60,   61,  260,  259,   64,   63,   19,
-  262,   68,  258,  286,  304,  305,  258,  264,  273,  304,
-  258,  258,  264,   33,  266,   80,  258,   37,  282,   66,
-   67,   88,  264,  306,  266,  100,  282,  283,  284,  285,
-  258,  288,  289,  100,   81,  110,  288,  289,   58,  308,
-  288,  289,  282,  110,  119,  286,  288,   94,   95,  305,
-  285,  266,  119,   43,  101,  120,  258,  258,  105,  106,
-  107,  108,  109,   53,  304,  306,  306,  260,  296,  297,
-  298,  299,  300,  288,  289,  282,  141,  142,  298,  299,
-  300,  286,  129,  258,  303,  160,  282,  305,  304,  264,
-  282,  266,  286,  160,  296,  297,  298,  299,  300,  258,
-  175,  176,  306,  303,  259,  282,  153,  305,  175,  176,
-  258,  286,  287,  288,  289,  290,  291,  292,  293,  294,
-  295,  296,  297,  298,  299,  300,  258,  302,  303,  260,
-  287,  306,  264,  260,  266,  265,  258,  296,  297,  298,
-  299,  300,  296,  297,  298,  299,  300,  282,  283,  284,
-  285,  304,  306,  302,  286,  287,  288,  289,  290,  291,
-  292,  293,  294,  295,  296,  297,  298,  299,  300,  258,
-  305,  303,  259,  261,  306,  264,  263,  266,  265,  266,
-  267,  268,  269,  270,  271,  306,  286,  306,  258,  277,
-  278,  279,  280,  281,  264,  282,  266,  286,  287,  288,
-  289,  290,  291,  292,  293,  294,  295,  296,  297,  298,
-  299,  300,  260,  282,  303,  266,  286,  306,  288,  289,
-  290,  291,  292,  293,  294,  295,  296,  297,  296,  297,
-  298,  299,  300,  303,  289,  303,  306,  275,  276,  296,
-  297,  298,  299,  300,  282,  283,  284,  285,  272,  259,
-  260,  260,  262,  263,  262,  265,  266,  267,  268,  269,
-  270,  271,  258,  301,  285,    0,  273,  305,  264,  274,
-  266,  274,  282,  296,  297,  298,  299,  300,  260,  260,
-  303,  258,  277,  278,  279,  280,  281,  264,  282,  266,
-  286,  258,  288,  289,  290,  291,  292,  293,  294,  295,
-  296,  297,  277,  278,  279,  280,  281,  303,  282,  306,
-  306,  288,  289,  290,  291,  292,  293,  294,  295,  259,
-  306,  306,  260,  263,   17,  265,  266,  267,  268,  269,
-  270,  271,   36,   61,   53,   56,   16,  259,   40,  131,
-  178,  263,  282,  265,  266,  267,  268,  269,  270,  271,
-   -1,  290,  291,  292,  293,  294,  295,   -1,   -1,   -1,
-  282,  113,  114,  115,  116,  117,  118,
+static const YYINT yycheck[] = {                        260,
+   18,  261,  259,  323,  282,  304,  258,  258,  285,  282,
+  260,  286,  303,  323,   32,  282,   34,  277,  278,  279,
+  280,  281,  260,   37,   16,   -1,   39,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,  323,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define YYMAXTOKEN 308
-#define YYUNDFTOKEN 351
+#define YYMAXTOKEN 328
+#define YYUNDFTOKEN 348
 #define YYTRANSLATE(a) ((a) > YYMAXTOKEN ? YYUNDFTOKEN : (a))
 #if YYDEBUG
 static const char *const yyname[] = {
@@ -448,9 +347,11 @@ static const char *const yyname[] = {
 "TERMINAR","CASO","PRED","DOSP","FALSE","TRUE","ENTERO","REAL","DREAL","SIN",
 "CAR","ID","CARACTER","CADENA","NUM","COMA","IGUAL","OR","AND","IDENTICO",
 "DIFERENTE","MENORQUE","MENORIGUAL","MAYORIGUAL","MAYORQUE","MAS","MENOS","MUL",
-"DIV","MODULO","NOT","PUNTO","RCOR","LCOR","LPAR","RPAR","SITEMP","SINO",0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-"illegal-symbol",
+"DIV","MODULO","NOT","PUNTO","RCOR","LCOR","LPAR","RPAR","SITEMP","SINO",
+"expresion","sentencia","sentencias","e_bool","relacional","lista_param",
+"lista_arg","argumentos","parametros","arg","tipo_arg","param_arr","variable",
+"arreglo","funciones","casos","casos2","predeterminado","variable_comp",
+"dato_est_sim",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"illegal-symbol",
 };
 static const char *const yyrule[] = {
 "$accept : programa",
@@ -472,81 +373,14 @@ static const char *const yyrule[] = {
 "base : DREAL",
 "base : CAR",
 "base : SIN",
-"tipo_arreglo : LCOR NUM RCOR tipo_arreglo",
-"tipo_arreglo :",
 "$$8 :",
-"lista_var : $$8 ID lista_var2",
-"lista_var2 : COMA ID lista_var2",
-"lista_var2 :",
+"tipo_arreglo : LCOR NUM $$8 RCOR tipo_arreglo",
+"tipo_arreglo :",
 "$$9 :",
+"lista_var : ID $$9 lista_var2",
 "$$10 :",
-"funciones : DEF tipo ID $$9 LPAR argumentos RPAR INICIO declaraciones sentencias END $$10 funciones",
-"funciones :",
-"argumentos : lista_arg",
-"argumentos : SIN",
-"lista_arg : lista_arg COMA arg",
-"lista_arg : arg",
-"arg : tipo_arg ID",
-"tipo_arg : base param_arr",
-"param_arr : LCOR RCOR param_arr",
-"param_arr :",
-"$$11 :",
-"sentencias : sentencias $$11 sentencia",
-"sentencias : sentencia",
-"sentencia : IF e_bool THEN sentencia END",
-"sentencia : IF e_bool THEN sentencia SINO sentencia END",
-"sentencia : WHILE e_bool DO sentencia END",
-"sentencia : DO sentencia WHILE e_bool PYC",
-"sentencia : SEGUN LPAR variable RPAR DO casos predeterminado END",
-"sentencia : variable IGUAL expresion PYC",
-"sentencia : WRITE expresion PYC",
-"sentencia : READ variable PYC",
-"sentencia : DEV PYC",
-"sentencia : DEV expresion PYC",
-"sentencia : TERMINAR PYC",
-"sentencia : INICIO sentencias END",
-"casos : CASO NUM DOSP sentencia casos2",
-"casos2 : casos",
-"casos2 :",
-"predeterminado : PRED DOSP sentencia",
-"predeterminado :",
-"$$12 :",
-"e_bool : e_bool OR $$12 e_bool",
-"$$13 :",
-"e_bool : e_bool AND $$13 e_bool",
-"e_bool : NOT e_bool",
-"e_bool : relacional",
-"e_bool : TRUE",
-"e_bool : FALSE",
-"relacional : relacional MENORQUE relacional",
-"relacional : relacional MAYORQUE relacional",
-"relacional : relacional MENORIGUAL relacional",
-"relacional : relacional MAYORIGUAL relacional",
-"relacional : relacional IDENTICO relacional",
-"relacional : relacional DIFERENTE relacional",
-"relacional : expresion",
-"expresion : expresion MAS expresion",
-"expresion : expresion MENOS expresion",
-"expresion : expresion MUL expresion",
-"expresion : expresion DIV expresion",
-"expresion : expresion MODULO expresion",
-"expresion : LPAR expresion RPAR",
-"expresion : variable",
-"expresion : NUM",
-"expresion : CADENA",
-"expresion : CARACTER",
-"variable : ID variable_comp",
-"variable_comp : dato_est_sim",
-"variable_comp : arreglo",
-"variable_comp : LPAR parametros RPAR",
-"dato_est_sim : dato_est_sim PUNTO ID",
-"dato_est_sim :",
-"arreglo : LCOR expresion RCOR",
-"arreglo : arreglo LCOR expresion RCOR",
-"parametros : lista_param",
-"parametros :",
-"lista_param : lista_param COMA expresion",
-"lista_param : expresion",
+"lista_var2 : COMA ID $$10 lista_var2",
+"lista_var2 :",
 
 };
 #endif
@@ -584,7 +418,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 744 "parser_pruebas.y"
+#line 297 "parser_pruebas.y"
 void yyerror(char *msg){
 	printf("%s, token: %s\n",msg, yytext);
 }
@@ -598,7 +432,7 @@ void print_code(struct code *c){
 		q=q->next;
 	}
 }
-#line 602 "y.tab.c"
+#line 436 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -801,7 +635,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 208 "parser_pruebas.y"
+#line 206 "parser_pruebas.y"
 	{printf("==========================P r o g r a m a==========================\n");
                   dir = 0;
                   codigo = init_code();
@@ -818,37 +652,37 @@ case 1:
                   }
 break;
 case 2:
-#line 221 "parser_pruebas.y"
+#line 219 "parser_pruebas.y"
 	{print_code(codigo);}
 break;
 case 3:
-#line 223 "parser_pruebas.y"
+#line 221 "parser_pruebas.y"
 	{typeGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 4:
-#line 223 "parser_pruebas.y"
+#line 221 "parser_pruebas.y"
 	{
                                                             print_tab_sym(getTopSym(pSimbolos));
                                                             print_tab_type(getTopType(pTipos));															
 															}
 break;
 case 6:
-#line 227 "parser_pruebas.y"
+#line 225 "parser_pruebas.y"
 	{typeGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 7:
-#line 227 "parser_pruebas.y"
+#line 225 "parser_pruebas.y"
 	{
 																		print_tab_sym(getTopSym(pSimbolos));
                                                             			print_tab_type(getTopType(pTipos));	
 																	}
 break;
 case 9:
-#line 231 "parser_pruebas.y"
+#line 229 "parser_pruebas.y"
 	{}
 break;
 case 10:
-#line 233 "parser_pruebas.y"
+#line 231 "parser_pruebas.y"
 	{TS1 = init_sym_tab();
 							   	  TT1 = init_type_tab(TT1);
 								  structDir = crearDir();
@@ -856,10 +690,11 @@ case 10:
 								  pushPDir(structDir, pDirecciones);
 								  dir = 0;
 								  push_tt(pTipos,TT1);
-								  push_st(pSimbolos, TS1);}
+								  push_st(pSimbolos, TS1);
+								}
 break;
 case 11:
-#line 240 "parser_pruebas.y"
+#line 239 "parser_pruebas.y"
 	{
 									TT1 = pop_tt(pTipos);
 									TS1 = pop_st(pSimbolos);
@@ -871,54 +706,58 @@ case 11:
 									}
 break;
 case 12:
-#line 250 "parser_pruebas.y"
+#line 249 "parser_pruebas.y"
 	{baseGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 13:
-#line 250 "parser_pruebas.y"
+#line 249 "parser_pruebas.y"
 	{yyval.tipo.valorTipo=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 14:
 #line 252 "parser_pruebas.y"
-	{ 
-				int e=0;
-				yyval.tipo.valorTipo = e;
+	{
+				yyval.tipo.valorTipo=0;
+				printf("entero\n");
 			}
 break;
 case 15:
 #line 256 "parser_pruebas.y"
 	{
-				int r=1;
-				yyval.tipo.valorTipo = r;
+				yyval.tipo.valorTipo=1;
+				printf("real\n");
 				}
 break;
 case 16:
 #line 260 "parser_pruebas.y"
 	{
-				int d=4;
-				yyval.tipo.valorTipo = d;
+				yyval.tipo.valorTipo=4;
+				printf("dreal\n");
 				}
 break;
 case 17:
 #line 264 "parser_pruebas.y"
-	{	
-				int c=2;
-				yyval.tipo.valorTipo = c;
+	{
+				yyval.tipo.valorTipo=2;
+				printf("car\n");
 				}
 break;
 case 18:
 #line 268 "parser_pruebas.y"
 	{
-				int s = 3;
-				yyval.tipo.valorTipo = s;
+				yyval.tipo.valorTipo=3;
+				printf("sin\n");
 				}
 break;
 case 19:
 #line 273 "parser_pruebas.y"
+	{printf("num: %s\n",yystack.l_mark[0].num.valor);}
+break;
+case 20:
+#line 273 "parser_pruebas.y"
 	{
 					printf("tip_arreglo\n");
-					if(yystack.l_mark[-2].num.tipe==0){
-						const char *tmp=yystack.l_mark[-2].num.valor;
+					if(yystack.l_mark[-3].num.tipe==0){
+						const char *tmp=yystack.l_mark[-3].num.valor;
 						int n = atoi(tmp);		
 						if(n>0){
 							newTYP = init_type();
@@ -933,661 +772,31 @@ case 19:
 					}
 				}
 break;
-case 20:
-#line 289 "parser_pruebas.y"
-	{yyval.tipo.valorTipo=baseGBL;}
-break;
 case 21:
-#line 291 "parser_pruebas.y"
-	{printf("prueba lista var 1\n");}
+#line 289 "parser_pruebas.y"
+	{ yyval.tipo.valorTipo = baseGBL; }
 break;
 case 22:
 #line 291 "parser_pruebas.y"
-	{
-							printf("Agregando var\n");
-							if( search_id_symbol(getTopSym(pSimbolos),yystack.l_mark[-1].id.lexval) == -1){
-								simbol = init_sym();
-								/*(SYM *simbol, char *id, int direccion, int tipo, char *tipoVariable, ARGS *args, SYMTAB *tabSimbolos, TYPTAB *tabTipos)*/
-								simbol = set_sym(simbol, yystack.l_mark[-1].id.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
-								append_sym(getTopSym(pSimbolos),simbol);
-								dir = dir + getTam(getTopType(pTipos), typeGBL);
-							}
-							else{
-								printf("El identificador ya fue declarado\n");
-							}
-				}
+	{printf("id: %s\n", yystack.l_mark[0].id.lexval);}
 break;
 case 23:
-#line 305 "parser_pruebas.y"
-	{
-									printf("Agregando var\n");
-									if( search_id_symbol(getTopSym(pSimbolos),yystack.l_mark[-1].id.lexval) == -1){
-										simbol = init_sym(); 
-										simbol=set_sym(simbol, yystack.l_mark[-1].id.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
-										append_sym(getTopSym(pSimbolos),simbol);
-										dir = dir + getTam(getTopType(pTipos), typeGBL);
-									}
-									else{
-										printf("El identificador ya fue declarado\n");
-									}  
-							}
+#line 291 "parser_pruebas.y"
+	{}
 break;
 case 24:
-#line 317 "parser_pruebas.y"
-	{}
+#line 293 "parser_pruebas.y"
+	{"id: %s",yystack.l_mark[0].id.lexval;}
 break;
 case 25:
-#line 319 "parser_pruebas.y"
-	{
-								if(search_id_symbol(TGS,yystack.l_mark[0].id.lexval) == -1){
-									simbol = init_sym();
-									simbol = set_sym(simbol,yystack.l_mark[0].id.lexval,-1,yystack.l_mark[-1].tipo.valorTipo,"func",NULL,TGS,TGT);
-									append_sym(TGS,simbol);
-									structDir = crearDir();
-									structDir->info = dir;
-									pushPDir(structDir,pDirecciones);
-									funcType = yystack.l_mark[-1].tipo.valorTipo;
-									funcReturn = false;
-									dir = 0;
-									TS1 = init_sym_tab();
-							   	  	TT1 = init_type_tab(TT1);
-									push_tt(pTipos,TT1);
-								 	push_st(pSimbolos, TS1);
-									append_new_quad(codigo,"label","-","-",yystack.l_mark[0].id.lexval);
-								}
-
-					}
+#line 293 "parser_pruebas.y"
+	{}
 break;
 case 26:
-#line 337 "parser_pruebas.y"
-	{
-						tmpEtq = create_label();
-						backpatch(codigo,yystack.l_mark[-1].listIndice_S.nextlist,tmpEtq);
-						TT1= pop_tt(pTipos);
-                        TS1= pop_st(pSimbolos);
-						structDir = popPDir(pDirecciones);
-						dir = structDir->info;
-						simbol = init_sym();
-						simbol = search_SYM(pSimbolos->top,yystack.l_mark[-8].id.lexval);
-						simbol->args = yystack.l_mark[-5].eListARGS.listArgs;
-
-						if(yystack.l_mark[-9].tipo.valorTipo != 3 && funcReturn == false){
-							printf("Error la funcion no tiene valor de retorno\n");
-						}
-					}
-break;
-case 28:
-#line 351 "parser_pruebas.y"
+#line 294 "parser_pruebas.y"
 	{}
 break;
-case 29:
-#line 353 "parser_pruebas.y"
-	{yyval.eListARGS.listArgs=yystack.l_mark[0].eListARGS.listArgs;}
-break;
-case 30:
-#line 354 "parser_pruebas.y"
-	{yyval.eListARGS.listArgs=NULL;}
-break;
-case 31:
-#line 356 "parser_pruebas.y"
-	{
-					yyval.eListARGS.listArgs = yystack.l_mark[-2].eListARGS.listArgs;
-					argx = init_arg(yystack.l_mark[0].tipo.valorTipo);
-					append_arg(yyval.eListARGS.listArgs, argx->arg);
-				}
-break;
-case 32:
-#line 361 "parser_pruebas.y"
-	{
-					yyval.eListARGS.listArgs = init_args();
-                    ARG* argx = init_arg(yystack.l_mark[0].tipo.valorTipo);
-                    append_arg(yyval.eListARGS.listArgs, argx->arg);
-				}
-break;
-case 33:
-#line 367 "parser_pruebas.y"
-	{
-					if( search_id_symbol(pSimbolos->top,yystack.l_mark[0].id.lexval) == -1){
-                          simbol = init_sym();
-                          simbol= set_sym(simbol, yystack.l_mark[0].id.lexval, dir, typeGBL, "var", NULL,pSimbolos->top, getTopType(pTipos));
-                          append_sym(pSimbolos->top,simbol);
-                          dir = dir + getTam(getTopType(pTipos), typeGBL);
-                    }
-                    else
-                      printf("El identificador ya fue declarado\n");
-                    yyval.tipo.valorTipo = yystack.l_mark[-1].tipo.valorTipo;
-				}
-break;
-case 34:
-#line 379 "parser_pruebas.y"
-	{baseGBL = yystack.l_mark[-1].tipo.valorTipo;}
-break;
-case 35:
-#line 381 "parser_pruebas.y"
-	{
-					TYP *tp = init_type();
-					/*newTYP = set_typ(init_type(),"array",$4.valorTipo,n*getTam(getTopType(pTipos),$4.valorTipo),getTopType(pTipos));*/
-                    tp = set_typ(tp,"array",yystack.l_mark[0].tipo.valorTipo,0,getTopType(pTipos));
-                    yyval.tipo.valorTipo = append_type(getTopType(pTipos), tp);
-				}
-break;
-case 36:
-#line 386 "parser_pruebas.y"
-	{yyval.tipo.valorTipo=baseGBL;}
-break;
-case 37:
-#line 388 "parser_pruebas.y"
-	{
-					tmpEtq=create_label();
-                    backpatch(codigo,yystack.l_mark[0].listIndice_S.nextlist,tmpEtq);
-                    append_new_quad(codigo,"label","-","-",tmpEtq);
-				}
-break;
-case 38:
-#line 392 "parser_pruebas.y"
-	{yyval.listIndice_S.nextlist=yystack.l_mark[0].listIndice_S.nextlist;}
-break;
-case 39:
-#line 393 "parser_pruebas.y"
-	{yyval.listIndice_S.nextlist=yystack.l_mark[0].listIndice_S.nextlist;}
-break;
-case 40:
-#line 395 "parser_pruebas.y"
-	{tmpLabel=create_label();
-												backpatch(codigo,yystack.l_mark[-3].eBool.listTrue,tmpLabel);
-												append_new_quad(codigo,"label","-","-",tmpLabel);
-												yyval.listIndice_S.nextlist=combinar(yystack.l_mark[-3].eBool.listFalse,yystack.l_mark[-1].listIndice_S.nextlist);
-											    }
-break;
-case 41:
-#line 400 "parser_pruebas.y"
-	{
-															tmpLabel=create_label();
-															backpatch(codigo,yystack.l_mark[-5].eBool.listTrue,tmpLabel);
-															append_new_quad(codigo,"label","-","-",tmpLabel);
-															tmpLabel=create_label();
-															backpatch(codigo,yystack.l_mark[-5].eBool.listFalse,tmpLabel);
-															append_new_quad(codigo,"label","-","-",tmpLabel);
-															yyval.listIndice_S.nextlist=combinar(yystack.l_mark[-3].listIndice_S.nextlist,yystack.l_mark[-1].listIndice_S.nextlist);
-															}
-break;
-case 42:
-#line 409 "parser_pruebas.y"
-	{
-													L1=create_label();
-													L2=create_label();
-													backpatch(codigo,yystack.l_mark[-1].listIndice_S.nextlist,L1);
-													backpatch(codigo,yystack.l_mark[-3].eBool.listTrue,L2);
-													yyval.listIndice_S.nextlist=yystack.l_mark[-3].eBool.listFalse;
-													append_new_quad(codigo,"label","-","-",L1);
-													append_new_quad(codigo,"label","-","-",L2);
-													char *L_nextList = create_label();
-													backpatch(codigo,yystack.l_mark[-1].listIndice_S.nextlist,L_nextList);
-													append_new_quad(codigo,"goto","-","-",L_nextList);
-												}
-break;
-case 43:
-#line 422 "parser_pruebas.y"
-	{tmpLabel=create_label();
-												   backpatch(codigo,yystack.l_mark[-1].eBool.listTrue,tmpLabel);
-												   yyval.listIndice_S.nextlist=yystack.l_mark[-1].eBool.listFalse;
-													}
-break;
-case 44:
-#line 426 "parser_pruebas.y"
-	{
-					  												int i;
-																	L1=create_label();
-																	prueba = combinar(yystack.l_mark[-2].listIndice_C.prueba, yystack.l_mark[-1].listIndice_P.prueba);
-																	backpatch(codigo,yystack.l_mark[-2].listIndice_C.nextlist,L1);
-																	sustituir("??",yystack.l_mark[-5].var.idVar,prueba,codigo);
-																	}
-break;
-case 45:
-#line 433 "parser_pruebas.y"
-	{
-										if((search_id_symbol(getTopSym(pSimbolos),yystack.l_mark[-3].var.idVar) != -1) || (search_id_symbol(TGS,yystack.l_mark[-3].var.idVar) != -1 )){
-											simbol = init_sym();
-											simbol=search_SYM(getTopSym(pSimbolos),yystack.l_mark[-3].var.idVar);
-											if(simbol==NULL){
-												simbol=search_SYM(TGS,yystack.l_mark[-3].var.idVar);
-											}
-											dir1=reducir(yystack.l_mark[-1].eExpr.dirExp,yystack.l_mark[-1].eExpr.tipoExp,simbol->tipo,codigo);
-											char *tmp=(char*)malloc(sizeof(char));
-											char *tmp2=(char*)malloc(sizeof(char));
-											sprintf(tmp, "%i", simbol->dir);
-											strcpy(tmp2,yystack.l_mark[-3].var.idVar);
-											strcat(tmp2,"+");
-											strcat(tmp2,tmp);
-											append_new_quad(codigo,"=",dir1,"-",tmp2);
-										}else{
-											printf("Error => El idntificador  no se ha declarado\n");
-										}
-										yyval.listIndice_S.nextlist=NULL;
-									}
-break;
-case 46:
-#line 453 "parser_pruebas.y"
-	{
-									append_new_quad(codigo,"print",yystack.l_mark[-1].eExpr.dirExp,"-","-");
-									yyval.listIndice_S.nextlist = NULL;
-								}
-break;
-case 47:
-#line 457 "parser_pruebas.y"
-	{
-									append_new_quad(codigo,"scan","-","-",yystack.l_mark[-1].var.idVar); 
-									yyval.listIndice_S.nextlist = NULL;
-								}
-break;
-case 48:
-#line 461 "parser_pruebas.y"
-	{	
-						if(funcType==3){
-							append_new_quad(codigo,"return","-","-","-");
-						}else{
-							printf("la funcion debe retornar  algun valor de tipo ==> %d",funcType);
-						}
-						yyval.listIndice_S.nextlist=NULL;
-					}
-break;
-case 49:
-#line 469 "parser_pruebas.y"
-	{ 
-					  					if(funcType!=3){
-											dir1= reducir(yystack.l_mark[-1].eExpr.dirExp,yystack.l_mark[-1].eExpr.tipoExp,funcType,codigo);
-											append_new_quad(codigo,"return",yystack.l_mark[-1].eExpr.dirExp,"-","-");
-											funcReturn=true;
-										}else{
-                    						 printf("la funcion debe retornar  algun valor de tipo ==>%d",funcType);
-                      					}
-										yyval.listIndice_S.nextlist=NULL;
-									}
-break;
-case 50:
-#line 479 "parser_pruebas.y"
-	{	
-					  				indiceGlobal = init_index();
-									char *tmp3=(char*)malloc(sizeof(char));
-									sprintf(tmp3, "%i", indiceGlobal->indice);
-									append_new_quad(codigo, "goto", "-", "-", tmp3);
-									yyval.listIndice_S.nextlist = init_list_index(indiceGlobal);
-									append_index(yyval.listIndice_S.nextlist, indiceGlobal);
-								}
-break;
-case 51:
-#line 487 "parser_pruebas.y"
-	{ 
-					  						yyval.listIndice_S.nextlist=yystack.l_mark[-1].listIndice_S.nextlist;
-										}
-break;
-case 52:
-#line 491 "parser_pruebas.y"
-	{
-										yyval.listIndice_C.nextlist = combinar(yyval.listIndice_C.nextlist, yystack.l_mark[-1].listIndice_S.nextlist);
-										char *label_C = create_label();
-										/*Indica el inicio del código para la sentencia*/
-										yyval.listIndice_C.prueba = yystack.l_mark[0].listIndice_C.prueba;
-										/*sustituir_c()*/
-										/*(if ”??” ”==” num.dir ”goto” L )*/
-									}
-break;
-case 53:
-#line 500 "parser_pruebas.y"
-	{
-						/*casos.prueba = newCode()*/
-						char *LT = create_label();
-						/*Indica el inicio del código para la sentencia*/
-						/*genCode(”label” L)*/
-						/*casos.prueba.append(if ”??” ”==” num.dir ”goto” L )*/
-						}
-break;
-case 54:
-#line 507 "parser_pruebas.y"
-	{}
-break;
-case 55:
-#line 509 "parser_pruebas.y"
-	{
-									/*predeterminado.prueba = newCode()*/
-									char *lll = create_label();
-									/*Indica el inicio del código para la sentencia*/
-									/*genCode(”label” L)*/
-									/*predeterminado.prueba.append(”goto” L )*/
-									}
-break;
-case 56:
-#line 515 "parser_pruebas.y"
-	{}
-break;
-case 57:
-#line 517 "parser_pruebas.y"
-	{
-					tmpEtq = create_label();
-					backpatch(codigo,yystack.l_mark[-1].eBool.listFalse,tmpEtq);
-					append_new_quad(codigo,"label","-","-",tmpEtq);
-				}
-break;
-case 58:
-#line 521 "parser_pruebas.y"
-	{
-					yyval.eBool.listTrue=combinar(yystack.l_mark[-3].eBool.listTrue,yystack.l_mark[0].eBool.listTrue);
-					yyval.eBool.listFalse=yystack.l_mark[0].eBool.listFalse;
-				}
-break;
-case 59:
-#line 525 "parser_pruebas.y"
-	{
-					tmpEtq=create_label();
-					backpatch(codigo,yystack.l_mark[-1].eBool.listTrue,tmpEtq);
-					append_new_quad(codigo,"label","-","-",tmpEtq);
-				}
-break;
-case 60:
-#line 530 "parser_pruebas.y"
-	{
-					yyval.eBool.listTrue=yystack.l_mark[0].eBool.listTrue;
-					yyval.eBool.listFalse=combinar(yystack.l_mark[-3].eBool.listFalse,yystack.l_mark[0].eBool.listFalse);}
-break;
-case 61:
-#line 533 "parser_pruebas.y"
-	{
-					yyval.eBool.listTrue=yystack.l_mark[0].eBool.listFalse;
-					yyval.eBool.listFalse=yystack.l_mark[0].eBool.listTrue;}
-break;
-case 62:
-#line 536 "parser_pruebas.y"
-	{
-					yyval.eBool.listTrue=yystack.l_mark[0].rel.listRelTrue;
-					yyval.eBool.listFalse=yystack.l_mark[0].rel.listRelFalse;}
-break;
-case 63:
-#line 539 "parser_pruebas.y"
-	{
-					indiceGlobal = init_index();
-					yyval.eBool.listFalse=init_list_index(NULL); 
-					yyval.eBool.listTrue=init_list_index(NULL);
-					append_index(yyval.eBool.listTrue, indiceGlobal);
-					char *tmp=(char*)malloc(sizeof(char));
-					sprintf(tmp, "%i", indiceGlobal->indice);
-					append_new_quad(codigo,"goto","-","-",tmp);}
-break;
-case 64:
-#line 547 "parser_pruebas.y"
-	{
-					indiceGlobal = init_index();
-					yyval.eBool.listFalse=init_list_index(NULL); 
-					yyval.eBool.listTrue=init_list_index(NULL);
-					append_index(yyval.eBool.listFalse, indiceGlobal);
-					char *tmp=(char*)malloc(sizeof(char));
-					sprintf(tmp, "%i", indiceGlobal->indice);
-					append_new_quad(codigo,"goto","-","-",tmp);
-				}
-break;
-case 65:
-#line 557 "parser_pruebas.y"
-	{
-					yyval.rel.listRelTrue = init_list_index(NULL);
-					yyval.rel.listRelFalse = init_list_index(NULL);
-					indiceGlobal = init_index();
-
-					indiceAux = init_index();
-
-					append_index(yyval.rel.listRelTrue, indiceGlobal);
-					append_index(yyval.rel.listRelFalse, indiceAux);
-					yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
-					dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
-					dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
-					char *tmpIndGlobal=(char*)malloc(sizeof(char));
-					char *tmpIndAux=(char*)malloc(sizeof(char));
-					sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-					sprintf(tmpIndAux, "%i", indiceAux->indice);
-					append_new_quad(codigo,"<", dir1, dir2, tmpIndGlobal);
-					append_new_quad(codigo,"goto", "-", "-", tmpIndAux);
-				}
-break;
-case 66:
-#line 576 "parser_pruebas.y"
-	{
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
-									yyval.rel.listRelFalse = init_list_index(indiceAux);
-									append_index(yyval.rel.listRelTrue, indiceGlobal);
-									append_index(yyval.rel.listRelFalse, indiceAux);
-									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
-									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, ">", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-break;
-case 67:
-#line 593 "parser_pruebas.y"
-	{
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
-									yyval.rel.listRelFalse = init_list_index(indiceAux);
-									append_index(yyval.rel.listRelTrue, indiceGlobal);
-									append_index(yyval.rel.listRelFalse, indiceAux);
-									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
-									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, "<=", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-break;
-case 68:
-#line 610 "parser_pruebas.y"
-	{
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
-									yyval.rel.listRelFalse = init_list_index(indiceAux);
-									append_index(yyval.rel.listRelTrue, indiceGlobal);
-									append_index(yyval.rel.listRelFalse, indiceAux);
-									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
-									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, ">=", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-break;
-case 69:
-#line 627 "parser_pruebas.y"
-	{
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
-									yyval.rel.listRelFalse = init_list_index(indiceAux);
-									append_index(yyval.rel.listRelTrue, indiceGlobal);
-									append_index(yyval.rel.listRelFalse, indiceAux);
-									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
-									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, "==", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-break;
-case 70:
-#line 644 "parser_pruebas.y"
-	{
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									yyval.rel.listRelTrue = init_list_index(indiceGlobal);
-									yyval.rel.listRelFalse = init_list_index(indiceAux);
-									append_index(yyval.rel.listRelTrue, indiceGlobal);
-									append_index(yyval.rel.listRelFalse, indiceAux);
-									yyval.rel.tipoRel = max(yystack.l_mark[-2].rel.tipoRel, yystack.l_mark[0].rel.tipoRel);
-									dir1 = ampliar(yystack.l_mark[-2].rel.dirRel,yystack.l_mark[-2].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									dir2 = ampliar(yystack.l_mark[0].rel.dirRel,yystack.l_mark[0].rel.tipoRel,yyval.rel.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, "<>", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-break;
-case 71:
-#line 661 "parser_pruebas.y"
-	{yyval.rel.tipoRel=yystack.l_mark[0].eExpr.tipoExp;
-	                          yyval.rel.dirRel=yystack.l_mark[0].eExpr.dirExp;}
-break;
-case 72:
-#line 664 "parser_pruebas.y"
-	{
-					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
-                    yyval.eExpr.dirExp = newTemp();
-                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp,codigo);
-                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp,codigo);
-                    append_new_quad(codigo, "+", dir1, dir2,yyval.eExpr.dirExp);
-				}
-break;
-case 73:
-#line 671 "parser_pruebas.y"
-	{
-					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
-                    yyval.eExpr.dirExp = newTemp();
-                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                    append_new_quad(codigo, "-", dir1, dir2,yyval.eExpr.dirExp);
-				}
-break;
-case 74:
-#line 678 "parser_pruebas.y"
-	{
-					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
-                    yyval.eExpr.dirExp = newTemp();
-                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                	dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                    append_new_quad(codigo, "*", dir1, dir2,yyval.eExpr.dirExp);
-				}
-break;
-case 75:
-#line 685 "parser_pruebas.y"
-	{
-					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
-                    yyval.eExpr.dirExp = newTemp();
-                	dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                    append_new_quad(codigo, "/", dir1, dir2,yyval.eExpr.dirExp);
-				}
-break;
-case 76:
-#line 692 "parser_pruebas.y"
-	{
-					yyval.eExpr.tipoExp = max(yystack.l_mark[-2].eExpr.tipoExp, yystack.l_mark[0].eExpr.tipoExp);
-                    yyval.eExpr.dirExp = newTemp();
-                    dir1 = ampliar(yystack.l_mark[-2].eExpr.dirExp,yystack.l_mark[-2].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                    dir2 = ampliar(yystack.l_mark[0].eExpr.dirExp,yystack.l_mark[0].eExpr.tipoExp,yyval.eExpr.tipoExp, codigo);
-                    append_new_quad(codigo, "%", dir1, dir2,yyval.eExpr.dirExp);
-				}
-break;
-case 77:
-#line 699 "parser_pruebas.y"
-	{
-					yyval.eExpr.dirExp = yystack.l_mark[-1].eExpr.dirExp;
-                    yyval.eExpr.tipoExp = yystack.l_mark[-1].eExpr.tipoExp;
-				}
-break;
-case 78:
-#line 703 "parser_pruebas.y"
-	{}
-break;
-case 79:
-#line 704 "parser_pruebas.y"
-	{
-					yyval.eExpr.dirExp = yystack.l_mark[0].num.valor;
-                    yyval.eExpr.tipoExp = yystack.l_mark[0].num.tipe;
-				}
-break;
-case 80:
-#line 708 "parser_pruebas.y"
-	{}
-break;
-case 81:
-#line 709 "parser_pruebas.y"
-	{}
-break;
-case 82:
-#line 712 "parser_pruebas.y"
-	{}
-break;
-case 83:
-#line 714 "parser_pruebas.y"
-	{}
-break;
-case 84:
-#line 715 "parser_pruebas.y"
-	{}
-break;
-case 85:
-#line 716 "parser_pruebas.y"
-	{}
-break;
-case 86:
-#line 718 "parser_pruebas.y"
-	{}
-break;
-case 87:
-#line 719 "parser_pruebas.y"
-	{}
-break;
-case 88:
-#line 721 "parser_pruebas.y"
-	{}
-break;
-case 89:
-#line 722 "parser_pruebas.y"
-	{}
-break;
-case 90:
-#line 724 "parser_pruebas.y"
-	{
-					yyval.eListARGS.listArgs=yystack.l_mark[0].eListARGS.listArgs;
-				}
-break;
-case 91:
-#line 727 "parser_pruebas.y"
-	{yyval.eListARGS.listArgs = NULL;}
-break;
-case 92:
-#line 729 "parser_pruebas.y"
-	{
-					yyval.eListARGS.listArgs=yystack.l_mark[-2].eListARGS.listArgs;
-                    ARG* argx = init_arg(yystack.l_mark[0].eExpr.tipoExp);
-                    append_arg(yyval.eListARGS.listArgs, argx->arg);
-                    append_new_quad(codigo,"param",yystack.l_mark[0].eExpr.dirExp," ", " ");
-				}
-break;
-case 93:
-#line 735 "parser_pruebas.y"
-	{
-					yyval.eListARGS.listArgs = init_args();
-                    ARG* argx = init_arg(yystack.l_mark[0].eExpr.tipoExp);
-                    append_arg(yyval.eListARGS.listArgs, argx->arg);
-                    append_new_quad(codigo,"param",yystack.l_mark[0].eExpr.dirExp," ", " ");
-				}
-break;
-#line 1591 "y.tab.c"
+#line 800 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

@@ -50,6 +50,26 @@
 #define RPAR 306
 #define SITEMP 307
 #define SINO 308
+#define expresion 309
+#define sentencia 310
+#define sentencias 311
+#define e_bool 312
+#define relacional 313
+#define lista_param 314
+#define lista_arg 315
+#define argumentos 316
+#define parametros 317
+#define arg 318
+#define tipo_arg 319
+#define param_arr 320
+#define variable 321
+#define arreglo 322
+#define funciones 323
+#define casos 324
+#define casos2 325
+#define predeterminado 326
+#define variable_comp 327
+#define dato_est_sim 328
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -57,6 +77,7 @@
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 typedef union{
+	int valExt;
 	struct{
     	int valorTipo;
   	}tipo;

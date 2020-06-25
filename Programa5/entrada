@@ -1,4 +1,9 @@
-ent id1;
+estructura inicio 
+    ent [2]b;
+    dreal a;
+    ent i;
+fin
+ent [2][3]id;
 car [2]arrUni;
 car [2][10]matriz;
 
