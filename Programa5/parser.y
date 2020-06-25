@@ -42,7 +42,8 @@ SYM *simbol;
 ARG *argx; 
 ARG *arg; 
 ARG *arg2; 
-TYP *newTipo; 
+TYP *newTipo;
+TYP *newTYP; 
 CODE *codigo; 
 ARGS *ListaArg; 
 INDEX *indiceGlobal, *indiceAux; 
@@ -143,38 +144,45 @@ char *tmpEtq;
 
 %token ERROR
 /*Los símbolos terminales de la gramática PARA Bison SON tokens y deben declararse en la sección de definiciones.*/
-%token DEF
+%token PYC
+%token INICIO
+%token END
 %token ESTRUCT
+%token DEF
+%token IF THEN
+%token WHILE 
+%token DO 
+%token SEGUN
+%token WRITE 
+%token DEV
+%token READ
+%token TERMINAR
+%token CASO PRED
+%token DOSP
+%token FALSE TRUE
 %token ENTERO REAL DREAL SIN CAR
+%token<id> ID
 %token CARACTER
 %token<cad> CADENA
 %token<num> NUM
-%token<id> ID
-%token IF THEN
-%token DO WHILE SEGUN
-%token TRUE FALSE
-%token INICIO TERMINAR END
-%token CASO PRED
-%token WRITE READ
-%token DEV
-%token COMA DOSP PYC PUNTO
-%left COMA
+
+%token COMA 
 %right IGUAL
 %left OR
 %left AND
-%left IDENTICO DIFERENTE
-%left MENORQUE MENORIGUAL MAYORIGUAL MAYORQUE
+%left IDENTICO DIFERENTE MENORQUE MENORIGUAL MAYORIGUAL MAYORQUE
 %left MAS MENOS
 %left MUL DIV MODULO
 %right NOT
 
+%nonassoc PUNTO
+%nonassoc RCOR 
+%nonassoc LCOR 
 %nonassoc LPAR RPAR
-%nonassoc LCOR RCOR
 %nonassoc SITEMP
 %nonassoc SINO
 
-%type<tipo> tipo base
-%type<tipo> tipo_arreglo
+%type<tipo> tipo base tipo_arreglo
 %type<eExpr> expresion
 %type<listIndice_S> sentencia sentencias
 %type<eBool> e_bool
@@ -187,6 +195,7 @@ char *tmpEtq;
 %type<var> variable arreglo
 %type declaraciones
 %type lista_var
+%type lista_var2
 %type funciones
 %type<listIndice_C> casos casos2
 %type<listIndice_P> predeterminado
@@ -206,67 +215,95 @@ programa:        {printf("==========================P r o g r a m a=============
 				  printf(">>>>>>Tabla general de tipos>>>>>>\n");
 				  print_tab_type(TGT);
                   TGS = init_sym_tab();
-				  //print_tab_sym(TGS);
                   push_st(pSimbolos,TGS);
                   push_tt(pTipos,TGT);
                   tabCadenas = crearTablaCadenas();
-				  //print_tab_sym(TGS);
-                  }declaraciones{
-					  			print_tab_sym(TGS);
-								print_tab_type(TGT);
-				  } funciones{print_code(codigo);};
+                  } declaraciones funciones{print_code(codigo);};
 				  
-declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC declaraciones
-                | tipo_registro {typeGBL=$1.valorTipo;} lista_var PYC declaraciones
+declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC{
+                                                            print_tab_sym(getTopSym(pSimbolos));
+                                                            print_tab_type(getTopType(pTipos));															
+															} declaraciones
+                | tipo_registro {typeGBL=$1.valorTipo;} lista_var PYC{
+																		print_tab_sym(getTopSym(pSimbolos));
+                                                            			print_tab_type(getTopType(pTipos));	
+																	} declaraciones
                 | {};
 
 tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
 							   	  TT1 = init_type_tab(TT1);
 								  structDir = crearDir();
-								  structDir->info = dir;
+								  //structDir->info = dir;
 								  pushPDir(structDir, pDirecciones);
 								  dir = 0;
 								  push_tt(pTipos,TT1);
-								  push_st(pSimbolos, TS1);} declaraciones {
-									  TT1 = pop_tt(pTipos);
-								      TS1 = pop_st(pSimbolos);
-									  structDir = popPDir(pDirecciones);
-									  dir = structDir->info;
-									  TYP* newTYP= init_type();
-									  newTYP = set_typ(newTYP,"reg",0,getTopType(pTipos));
-									  typeTemp = append_type(getTopType(pTipos), newTYP);} END {
-										  $$.valorTipo=typeTemp;
-									  };
+								  push_st(pSimbolos, TS1);} declaraciones END {
+									TT1 = pop_tt(pTipos);
+									TS1 = pop_st(pSimbolos);
+									structDir = popPDir(pDirecciones);
+									dir = structDir->info;
+									newTYP = set_typ_struct(init_type(),"struct",0,TT1, TS1);
+									typeTemp = append_type(TT1, newTYP);
+									$$.valorTipo=typeTemp;
+									};
 
-tipo:             base {baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;} 
+tipo:             base{baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;};
 
-base:             ENTERO{$$.valorTipo=0;} 
-                | REAL{$$.valorTipo=1;} 
-                | DREAL{$$.valorTipo=4;} 
-                | CAR{$$.valorTipo=2;} 
-                | SIN {$$.valorTipo=3;};
+base:   ENTERO{
+				$$.valorTipo=0;
+				printf("Tipo entero\n");
+			} 
+		| REAL{
+				$$.valorTipo=1;} 
+		| DREAL{
+				$$.valorTipo=4;} 
+		| CAR{
+				$$.valorTipo=2;} 
+		| SIN {
+				$$.valorTipo=3;};
 
-tipo_arreglo: 	LCOR NUM RCOR tipo_arreglo{
+tipo_arreglo:	LCOR NUM RCOR tipo_arreglo {
 					if($2.tipe==0){
-                        int n = atoi($2.valor);
-                                 
-                        if(n>0){
-                            TYP *newTYP = init_type();
-                            newTYP = set_typ(newTYP,"array",$4.valorTipo,getTopType(pTipos));
-                            $$.valorTipo = append_type(getTopType(pTipos), newTYP);
-							
-                        }
-                        else{
-                            printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
-                        }
-                    }
-                    else{
-                        printf("El indice tiene que ser entero y mayor que cero///////////////////////////////////");
-                    }
-				} 
-				| {};
+						const char *tmp=$2.valor;
+						int n = atoi(tmp);		
+						if(n>0){
+							newTYP = init_type();
+							newTYP = set_typ(newTYP,"array",$4.valorTipo,n*getTam(getTopType(pTipos),$4.valorTipo),getTopType(pTipos));
+							$$.valorTipo = append_type(getTopType(pTipos), newTYP);
+						}
+						else{
+							printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
+						}
+					}else{
+						printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
+					}
+				} | {$$.valorTipo=baseGBL;} ;
 
-lista_var:        lista_var COMA ID{} | ID{} ;
+lista_var:		ID lista_var2{
+							if( search_id_symbol(getTopSym(pSimbolos),$1.lexval) == -1){
+								simbol = init_sym();
+								simbol = set_sym(simbol, $1.lexval, dir, typeGBL, "var", NULL, pSimbolos->top, getTopType(pTipos));
+								append_sym(pSimbolos->top,simbol);
+								dir = dir + getTam(getTopType(pTipos), typeGBL);
+							}
+							else{
+								printf("El identificador ya fue declarado\n");
+							}
+				};
+
+lista_var2: 	COMA ID lista_var2{
+									printf("Agregando var\n");
+									if( search_id_symbol(getTopSym(pSimbolos),$2.lexval) == -1){
+										simbol = init_sym(); 
+										simbol=set_sym(simbol, $2.lexval, dir, typeGBL, "var", NULL, pSimbolos->top, getTopType(pTipos));
+										append_sym(pSimbolos->top,simbol);
+										dir = dir + getTam(getTopType(pTipos), typeGBL);
+									}
+									else{
+										printf("El identificador ya fue declarado\n");
+									}  
+							}
+				| {};
 
 funciones:        DEF tipo ID {if(search_id_symbol(TGS,$3.lexval) == -1){
 									simbol = init_sym();
@@ -331,7 +368,8 @@ tipo_arg:         base param_arr {baseGBL = $1.valorTipo;};
 
 param_arr:      LCOR RCOR param_arr{
 					TYP *tp = init_type();
-                    tp = set_typ(tp,"array",$3.valorTipo,getTopType(pTipos));
+					//newTYP = set_typ(init_type(),"array",$4.valorTipo,n*getTam(getTopType(pTipos),$4.valorTipo),getTopType(pTipos));
+                    tp = set_typ(tp,"array",$3.valorTipo,0,getTopType(pTipos));
                     $$.valorTipo = append_type(getTopType(pTipos), tp);
 				} | {$$.valorTipo=baseGBL;};
 
@@ -692,7 +730,7 @@ lista_param:    lista_param COMA expresion {
 
 %%
 void yyerror(char *msg){
-	printf("%s, linea: %d, token: %s\n",msg, yylineno, yytext);
+	printf("%s, token: %s\n",msg, yytext);
 }
 
 void print_code(struct code *c){

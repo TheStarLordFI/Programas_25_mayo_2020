@@ -8,9 +8,11 @@
   #include <string.h>
   #include <stdlib.h>
   #include "y.tab.h"
+  #include "cuadruplas.h"
+  extern void print_code(CODE *c);
+  extern void yyerror(char *s);
 %}
 
-%option noyywrap
 %x COMENTARIO
 
 /*--Expresiones regulares--*/
@@ -81,8 +83,6 @@ caracter \'([a-zA-Z])\'
         return NUM;
       }
 {id} {  
-        /* Ej: el valor de yytext se copia en el parser, 
-           en el elemento de la union id, estructura dentro de la union*/
         strcpy(yylval.id.lexval,yytext);
         return ID;
       }
@@ -98,3 +98,6 @@ caracter \'([a-zA-Z])\'
 .     {return ERROR;}
 
 %%
+int yywrap(){
+    return 1;
+}

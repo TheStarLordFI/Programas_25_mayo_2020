@@ -3,6 +3,7 @@
 #include "cuadruplas.h"
 extern int yyparse();
 extern void print_code(CODE *c);
+extern void yyerror(char *s);
 extern FILE *yyin;
 
 int main (int argc, char** argv){
@@ -16,7 +17,6 @@ int main (int argc, char** argv){
         printf("El archivo %s no se puede abrir\n", argv[1]);
         return -1;
     }
-
     yyin = f;
     yyparse();
     fclose(yyin);

@@ -33,11 +33,9 @@ void append_sym(SYMTAB *tabSimbolos,SYM *simbol){
   if (insertado == 1){
     tabSimbolos->num++;
     printf("\nTabla de simbolos: insertando simbolo: %s\n", simbol->id);
-    //imprimeTS(*tabSimbolos);
     return;
   } else {
     printf("Tabla de simbolos: ERROR! no se inserto el simbolo, el id \"%s\" ya existe\n", simbol->id);
-    free(simbol);
     return;
   }
 }
@@ -348,7 +346,7 @@ int compare_args(ARGS *a1, ARGS *a2){
 * Fecha de creación: 31 de mayo 2020
 */
 SYMTAB *pop_st(SSTACK *s){
-  SYMTAB* temp;
+  SYMTAB* temp = (SYMTAB *)malloc(sizeof(SYMTAB));;
   temp = s->top;
   s->top = temp->next;
   //s->numeroelementos --;
@@ -362,7 +360,7 @@ SYMTAB *pop_st(SSTACK *s){
 * Autor: Morales Garcia Luis
 * Fecha de creación: 31 de mayo 2020
 */
-void push_st (SSTACK *s,SYMTAB *st){
+void push_st(SSTACK *s,SYMTAB *st){
   st->next = s->top;
   s->top = st;
   //s->numeroelementos ++;

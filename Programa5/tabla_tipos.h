@@ -12,7 +12,7 @@ TSTACK *init_type_tab_stack(); //*Reserva memoria para la pila
 TYPTAB *init_type_tab(TYPTAB *tabTipos); //*Reserva memoria para una tabla de tipos e inserta los tipos nativos
 TYP *init_type(); // Reserva memoria para un tipo
 
-void init_type_base();
+TB *init_type_base();
 TYPTAB *append_natives_types(TYPTAB *tT);
 TYP  *search_type(TYPTAB *tabTipos, int id);
 
@@ -27,5 +27,7 @@ void print_tab_type(TYPTAB *t ); //*Imprime en pantalla la tabla de tipos
 TYPTAB *getTopType(TSTACK *pilaTT);//Retorna el tope de la pila de tipos
 
 
-TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos);
+TYP *set_typ(TYP *type, char *nombre, int idTipo, int tam, TYPTAB *tabTipos);
+TYP *set_typ_struct(TYP *type, char *nombre, int idTipoB, TYPTAB *tabTipos,SYMTAB *tabSym);
+int getTamStruct(TYPTAB *tabTipos, SYMTAB *tabSym, int idTipoB);
 #endif

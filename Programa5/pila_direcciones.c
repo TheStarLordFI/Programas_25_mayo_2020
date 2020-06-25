@@ -59,9 +59,9 @@ void borrarPDir(DSTACK *pilaDir){
 * Fecha de creación: 20 de Junio
 */
 void pushPDir(DIR *direccion, DSTACK *pilaDir){
-   direccion->sig = pilaDir->tope;
-   pilaDir->tope = direccion;
-   pilaDir->elementosPila++;
+  direccion->sig = pilaDir->tope;
+  pilaDir->tope = direccion;
+  pilaDir->elementosPila++;
   printf("Pila de Direcciones: Se ha insertado una direccion\n");
 }
 

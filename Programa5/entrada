@@ -1,50 +1,49 @@
-ent carga_temp,t1;
-car [2]arrUni,tc;
-car [2][10]matriz,t2;
-inicio dreal varReg;
+ent [1]id1;
+car [2]arrUni;
+car [2][10]matriz;
 
 def ent prueba1(sin) inicio
-ent a,b,c,l,k,g,p,j;
-real vLocal;
-vLocal := 5.2;
-a := 5 + 4;
-b := 5 + 4.5 * 7-2;
-l := 7*8;
-k := 4.4/2;
-g := 10%2;
-p := (2);
-j := (4+5)+(8+7.66);
+    ent a,b,c,l,k,g,p,j;
+    real vLocal;
+    vLocal := 5.2;
+    a := 5 + 4;
+    b := 5 + 4.5 * 7-2;
+    l := 7*8;
+    k := 4.4/2;
+    g := 10%2;
+    p := (2);
+    j := (4+5)+(8+7.66);
 
-si 2<3 entonces
-carga_temp := 1;
-fin
+    si 2<3 entonces
+        cargaTemp := 1;
+    fin
 
-si 4>1 entonces
-carga_temp := 4;
-fin
+    si 4>1 entonces
+        cargaTemp := 4;
+    fin
 
-si 8<=7 entonces
-carga_temp := 3;
-fin
+    si 8<=7 entonces
+        carga_Tmp := 3;
+    fin
 
-si 1>=0 entonces
-carga_temp := 6;
-fin
+    si 1>=0 entonces
+        carga_Tmp := 6;
+    fin
 
-si 5=6 entonces
-carga_temp := 2;
-fin
+    si 5=6 entonces
+        cargaTemp := 2;
+    fin
 
-si 3<>3 entonces
-carga_temp := 9;
-fin
+    si 3<>3 entonces
+        carga_Tmp := 9;
+    fin
 
-si 1=1 o 2=8 entonces
-carga_temp := 7;
-fin
+    si 1=1 o 2=8 entonces
+        carga_tTp := 7;
+    fin
 
-si 3>=5 y 5<1 entonces
-carga_temp := 8;
-escribir  0
-devolver 1
+    si 3>=5 y 5<1 entonces
+        carga_tTp := 8;
+    escribir  0
+    devolver 1
 fin

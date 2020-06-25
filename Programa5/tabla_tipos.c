@@ -24,29 +24,23 @@ void push_tt( TSTACK *s , TYPTAB *tt){
 */
 
 int append_type(TYPTAB *tt, TYP *t){
-  int insertado = -1;
+  int ID = -1;
   if(tt->head == NULL){
     tt->head = t;
     tt->tail = t;
-    insertado = 1;
+    ID = tt->num;
+    tt->num++;
+    //print_tab_type(tt);
+    return ID;
   } else {
     (tt->tail)->next=t;
     tt->tail=t;
-    insertado = 1;
-  }
-  if (tt->num <= 4 ){
+    ID = tt->num;
     tt->num++;
-    return tt->num;
+    //print_tab_type(tt);
+    return ID;
   }
-  else if (insertado == 1){
-    tt->num++;
-    printf("\nInsertando en tabla de tipos:");
-    print_tab_type(tt);
-    return tt->num-1;
-  } else {
-    printf("Tabla de tipos: ERROR! no se inserto el tipo\n");
-    return insertado;
-  }
+  return ID;
 }
 
 
@@ -83,14 +77,14 @@ void print_tab_type(TYPTAB *t){
   printf(" |  ID  |  TIPO  |  TAM  |  T_BASE  | \n");
   printf("-------------------------------------\n");
   while(tipoDato!=NULL){
-    if (tipoDato->tb->is_est == 0 || tipoDato->tb->is_est == -1){
+    if (tipoDato->tb->is_est == 1 || tipoDato->tb->is_est == -1){
       printf(" |%i\t|%s\t|%i\t|-\t|\n",tipoDato->id,tipoDato->nombre,tipoDato->tam);
     }else{
       printf(" |%i\t|%s\t|%i\t|%i\t|\n",tipoDato->id,tipoDato->nombre,tipoDato->tam,tipoDato->tb->tipo.tipo);
     }
     tipoDato=tipoDato->next;
   }
-  printf("-------------------------------------------\n");
+  printf("--------------------------------------\n");
 }
 
 /*
@@ -137,11 +131,8 @@ TYPTAB *append_natives_types(TYPTAB *tabTipos){
 
   for(i=0; i<5; i++){
     tipoAux=(TYP *)malloc(sizeof(TYP));
-    //tipoB = init_type_base(tipoB);
     tipoAux->id = tabTipos->num;
-    //printf("%d\n", tipoAux->id);
     strcpy(tipoAux->nombre, &arrTiposNativos[i][0]);
-    //printf("%s\n", tipoAux->nombre);
     tipoAux->tam = tamBytesNativos[i];
     tipoAux->tb = tipoB;
     tipoAux->tb->tipo.tipo= -1; //significa que es un tipo de base nativo
@@ -162,12 +153,12 @@ TYPTAB *append_natives_types(TYPTAB *tabTipos){
 * Fecha de creación: 31 de mayo 2020
 */
 TYP *init_type(){
-    TYP *nuevoTipo;
-    nuevoTipo = (TYP *)malloc(sizeof(TYP));
-    nuevoTipo->next = NULL;
-    nuevoTipo->tb = NULL;
-    //printf("Se ha creado un tipo\n");
-return nuevoTipo;
+  TYP *nuevoTipo;
+  nuevoTipo = (TYP *)malloc(sizeof(TYP));
+  nuevoTipo->next = NULL;
+  nuevoTipo->tb = NULL;
+  printf("Se ha creado un tipo\n");
+  return nuevoTipo;
 }
 
 /*
@@ -176,14 +167,11 @@ return nuevoTipo;
 * Autor: Osmar Juarez Aguilar
 * Fecha de creación: 31 de mayo 2020
 */
-void init_type_base(){
+TB *init_type_base(){
   TB *tipoB;
   tipoB = (TB *)malloc(sizeof(TB));
-  tipoB->is_est = -1;
-  tipoB->tipo.tipo = -2; // significa que aún no sabemos que tipo de base tiene
-  tipoB->tipo.est = NULL;
-  //printf("Se ha creado un tipo base\n");
-  //return tipoB;
+  tipoB->is_est = -1;//aun no sabemos si es estructura o no
+  return tipoB;
 }
 
 /*
@@ -207,13 +195,14 @@ char *getNombre(TYPTAB *t,int id){
 TYP  *search_type(TYPTAB *tabTipos, int id){
   TYP  *tipoDato;
   tipoDato = tabTipos->head;
-    while(tipoDato!=NULL){
-        if (tipoDato->id == id)
-            return tipoDato;
-        tipoDato = tipoDato->next;
-    }
-    printf ("Tabla de tipos: ERROR! El id %d no existe \n", id);
-    return NULL;
+  while(tipoDato!=NULL){
+      if (tipoDato->id == id){
+        return tipoDato;
+      }
+      tipoDato = tipoDato->next;
+  }
+  printf("Tabla de tipos: ERROR! El id %d no existe \n", id);
+  return NULL;
 }
 
 /*
@@ -288,23 +277,72 @@ void finish_type(TYP *S ){
   free(S);
 }
 
-TYP *set_typ(TYP *type, char *nombre, int idTipo, TYPTAB *tabTipos){
-  TYP *aux;
-  int intAux;
+
+/*
+* Función: set_typ
+* Descripción: pone los valores de una estructura TYP para un tipo de dato
+* Autor: Osmar Juarez Aguilar
+* Modificación: 24 de junio 2020
+*/
+TYP *set_typ(TYP *type, char *nombre, int idTipoB, int tam, TYPTAB *tabTipos){
+  TYP *aux = (TYP *)malloc(sizeof(TYP));
   type->id = tabTipos->num;
   strcpy(type->nombre, nombre);
-  if( type->tb->is_est == 0){ //si es un tipo simple
-    aux = search_type(tabTipos, idTipo);
-    if (aux != NULL ) //significa que sí encontró ese tipo de dato
+  TB *tipoBase = init_type_base();
+  if(strcmp(nombre,"array")==0){
+    aux = search_type(tabTipos, idTipoB);
+    if (aux != NULL ){//significa que sí encontró ese tipo de dato
+      type->tb = tipoBase;
       type->tb->tipo.tipo= aux->id;
-    else
-     printf("Tabla de Tipos: ERROR! No se pudo insertar el tipo %s, no existe el tipo base %i \n", nombre, idTipo);
+      type->tb->tipo.est = NULL;
+      type->tb->is_est = 0;
+      type->tam = tam;
+    }else{
+      printf("Tabla de Tipos: ERROR! No se pudo insertar el tipo %s, no existe el tipo base %i \n", nombre, idTipoB);
+      return NULL;
+    }
   }
-  else {
-    /* En caso de que sea estructura */
+  return type;
+}
+
+/*
+* Función: getTamStruct
+* Descripción: regresa el tam de una estructura de acuerd a el # de simbolos 
+*              que tiene y el tam de cada uno.
+* Autor: Osmar Juarez Aguilar
+* Modificación: 24 de junio 2020
+*/
+int getTamStruct(TYPTAB *tabTipos, SYMTAB *tabSym, int idTipoB){
+  int i;
+  int tamStruct = 0;
+  SYM *symT = NULL;
+  symT = tabSym->head;
+  while(symT!=NULL){
+    tamStruct = tamStruct + getTam(tabTipos, symT->tipo); 
+    symT= symT->next;
   }
-  aux = search_type(tabTipos, idTipo);
-  type->tam = getTam(tabTipos, type->id);
+  return tamStruct;
+}
+
+/*
+* Función: set_typ_struct
+* Descripción: pone los valores de una estructura TYP para un tipo de dato estructura
+* Autor: Osmar Juarez Aguilar
+* Modificación: 24 de junio 2020
+*/
+TYP *set_typ_struct(TYP *type, char *nombre, int idTipoB, TYPTAB *tabTipos,SYMTAB *tabSym){
+  type->id = tabTipos->num;
+  strcpy(type->nombre, nombre);
+  TB *tipoBase = init_type_base();
+  if(strcmp(nombre,"struct")==0){
+      type->tb = tipoBase;
+      type->tb->tipo.tipo= idTipoB;
+      type->tb->tipo.est = tabSym;
+      type->tb->is_est = 0;
+      type->tam = getTamStruct(tabTipos, tabSym, idTipoB);
+  }else{
+      printf("Tabla de Tipos: ERROR! No se pudo insertar el tipo %s, no existe el tipo base %i \n", nombre, idTipoB);
+  }
   return type;
 }
 
