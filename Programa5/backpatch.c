@@ -156,9 +156,9 @@ char *create_label(){
 * Fecha de creación: 13 de junio 2020
 */
 void backpatch(CODE *c, LINDEX *l, char *label){
-    QUAD *q = (QUAD*)malloc(sizeof(QUAD));
-    INDEX *i;
-    char *tmp=(char*)malloc(sizeof(char));
+    QUAD *q = (QUAD *)malloc(sizeof(QUAD));
+    INDEX *i = (INDEX *)malloc(sizeof(INDEX));
+    char *tmp=(char *)malloc(sizeof(char));
  
     if(l!=NULL){
         i = l->head;
@@ -182,7 +182,7 @@ void backpatch(CODE *c, LINDEX *l, char *label){
 */
 void sustituir(char *label, char *var, LINDEX *l, CODE *c){
     QUAD *q = (QUAD*)malloc(sizeof(QUAD));
-    INDEX *i;
+    INDEX *i = (INDEX *)malloc(sizeof(INDEX));
     char *tmp=(char*)malloc(sizeof(char));
  
     if(l!=NULL){
@@ -206,7 +206,7 @@ void sustituir(char *label, char *var, LINDEX *l, CODE *c){
 */
 void sustituir_cc(char *label, char *var, LINDEX *l, CODE *c){
     QUAD *q = (QUAD*)malloc(sizeof(QUAD));
-    INDEX *i;
+    INDEX *i =(INDEX *)malloc(sizeof(INDEX));
     char *tmp=(char*)malloc(sizeof(char));
  
     if(l!=NULL){

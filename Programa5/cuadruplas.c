@@ -72,6 +72,7 @@ void append_quad(CODE* c, QUAD *cd)
 	c->tail->next = cd;
 	c->tail  = cd;
   }
+  append_quad(c, append_new_quad);
   c->num_instru++;
 }
 
