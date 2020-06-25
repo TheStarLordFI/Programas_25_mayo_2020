@@ -77,28 +77,28 @@ typedef union{
 	}cad;
 
 	struct{
-	  	struct list_index *nextlist;/*listIndex*/
+	  	struct list_index *nextlist;/*listIndex*/
 	}listIndice_S; 
 	
 	struct{
-		struct list_index *prueba;/*listIndex*/
-	  	struct list_index *nextlist;/*listIndex*/
+		struct list_index *prueba;/*listIndex*/
+	  	struct list_index *nextlist;/*listIndex*/
 	}listIndice_C; 
 
 	struct{
-		struct list_index *prueba;/*listIndex*/
+		struct list_index *prueba;/*listIndex*/
 	}listIndice_P;
 
 	struct{
-	   	struct list_index *listTrue; /*En la DDS viene como truelist*/
-	   	struct list_index *listFalse; /*En la DDS viene como falselist*/
+	   	struct list_index *listTrue; /*En la DDS viene como truelist*/
+	   	struct list_index *listFalse; /*En la DDS viene como falselist*/
 	}eBool;
 
 	struct{
-	    int tipoRel; /*En la DDS viene como tipo */
-	    char* dirRel;/*En la DDS viene como dir*/
-	    struct list_index *listRelTrue;/*En la DDS viene como truelist*/
-	    struct list_index *listRelFalse;/*En la DDS viene como falselist*/
+	    int tipoRel; /*En la DDS viene como tipo */
+	    char* dirRel;/*En la DDS viene como dir*/
+	    struct list_index *listRelTrue;/*En la DDS viene como truelist*/
+	    struct list_index *listRelFalse;/*En la DDS viene como falselist*/
   	}rel;
 	
 	struct{
@@ -114,7 +114,7 @@ typedef union{
   	}var;
 	
 	struct{
-    	struct args *listArgs;/*listParam*/
+    	struct args *listArgs;/*listParam*/
   	}eListARGS;
 
 	struct{

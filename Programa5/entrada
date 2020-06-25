@@ -1,4 +1,4 @@
-ent [1]id1;
+ent id1;
 car [2]arrUni;
 car [2][10]matriz;
 

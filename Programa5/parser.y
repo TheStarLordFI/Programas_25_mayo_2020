@@ -220,10 +220,7 @@ programa:        {printf("==========================P r o g r a m a=============
                   tabCadenas = crearTablaCadenas();
                   } declaraciones funciones{print_code(codigo);};
 				  
-declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC{
-                                                            print_tab_sym(getTopSym(pSimbolos));
-                                                            print_tab_type(getTopType(pTipos));															
-															} declaraciones
+declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC{} declaraciones
                 | tipo_registro {typeGBL=$1.valorTipo;} lista_var PYC{
 																		print_tab_sym(getTopSym(pSimbolos));
                                                             			print_tab_type(getTopType(pTipos));	
@@ -249,20 +246,24 @@ tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
 
 tipo:             base{baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;};
 
-base:   ENTERO{
+base:   ENTERO {
 				$$.valorTipo=0;
-				printf("Tipo entero\n");
 			} 
-		| REAL{
-				$$.valorTipo=1;} 
-		| DREAL{
-				$$.valorTipo=4;} 
-		| CAR{
-				$$.valorTipo=2;} 
+		| REAL {
+				$$.valorTipo=1;
+				} 
+		| DREAL {
+				$$.valorTipo=4;
+				} 
+		| CAR {
+				$$.valorTipo=2;
+				} 
 		| SIN {
-				$$.valorTipo=3;};
+				$$.valorTipo=3;
+				};
 
 tipo_arreglo:	LCOR NUM RCOR tipo_arreglo {
+					printf("tip_arreglo\n");
 					if($2.tipe==0){
 						const char *tmp=$2.valor;
 						int n = atoi(tmp);		

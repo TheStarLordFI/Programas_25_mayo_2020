@@ -247,45 +247,54 @@ tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
 									$$.valorTipo=typeTemp;
 									};
 
-tipo:             base{baseGBL=$1.valorTipo;} tipo_arreglo{$$.valorTipo=$3.valorTipo;};
+tipo:             base{baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;};
 
-base:   ENTERO{
-				$$.valorTipo=0;
-				printf("Tipo entero\n");
+base:   ENTERO{ 
+				int e=0;
+				$$.valorTipo = e;
 			} 
 		| REAL{
-				$$.valorTipo=1;} 
+				int r=1;
+				$$.valorTipo = r;
+				} 
 		| DREAL{
-				$$.valorTipo=4;} 
-		| CAR{
-				$$.valorTipo=2;} 
+				int d=4;
+				$$.valorTipo = d;
+				} 
+		| CAR{	
+				int c=2;
+				$$.valorTipo = c;
+				} 
 		| SIN {
-				$$.valorTipo=3;};
+				int s = 3;
+				$$.valorTipo = s;
+				};
 
 tipo_arreglo:	LCOR NUM RCOR tipo_arreglo {
-				printf("prueba tipo_arreglo\n");
-				if($2.tipe==0){
-					const char *tmp=$2.valor;
-					int n = atoi(tmp);		
-					if(n>0){
-						newTYP = init_type();
-						newTYP = set_typ(newTYP,"array",$4.valorTipo,n*getTam(getTopType(pTipos),$4.valorTipo),getTopType(pTipos));
-						$$.valorTipo = append_type(getTopType(pTipos), newTYP);
-					}
-					else{
+					printf("tip_arreglo\n");
+					if($2.tipe==0){
+						const char *tmp=$2.valor;
+						int n = atoi(tmp);		
+						if(n>0){
+							newTYP = init_type();
+							newTYP = set_typ(newTYP,"array",$4.valorTipo,n*getTam(getTopType(pTipos),$4.valorTipo),getTopType(pTipos));
+							$$.valorTipo = append_type(getTopType(pTipos), newTYP);
+						}
+						else{
+							printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
+						}
+					}else{
 						printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
 					}
-				}else{
-					printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
-				}
-				} | {$$.valorTipo=baseGBL;};
+				} | {$$.valorTipo=baseGBL;} ;
 
-lista_var:		ID lista_var2{
+lista_var:		{printf("prueba lista var 1\n");}ID lista_var2{
 							printf("Agregando var\n");
-							if( search_id_symbol(getTopSym(pSimbolos),$1.lexval) == -1){
+							if( search_id_symbol(getTopSym(pSimbolos),$2.lexval) == -1){
 								simbol = init_sym();
-								simbol = set_sym(simbol, $1.lexval, dir, typeGBL, "var", NULL, pSimbolos->top, getTopType(pTipos));
-								append_sym(pSimbolos->top,simbol);
+								//(SYM *simbol, char *id, int direccion, int tipo, char *tipoVariable, ARGS *args, SYMTAB *tabSimbolos, TYPTAB *tabTipos)
+								simbol = set_sym(simbol, $2.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
+								append_sym(getTopSym(pSimbolos),simbol);
 								dir = dir + getTam(getTopType(pTipos), typeGBL);
 							}
 							else{
@@ -297,8 +306,8 @@ lista_var2: 	COMA ID lista_var2{
 									printf("Agregando var\n");
 									if( search_id_symbol(getTopSym(pSimbolos),$2.lexval) == -1){
 										simbol = init_sym(); 
-										simbol=set_sym(simbol, $2.lexval, dir, typeGBL, "var", NULL, pSimbolos->top, getTopType(pTipos));
-										append_sym(pSimbolos->top,simbol);
+										simbol=set_sym(simbol, $2.lexval, dir, typeGBL, "var", NULL, getTopSym(pSimbolos), getTopType(pTipos));
+										append_sym(getTopSym(pSimbolos),simbol);
 										dir = dir + getTam(getTopType(pTipos), typeGBL);
 									}
 									else{
@@ -307,7 +316,8 @@ lista_var2: 	COMA ID lista_var2{
 							}
 				| {};
 
-funciones:        DEF tipo ID {if(search_id_symbol(TGS,$3.lexval) == -1){
+funciones:        DEF tipo ID {
+								if(search_id_symbol(TGS,$3.lexval) == -1){
 									simbol = init_sym();
 									simbol = set_sym(simbol,$3.lexval,-1,$2.valorTipo,"func",NULL,TGS,TGT);
 									append_sym(TGS,simbol);
