@@ -12,7 +12,7 @@
 #include "tabla_simbolos.h"
 #include "tabla_tipos.h"
 //#include "cuadruplas.h"
-#include "backpatch.h"
+//#include "backpatch.h"
 #include "tipos.h"
 #include "tabla_cadenas.h"
 #include "pila_direcciones.h"
@@ -21,7 +21,7 @@ void yyerror(char *s);
 extern int yylineno;
 extern int yylex();
 extern char* yytext;
-void print_code(struct code *c);
+//void print_code(struct code *c);
 
 /*Se deben declarar las estructuras que para nuestro proyecto se tienen.
 * Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
@@ -44,10 +44,10 @@ ARG *arg;
 ARG *arg2; 
 TYP *newTipo;
 TYP *newTYP; 
-CODE *codigo; 
+//CODE *codigo; 
 ARGS *ListaArg; 
-INDEX *indiceGlobal, *indiceAux; 
-LINDEX *prueba;
+//INDEX *indiceGlobal, *indiceAux; 
+//LINDEX *prueba;
 /////////////////////////////Variables doc 2020-2DDS_usr1///////////////////////////////////////
 int dir;
 char *dir1, *dir2, *dirTemp; //Dir temporales
@@ -85,7 +85,7 @@ char *tmpEtq;
 	    struct cadenas *cad;
 	}cad;
 
-	struct{
+	/*struct{
 	  	struct list_index *nextlist;//listIndex
 	}listIndice_S; 
 	
@@ -108,7 +108,7 @@ char *tmpEtq;
 	    char* dirRel;//En la DDS viene como dir
 	    struct list_index *listRelTrue;//En la DDS viene como truelist
 	    struct list_index *listRelFalse;//En la DDS viene como falselist
-  	}rel;
+  	}rel;*/
 	
 	struct{
     	int tipoExp;
@@ -122,9 +122,9 @@ char *tmpEtq;
     	char *idVar;
   	}var;
 	
-	struct{
+	/*struct{
     	struct args *listArgs;//listParam
-  	}eListARGS;
+  	}eListARGS;*/
 
 	struct{
 		int tipoVaComp;
@@ -139,8 +139,6 @@ char *tmpEtq;
 		char *des;
 		int code_est;
 	}datoEst;
-	
-
 }
 
 %token ERROR
@@ -177,35 +175,36 @@ char *tmpEtq;
 %right NOT
 
 %nonassoc PUNTO
-%nonassoc RCOR LCOR 
+%nonassoc RCOR
+%nonassoc LCOR
 %nonassoc LPAR RPAR
 %nonassoc SITEMP
 %nonassoc SINO
 
-%type<tipo> tipo base tipo_arreglo
-%type<eExpr> expresion
-%type<listIndice_S> sentencia sentencias
-%type<eBool> e_bool
-%type<rel> relacional
-%type<eListARGS> lista_param lista_arg
-%type<eListARGS> argumentos
-%type<eListARGS> parametros
-%type<tipo> arg tipo_registro
-%type<tipo> tipo_arg param_arr
-%type<var> variable arreglo
+%type<tipo> tipo base tipo_arreglo tipo_registro
+//%type<eExpr> expresion
+//%type<listIndice_S> sentencia sentencias
+//%type<eBool> e_bool
+//%type<rel> relacional
+//%type<eListARGS> lista_param lista_arg
+//%type<eListARGS> argumentos
+//%type<eListARGS> parametros
+//%type<tipo> arg tipo_registro
+//%type<tipo> tipo_arg param_arr
+//%type<var> variable arreglo
 %type<tipo> declaraciones lista_var lista_var2 programa 
 %type funciones 
-%type<listIndice_C> casos casos2
-%type<listIndice_P> predeterminado
-%type<varComp> variable_comp
-%type<datoEst> dato_est_sim
+//%type<listIndice_C> casos casos2
+//%type<listIndice_P> predeterminado
+//%type<varComp> variable_comp
+//%type<datoEst> dato_est_sim
 
 %start programa
 
 %%
 programa:        {printf("==========================P r o g r a m a==========================\n");
                   dir = 0;
-                  codigo = init_code();
+                  //codigo = init_code();
                   pDirecciones = crearPilaDir();
                   pSimbolos = init_sym_tab_stack();
                   pTipos = init_type_tab_stack();
@@ -216,7 +215,7 @@ programa:        {printf("==========================P r o g r a m a=============
                   push_st(pSimbolos,TGS);
                   push_tt(pTipos,TGT);
                   tabCadenas = crearTablaCadenas();
-                  } declaraciones funciones{print_code(codigo);};
+                  } declaraciones funciones{/*print_code(codigo);*/};
 				  
 declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC{
                                                             print_tab_sym(getTopSym(pSimbolos));
@@ -271,7 +270,7 @@ base:   ENTERO {
 				};
 
 tipo_arreglo:	LCOR NUM{printf("num: %s\n",$2.valor);} RCOR tipo_arreglo {
-					printf("tip_arreglo\n");
+					printf("tip_arreglo\n");	
 					if($2.tipe==0){
 						const char *tmp=$2.valor;
 						int n = atoi(tmp);		
@@ -293,17 +292,8 @@ lista_var:		ID{printf("id: %s\n", $1.lexval);} lista_var2{};
 lista_var2: 	COMA ID{"id: %s",$2.lexval;} lista_var2{}
 				| {};
 
+funciones: {}
 %%
 void yyerror(char *msg){
 	printf("%s, token: %s\n",msg, yytext);
-}
-
-void print_code(struct code *c){
-	struct cuad *q =(struct cuad *)malloc(sizeof(struct cuad)); 
-	printf("=========================CODIGO DE 3 DIRECCIONES=========================\n");
-	q=c->head;
-	while(q!=NULL){
-		printf("|%s\t|%s\t|%s\t|%s\t|\n",q->op,q->arg1,q->arg2,q->res);
-		q=q->next;
-	}
 }

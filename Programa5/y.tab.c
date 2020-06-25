@@ -25,7 +25,7 @@
 #include "tabla_simbolos.h"
 #include "tabla_tipos.h"
 /*#include "cuadruplas.h"*/
-#include "backpatch.h"
+/*#include "backpatch.h"*/
 #include "tipos.h"
 #include "tabla_cadenas.h"
 #include "pila_direcciones.h"
@@ -34,7 +34,7 @@ void yyerror(char *s);
 extern int yylineno;
 extern int yylex();
 extern char* yytext;
-void print_code(struct code *c);
+/*void print_code(struct code *c);*/
 
 /*Se deben declarar las estructuras que para nuestro proyecto se tienen.
 * Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
@@ -57,10 +57,10 @@ ARG *arg;
 ARG *arg2; 
 TYP *newTipo;
 TYP *newTYP; 
-CODE *codigo; 
+/*CODE *codigo; */
 ARGS *ListaArg; 
-INDEX *indiceGlobal, *indiceAux; 
-LINDEX *prueba;
+/*INDEX *indiceGlobal, *indiceAux; */
+/*LINDEX *prueba;*/
 /*///////////////////////////Variables doc 2020-2DDS_usr1///////////////////////////////////////*/
 int dir;
 char *dir1, *dir2, *dirTemp; /*Dir temporales*/
@@ -103,30 +103,30 @@ typedef union{
 	    struct cadenas *cad;
 	}cad;
 
-	struct{
-	  	struct list_index *nextlist;/*listIndex*/
+	/*struct{
+	  	struct list_index *nextlist;//listIndex
 	}listIndice_S; 
 	
 	struct{
-		struct list_index *prueba;/*listIndex*/
-	  	struct list_index *nextlist;/*listIndex*/
+		struct list_index *prueba;//listIndex
+	  	struct list_index *nextlist;//listIndex
 	}listIndice_C; 
 
 	struct{
-		struct list_index *prueba;/*listIndex*/
+		struct list_index *prueba;//listIndex
 	}listIndice_P;
 
 	struct{
-	   	struct list_index *listTrue; /*En la DDS viene como truelist*/
-	   	struct list_index *listFalse; /*En la DDS viene como falselist*/
+	   	struct list_index *listTrue; //En la DDS viene como truelist
+	   	struct list_index *listFalse; //En la DDS viene como falselist
 	}eBool;
 
 	struct{
-	    int tipoRel; /*En la DDS viene como tipo */
-	    char* dirRel;/*En la DDS viene como dir*/
-	    struct list_index *listRelTrue;/*En la DDS viene como truelist*/
-	    struct list_index *listRelFalse;/*En la DDS viene como falselist*/
-  	}rel;
+	    int tipoRel; //En la DDS viene como tipo 
+	    char* dirRel;//En la DDS viene como dir
+	    struct list_index *listRelTrue;//En la DDS viene como truelist
+	    struct list_index *listRelFalse;//En la DDS viene como falselist
+  	}rel;*/
 	
 	struct{
     	int tipoExp;
@@ -140,9 +140,9 @@ typedef union{
     	char *idVar;
   	}var;
 	
-	struct{
-    	struct args *listArgs;/*listParam*/
-  	}eListARGS;
+	/*struct{
+    	struct args *listArgs;//listParam
+  	}eListARGS;*/
 
 	struct{
 		int tipoVaComp;
@@ -157,11 +157,9 @@ typedef union{
 		char *des;
 		int code_est;
 	}datoEst;
-	
-
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 165 "y.tab.c"
+#line 163 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -246,92 +244,112 @@ extern int YYPARSE_DECL();
 #define RPAR 306
 #define SITEMP 307
 #define SINO 308
-#define expresion 309
-#define sentencia 310
-#define sentencias 311
-#define e_bool 312
-#define relacional 313
-#define lista_param 314
-#define lista_arg 315
-#define argumentos 316
-#define parametros 317
-#define arg 318
-#define tipo_arg 319
-#define param_arr 320
-#define variable 321
-#define arreglo 322
-#define funciones 323
-#define casos 324
-#define casos2 325
-#define predeterminado 326
-#define variable_comp 327
-#define dato_est_sim 328
 #define YYERRCODE 256
 typedef short YYINT;
 static const YYINT yylhs[] = {                           -1,
-    8,    0,    9,   10,    5,   11,   12,    5,    5,   13,
-    4,   14,    1,    2,    2,    2,    2,    2,   15,    3,
-    3,   16,    6,   17,    7,    7,
+    9,    0,   10,   11,    5,   12,   13,    5,    5,   14,
+    4,   15,    1,    2,    2,    2,    2,    2,   16,    3,
+    3,   17,    6,   18,    7,    7,    8,
 };
 static const YYINT yylen[] = {                            2,
     0,    3,    0,    0,    6,    0,    0,    6,    0,    0,
     5,    0,    3,    1,    1,    1,    1,    1,    0,    5,
-    0,    0,    3,    0,    4,    0,
+    0,    0,    3,    0,    4,    0,    0,
 };
 static const YYINT yydefred[] = {                         1,
     0,    0,    0,   14,   15,   16,   18,   17,    3,   12,
-    6,    0,   10,    0,    0,    0,    2,    0,   22,    0,
+    6,   27,   10,    0,    0,    0,    2,    0,   22,    0,
     0,   13,    0,    0,    0,    4,   19,    7,   11,    0,
    23,    0,    0,    0,   24,    5,    0,    8,    0,   20,
    25,
 };
 static const YYINT yydgoto[] = {                          1,
-    9,   10,   22,   11,   12,   20,   31,    2,   14,   32,
-   16,   34,   18,   15,   33,   25,   39,
+    9,   10,   22,   11,   12,   20,   31,   17,    2,   14,
+   32,   16,   34,   18,   15,   33,   25,   39,
 };
 static const YYINT yysindex[] = {                         0,
-    0, -259, -256,    0,    0,    0,    0,    0,    0,    0,
-    0, -319,    0, -277, -298, -277,    0, -259,    0, -251,
- -276,    0, -250, -249, -274,    0,    0,    0,    0, -272,
-    0, -259, -290, -259,    0,    0, -298,    0, -274,    0,
+    0, -261, -257,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0, -279, -300, -279,    0, -261,    0, -253,
+ -277,    0, -252, -251, -276,    0,    0,    0,    0, -271,
+    0, -261, -291, -261,    0,    0, -300,    0, -276,    0,
     0,
 };
 static const YYINT yyrindex[] = {                         0,
-    0, -309,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0, -266,    0,    0, -237,    0,    0,
-    0,    0,    0,    0, -251,    0,    0,    0,    0,    0,
-    0, -260,    0, -260,    0,    0, -266,    0, -251,    0,
+    0,   13,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0, -268,    0,    0, -245,    0,    0,
+    0,    0,    0,    0, -253,    0,    0,    0,    0,    0,
+    0,    1,    0,    1,    0,    0, -268,    0, -253,    0,
     0,
 };
 static const YYINT yygindex[] = {                         0,
-    0,    0,  -13,    0,  -17,    9,  -12,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,
+    0,    0,  -15,    0,  -11,    8,  -14,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
 };
-#define YYTABLESIZE 63
-static const YYINT yytable[] = {                          9,
-   24,    3,   13,   17,   19,   21,   26,   28,   27,   35,
-   29,   30,   37,    9,   36,   21,   38,    4,    5,    6,
-    7,    8,    9,   40,   23,    0,   41,    0,    0,    0,
+#define YYTABLESIZE 261
+static const YYINT yytable[] = {                          3,
+    9,   13,   19,   21,   26,   28,   24,   27,   29,   30,
+   35,   37,    9,   21,    9,    4,    5,    6,    7,    8,
+   36,   40,   38,   23,   41,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    9,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    9,
 };
-static const YYINT yycheck[] = {                        260,
-   18,  261,  259,  323,  282,  304,  258,  258,  285,  282,
-  260,  286,  303,  323,   32,  282,   34,  277,  278,  279,
-  280,  281,  260,   37,   16,   -1,   39,   -1,   -1,   -1,
+static const YYINT yycheck[] = {                        261,
+    0,  259,  282,  304,  258,  258,   18,  285,  260,  286,
+  282,  303,    0,  282,  260,  277,  278,  279,  280,  281,
+   32,   37,   34,   16,   39,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,  323,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+  260,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define YYMAXTOKEN 328
-#define YYUNDFTOKEN 348
+#define YYMAXTOKEN 308
+#define YYUNDFTOKEN 329
 #define YYTRANSLATE(a) ((a) > YYMAXTOKEN ? YYUNDFTOKEN : (a))
 #if YYDEBUG
 static const char *const yyname[] = {
@@ -347,11 +365,8 @@ static const char *const yyname[] = {
 "TERMINAR","CASO","PRED","DOSP","FALSE","TRUE","ENTERO","REAL","DREAL","SIN",
 "CAR","ID","CARACTER","CADENA","NUM","COMA","IGUAL","OR","AND","IDENTICO",
 "DIFERENTE","MENORQUE","MENORIGUAL","MAYORIGUAL","MAYORQUE","MAS","MENOS","MUL",
-"DIV","MODULO","NOT","PUNTO","RCOR","LCOR","LPAR","RPAR","SITEMP","SINO",
-"expresion","sentencia","sentencias","e_bool","relacional","lista_param",
-"lista_arg","argumentos","parametros","arg","tipo_arg","param_arr","variable",
-"arreglo","funciones","casos","casos2","predeterminado","variable_comp",
-"dato_est_sim",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"illegal-symbol",
+"DIV","MODULO","NOT","PUNTO","RCOR","LCOR","LPAR","RPAR","SITEMP","SINO",0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"illegal-symbol",
 };
 static const char *const yyrule[] = {
 "$accept : programa",
@@ -381,6 +396,7 @@ static const char *const yyrule[] = {
 "$$10 :",
 "lista_var2 : COMA ID $$10 lista_var2",
 "lista_var2 :",
+"funciones :",
 
 };
 #endif
@@ -422,17 +438,7 @@ static YYSTACKDATA yystack;
 void yyerror(char *msg){
 	printf("%s, token: %s\n",msg, yytext);
 }
-
-void print_code(struct code *c){
-	struct cuad *q =(struct cuad *)malloc(sizeof(struct cuad)); 
-	printf("=========================CODIGO DE 3 DIRECCIONES=========================\n");
-	q=c->head;
-	while(q!=NULL){
-		printf("|%s\t|%s\t|%s\t|%s\t|\n",q->op,q->arg1,q->arg2,q->res);
-		q=q->next;
-	}
-}
-#line 436 "y.tab.c"
+#line 442 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -635,10 +641,10 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 206 "parser_pruebas.y"
+#line 205 "parser_pruebas.y"
 	{printf("==========================P r o g r a m a==========================\n");
                   dir = 0;
-                  codigo = init_code();
+                  /*codigo = init_code();*/
                   pDirecciones = crearPilaDir();
                   pSimbolos = init_sym_tab_stack();
                   pTipos = init_type_tab_stack();
@@ -652,37 +658,37 @@ case 1:
                   }
 break;
 case 2:
-#line 219 "parser_pruebas.y"
-	{print_code(codigo);}
+#line 218 "parser_pruebas.y"
+	{/*print_code(codigo);*/}
 break;
 case 3:
-#line 221 "parser_pruebas.y"
+#line 220 "parser_pruebas.y"
 	{typeGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 4:
-#line 221 "parser_pruebas.y"
+#line 220 "parser_pruebas.y"
 	{
                                                             print_tab_sym(getTopSym(pSimbolos));
                                                             print_tab_type(getTopType(pTipos));															
 															}
 break;
 case 6:
-#line 225 "parser_pruebas.y"
+#line 224 "parser_pruebas.y"
 	{typeGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 7:
-#line 225 "parser_pruebas.y"
+#line 224 "parser_pruebas.y"
 	{
 																		print_tab_sym(getTopSym(pSimbolos));
                                                             			print_tab_type(getTopType(pTipos));	
 																	}
 break;
 case 9:
-#line 229 "parser_pruebas.y"
+#line 228 "parser_pruebas.y"
 	{}
 break;
 case 10:
-#line 231 "parser_pruebas.y"
+#line 230 "parser_pruebas.y"
 	{TS1 = init_sym_tab();
 							   	  TT1 = init_type_tab(TT1);
 								  structDir = crearDir();
@@ -694,7 +700,7 @@ case 10:
 								}
 break;
 case 11:
-#line 239 "parser_pruebas.y"
+#line 238 "parser_pruebas.y"
 	{
 									TT1 = pop_tt(pTipos);
 									TS1 = pop_st(pSimbolos);
@@ -706,54 +712,54 @@ case 11:
 									}
 break;
 case 12:
-#line 249 "parser_pruebas.y"
+#line 248 "parser_pruebas.y"
 	{baseGBL=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 13:
-#line 249 "parser_pruebas.y"
+#line 248 "parser_pruebas.y"
 	{yyval.tipo.valorTipo=yystack.l_mark[0].tipo.valorTipo;}
 break;
 case 14:
-#line 252 "parser_pruebas.y"
+#line 251 "parser_pruebas.y"
 	{
 				yyval.tipo.valorTipo=0;
 				printf("entero\n");
 			}
 break;
 case 15:
-#line 256 "parser_pruebas.y"
+#line 255 "parser_pruebas.y"
 	{
 				yyval.tipo.valorTipo=1;
 				printf("real\n");
 				}
 break;
 case 16:
-#line 260 "parser_pruebas.y"
+#line 259 "parser_pruebas.y"
 	{
 				yyval.tipo.valorTipo=4;
 				printf("dreal\n");
 				}
 break;
 case 17:
-#line 264 "parser_pruebas.y"
+#line 263 "parser_pruebas.y"
 	{
 				yyval.tipo.valorTipo=2;
 				printf("car\n");
 				}
 break;
 case 18:
-#line 268 "parser_pruebas.y"
+#line 267 "parser_pruebas.y"
 	{
 				yyval.tipo.valorTipo=3;
 				printf("sin\n");
 				}
 break;
 case 19:
-#line 273 "parser_pruebas.y"
+#line 272 "parser_pruebas.y"
 	{printf("num: %s\n",yystack.l_mark[0].num.valor);}
 break;
 case 20:
-#line 273 "parser_pruebas.y"
+#line 272 "parser_pruebas.y"
 	{
 					printf("tip_arreglo\n");
 					if(yystack.l_mark[-3].num.tipe==0){
@@ -773,30 +779,34 @@ case 20:
 				}
 break;
 case 21:
-#line 289 "parser_pruebas.y"
+#line 288 "parser_pruebas.y"
 	{ yyval.tipo.valorTipo = baseGBL; }
 break;
 case 22:
-#line 291 "parser_pruebas.y"
+#line 290 "parser_pruebas.y"
 	{printf("id: %s\n", yystack.l_mark[0].id.lexval);}
 break;
 case 23:
-#line 291 "parser_pruebas.y"
+#line 290 "parser_pruebas.y"
 	{}
 break;
 case 24:
-#line 293 "parser_pruebas.y"
+#line 292 "parser_pruebas.y"
 	{"id: %s",yystack.l_mark[0].id.lexval;}
 break;
 case 25:
-#line 293 "parser_pruebas.y"
+#line 292 "parser_pruebas.y"
 	{}
 break;
 case 26:
-#line 294 "parser_pruebas.y"
+#line 293 "parser_pruebas.y"
 	{}
 break;
-#line 800 "y.tab.c"
+case 27:
+#line 295 "parser_pruebas.y"
+	{}
+break;
+#line 810 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

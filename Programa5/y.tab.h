@@ -50,26 +50,6 @@
 #define RPAR 306
 #define SITEMP 307
 #define SINO 308
-#define expresion 309
-#define sentencia 310
-#define sentencias 311
-#define e_bool 312
-#define relacional 313
-#define lista_param 314
-#define lista_arg 315
-#define argumentos 316
-#define parametros 317
-#define arg 318
-#define tipo_arg 319
-#define param_arr 320
-#define variable 321
-#define arreglo 322
-#define funciones 323
-#define casos 324
-#define casos2 325
-#define predeterminado 326
-#define variable_comp 327
-#define dato_est_sim 328
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -97,30 +77,30 @@ typedef union{
 	    struct cadenas *cad;
 	}cad;
 
-	struct{
-	  	struct list_index *nextlist;/*listIndex*/
+	/*struct{
+	  	struct list_index *nextlist;//listIndex
 	}listIndice_S; 
 	
 	struct{
-		struct list_index *prueba;/*listIndex*/
-	  	struct list_index *nextlist;/*listIndex*/
+		struct list_index *prueba;//listIndex
+	  	struct list_index *nextlist;//listIndex
 	}listIndice_C; 
 
 	struct{
-		struct list_index *prueba;/*listIndex*/
+		struct list_index *prueba;//listIndex
 	}listIndice_P;
 
 	struct{
-	   	struct list_index *listTrue; /*En la DDS viene como truelist*/
-	   	struct list_index *listFalse; /*En la DDS viene como falselist*/
+	   	struct list_index *listTrue; //En la DDS viene como truelist
+	   	struct list_index *listFalse; //En la DDS viene como falselist
 	}eBool;
 
 	struct{
-	    int tipoRel; /*En la DDS viene como tipo */
-	    char* dirRel;/*En la DDS viene como dir*/
-	    struct list_index *listRelTrue;/*En la DDS viene como truelist*/
-	    struct list_index *listRelFalse;/*En la DDS viene como falselist*/
-  	}rel;
+	    int tipoRel; //En la DDS viene como tipo 
+	    char* dirRel;//En la DDS viene como dir
+	    struct list_index *listRelTrue;//En la DDS viene como truelist
+	    struct list_index *listRelFalse;//En la DDS viene como falselist
+  	}rel;*/
 	
 	struct{
     	int tipoExp;
@@ -134,9 +114,9 @@ typedef union{
     	char *idVar;
   	}var;
 	
-	struct{
-    	struct args *listArgs;/*listParam*/
-  	}eListARGS;
+	/*struct{
+    	struct args *listArgs;//listParam
+  	}eListARGS;*/
 
 	struct{
 		int tipoVaComp;
@@ -151,8 +131,6 @@ typedef union{
 		char *des;
 		int code_est;
 	}datoEst;
-	
-
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
 extern YYSTYPE yylval;

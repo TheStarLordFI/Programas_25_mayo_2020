@@ -15,7 +15,7 @@ parserT:
 prueba:
 	flex lexer.l
 	byacc -d -v parser_pruebas.y
-	gcc lex.yy.c y.tab.c tabla_simbolos.c tabla_tipos.c tipos.c cuadruplas.c backpatch.c pila_direcciones.c tabla_cadenas.c main.c -o prueba
+	gcc lex.yy.c y.tab.c tabla_simbolos.c tabla_tipos.c pila_direcciones.c tabla_cadenas.c main.c -o prueba
 test:
 	./prueba entrada
 exec2:

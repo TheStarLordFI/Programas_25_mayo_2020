@@ -8,8 +8,6 @@
   #include <string.h>
   #include <stdlib.h>
   #include "y.tab.h"
-  #include "cuadruplas.h"
-  extern void print_code(CODE *c);
   extern void yyerror(char *s);
 %}
 
