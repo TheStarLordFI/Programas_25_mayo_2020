@@ -121,3 +121,14 @@ char* newTemp(){
   strcat(n,tem);
   return n;
 }
+
+/*hace lo mismo que init_quad()
+QUAD *new_quad_prueba(char *op, char *arg1, char *arg2, char *res){
+    QUAD *cuadrupla = (QUAD *)malloc(sizeof(QUAD));
+    strcpy(cuadrupla->op, op);
+    strcpy(cuadrupla->arg1, arg1);
+    strcpycuadrupla->arg2 = arg2;
+    cuadrupla->res = res;
+    cuadrupla->next = NULL;
+    return cuadrupla;
+}*/

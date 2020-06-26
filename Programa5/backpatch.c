@@ -140,8 +140,8 @@ LINDEX *combinar(LINDEX *l1,LINDEX *l2){
 * Fecha de creación: 14 de junio 2020
 */
 char *create_label(){
-    char *label=(char*)malloc(sizeof(char));
-    char *tmp=(char*)malloc(sizeof(char));
+    char *label=(char*)malloc(sizeof(char)*15);
+    char *tmp=(char*)malloc(sizeof(char)*15);
     strcpy(label, "L");
     sprintf(tmp, "%i", contLabel);
     strcat(label, tmp);
@@ -183,7 +183,7 @@ void backpatch(CODE *c, LINDEX *l, char *label){
 void sustituir(char *label, char *var, LINDEX *l, CODE *c){
     QUAD *q = (QUAD*)malloc(sizeof(QUAD));
     INDEX *i = (INDEX *)malloc(sizeof(INDEX));
-    char *tmp=(char*)malloc(sizeof(char));
+    char *tmp=(char*)malloc(sizeof(char)*15);
  
     if(l!=NULL){
         i = l->head;
@@ -207,7 +207,7 @@ void sustituir(char *label, char *var, LINDEX *l, CODE *c){
 void sustituir_cc(char *label, char *var, LINDEX *l, CODE *c){
     QUAD *q = (QUAD*)malloc(sizeof(QUAD));
     INDEX *i =(INDEX *)malloc(sizeof(INDEX));
-    char *tmp=(char*)malloc(sizeof(char));
+    char *tmp=(char*)malloc(sizeof(char)*15);
  
     if(l!=NULL){
         i = l->head;

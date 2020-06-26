@@ -17,8 +17,8 @@ int conta_tmp = 0; //contador gobal de teporales creadas
 */
 char* nuevaTemp(){
     conta_tmp++;
-    char *n=(char*)malloc(sizeof(char));
-    char *tem=(char*)malloc(sizeof(char));
+    char *n=(char*)malloc(sizeof(char)*15);
+    char *tem=(char*)malloc(sizeof(char)*15);
     strcpy(n,"tmp");
     sprintf(tem, "%i", conta_tmp);
     strcat(n,tem);
@@ -36,7 +36,7 @@ char* nuevaTemp(){
 * Fecha de creación: 10 de junio 2020
 */
 char *ampliar(char *dir, int t1, int t2, CODE *c){
-    char* nuevaDir = (char*)malloc(sizeof(char));
+    char* nuevaDir = (char*)malloc(sizeof(char)*15);
     char *ent = "(ENT)";
     char *real = "(REAL)";
     char *dreal = "(DREAL)";
@@ -73,7 +73,7 @@ char *ampliar(char *dir, int t1, int t2, CODE *c){
 * Fecha de creación: 10 de junio 2020
 */
 char *reducir(char *dir, int t1, int t2, CODE *c){
-    char* nuevaDir=(char*)malloc(sizeof(char));
+    char* nuevaDir=(char*)malloc(sizeof(char)*15);
     char *car = "(CAR)";
     char *real = "(REAL)";
     char *ent = "(ENT)";

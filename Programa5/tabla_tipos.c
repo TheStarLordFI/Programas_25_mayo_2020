@@ -94,9 +94,16 @@ void print_tab_type(TYPTAB *t){
 * Fecha de creación: 31 Mayo 2020
 */
 
-TB *getTipoBase(TYPTAB *t , int id){
-  TYP *tipoDato = search_type(t, id);
-  return tipoDato ? tipoDato->tb : NULL;
+int getTipoBase(TYPTAB *tt , int id){
+  if (tt == NULL || id < 0) { return -1; }
+    TYP *t = tt->head;
+    while (t!= NULL) {
+        if (t->id == id) { 
+          return t->tb->tipo.tipo;
+        }
+        t = t->next;
+    }
+    return -1;
 }
 
 /*
@@ -277,6 +284,24 @@ void finish_type(TYP *S ){
   free(S);
 }
 
+/*
+* Función: get_TS_asoc
+* Descripción: Regresa la tabla de simbolos asociada a un tipo 
+* Autor: Rodríguez Sánchez José Andrés
+* Fecha de creación: 31 Mayo 2020
+*/
+SYMTAB *get_TS_asoc(TYPTAB *tt, int id){
+  if (tt == NULL || id < 0) { return NULL; }
+    TYP *t_tmp;
+    t_tmp = tt->head;
+    while (t_tmp != NULL) {
+        if (t_tmp->id == id){
+          return t_tmp->tb->tipo.est;
+        }
+        t_tmp = t_tmp->next;
+    }
+    return NULL;
+}
 
 /*
 * Función: set_typ

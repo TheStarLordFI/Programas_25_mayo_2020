@@ -50,24 +50,6 @@
 #define RPAR 306
 #define SITEMP 307
 #define SINO 308
-#define expresion 309
-#define sentencia 310
-#define sentencias 311
-#define e_bool 312
-#define relacional 313
-#define lista_param 314
-#define parametros 315
-#define tipo_arg 316
-#define param_arr 317
-#define variable 318
-#define arreglo 319
-#define casos 320
-#define casos2 321
-#define predeterminado 322
-#define variable_comp 323
-#define dato_est_sim 324
-#define delaraciones 325
-#define FIN 326
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -108,16 +90,21 @@ typedef union{
 
 	struct{
 		int tipo;
-		char dir[32];
+		char *dir;
 		int valor;
 	}exp;
 
 	struct{
 		char dir[32];
 		int tipo;
-		struct list_index *truelist;
-		struct list_index *falselist;
+		struct list_index *listTrue;
+		struct list_index *listFalse;
 	}e_b;
+
+	struct{
+		struct code *prueba;
+		struct list_index *nextList;
+	}casosPred;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
 extern YYSTYPE yylval;

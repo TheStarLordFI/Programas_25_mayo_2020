@@ -30,4 +30,6 @@ QUAD *search_quad_index(CODE *c,char *i); //busca un indice en quad
 
 char* newTemp();
 
+QUAD *new_quad_prueba(char *op, char *arg1, char *arg2, char *res);
+
 #endif

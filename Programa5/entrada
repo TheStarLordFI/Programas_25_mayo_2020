@@ -1,7 +1,15 @@
-def ent prueba1(sin) inicio 
+estructura inicio
+    ent e1;
+    real e2;
+fin est;
+ent [3][4]arr;
+ent x1,x2,x3;
+dreal i1,j1;
+
+def ent prueba1(ent u1, real []xy) inicio 
     ent a,b,c,l,k,g,p,j; 
-    real vLocal; 
-    vLocal := 5.2; 
+    real v_Local,v2; 
+    v_Local := 5.2; 
     a := 5 + 4; 
     b := 5 + 4.5 * 7-2; 
     l := 7*8; 

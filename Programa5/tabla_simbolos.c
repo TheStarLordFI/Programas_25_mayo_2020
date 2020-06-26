@@ -274,6 +274,7 @@ int getNumArgs(SYMTAB *st,char *id){
 * Fecha de creación: 31 de mayo 2020
 */
 void append_arg(ARGS* args, int arg){
+  printf(" Agregando argumento ...\n");
   if (args->head == NULL){
         args->head = init_arg(arg);
         args->num = 1;
@@ -367,7 +368,7 @@ ARGS *init_args(){
   nuevoArgs->head = NULL;
   nuevoArgs->num = 0;
   nuevoArgs->tail=NULL;
-  printf("Creando nueva lista de argumentos\n");
+  //printf("Creando nueva lista de argumentos\n");
   return nuevoArgs;
 }
 

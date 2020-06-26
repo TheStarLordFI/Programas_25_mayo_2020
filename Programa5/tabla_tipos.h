@@ -21,7 +21,7 @@ void finish_type_tab(TYPTAB *st); //*Libera memoria para una tabla de tipos
 void finish_type(TYP *s); //*libera memoria para un tipo
 
 int getTam(TYPTAB *t , int id);//*Retorna el tam de un tipo
-TB *getTipoBase(TYPTAB *t , int id); //*retorna el tipo base
+int getTipoBase(TYPTAB *t , int id); //*retorna el tipo base
 char *getNombre( TYPTAB *t , int id ) ; //*retorna el nombre de un tipo tambien lo puede cambiar por un entero
 void print_tab_type(TYPTAB *t ); //*Imprime en pantalla la tabla de tipos
 TYPTAB *getTopType(TSTACK *pilaTT);//Retorna el tope de la pila de tipos
@@ -30,4 +30,5 @@ TYPTAB *getTopType(TSTACK *pilaTT);//Retorna el tope de la pila de tipos
 TYP *set_typ(TYP *type, char *nombre, int idTipo, int tam, TYPTAB *tabTipos);
 TYP *set_typ_struct(TYP *type, char *nombre, int idTipoB, TYPTAB *tabTipos,SYMTAB *tabSym);
 int getTamStruct(TYPTAB *tabTipos, SYMTAB *tabSym, int idTipoB);
+SYMTAB *get_TS_asoc(TYPTAB *tt, int id);
 #endif
