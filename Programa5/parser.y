@@ -18,128 +18,80 @@
 #include "pila_direcciones.h"
 
 void yyerror(char *s);
-extern int yylineno;
 extern int yylex();
 extern char* yytext;
 void print_code(struct code *c);
-
-/*Se deben declarar las estructuras que para nuestro proyecto se tienen.
-* Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
-*/
-SSTACK *pSimbolos; 
-TSTACK *pTipos; 
-DSTACK *pDirecciones;
+/////////////////////////////estructuras/////////////////////////////////////
+CODE *codigo;
+SYM *simbol;
+SYMTAB *new_ST;
+TYPTAB *new_TT;
+SSTACK *stack_sym;
+TSTACK *stack_type;
+SYMTAB *tab_sym;
+SYMTAB *tab_symGBL;
+SYMTAB *tab_sym_struct;
+TYPTAB *tab_type_struct;
+TYPTAB *tab_type;
+TYPTAB *tab_typeGBL;
+DSTACK *stack_dir;
 DIR *structDir;
-SYMTAB *TGS;
-SYMTAB *TS1;
-SYMTAB *tTempSimbol;
-//TGT: Tabla General de Tipos, TT1: Tabla Tipos 1
-TYPTAB *TGT;
-TYPTAB *TT1; 
-TYPTAB *tTempTipos; 
-CADTAB *tabCadenas;
-SYM *simbol; 
-ARG *argx; 
-ARG *arg; 
-ARG *arg2; 
-TYP *newTipo;
-TYP *newTYP; 
-CODE *codigo; 
-ARGS *ListaArg; 
-INDEX *indiceGlobal, *indiceAux; 
-LINDEX *prueba;
-/////////////////////////////Variables doc 2020-2DDS_usr1///////////////////////////////////////
-int dir;
-char *dir1, *dir2, *dirTemp; //Dir temporales
-int typeGBL;
-int typeTemp;
-int tam;
+ARG *argx;
+/////////////////////////////Variables///////////////////////////////////////
+int tipoGBL;
 int baseGBL;
+int tamTSGBL;
+int address;
 int funcType;
 bool funcReturn;
-char *L, *tmpLabel;
-char *L1, *L2; //L temporales
-char IDGBL[32];
-char *estTemp;//nombre de la tabla de tipos
-char *tmpEtq;
+ARGS *listaRET;
+char idGBL[32];
 %}
 
 %union{
+	char dir[32];
+	
+	int base;
+	
 	struct{
-    	int valorTipo;
-  	}tipo;
+		struct list_index *nextList;
+		char label[15];
+		char final_label[15];
+	}tSentencia;
 
 	struct{
-	    int tipe;
-	    char* valor;
+		int tipo;
+		int num;
+		char dir[32];
 	}num;
 
 	struct{
-	   char *lexval;
-	}id;
-		
-	struct{
-	    int tipoCad;
-	    char *lexval;
-	    struct cadenas *cad;
-	}cad;
+		int num;
+		struct args *listArgs;
+	}list;
 
 	struct{
-	  	struct list_index *nextlist;//listIndex
-	}listIndice_S; 
-	
-	struct{
-		struct list_index *prueba;//listIndex
-	  	struct list_index *nextlist;//listIndex
-	}listIndice_C; 
+		char dir[20];
+		char base[20];
+		int des;
+		int tipo;
+		int estruct;
+		int code_struct;
+		struct sym_tab *tab_sym;
+	}var;
 
 	struct{
-		struct list_index *prueba;//listIndex
-	}listIndice_P;
+		int tipo;
+		char dir[32];
+		int valor;
+	}exp;
 
 	struct{
-	   	struct list_index *listTrue; //En la DDS viene como truelist
-	   	struct list_index *listFalse; //En la DDS viene como falselist
-	}eBool;
-
-	struct{
-	    int tipoRel; //En la DDS viene como tipo 
-	    char* dirRel;//En la DDS viene como dir
-	    struct list_index *listRelTrue;//En la DDS viene como truelist
-	    struct list_index *listRelFalse;//En la DDS viene como falselist
-  	}rel;
-	
-	struct{
-    	int tipoExp;
-		char *dirExp;
-    }eExpr;
-	
-	struct{
-    	int tipoVA;
-    	int baseVA;
-    	int tam;
-    	char *idVar;
-  	}var;
-	
-	struct{
-    	struct args *listArgs;//listParam
-  	}eListARGS;
-
-	struct{
-		int tipoVaComp;
-		char *des;
-		int code_est;
-	}varComp;
-
-	struct{
-		int estructura;
-		struct SYMTAB *tabla;
-		int type;
-		char *des;
-		int code_est;
-	}datoEst;
-	
-
+		char dir[32];
+		int tipo;
+		struct list_index *truelist;
+		struct list_index *falselist;
+	}e_b;
 }
 
 %token ERROR
@@ -151,7 +103,7 @@ char *tmpEtq;
 %token DEF
 %token IF THEN
 %token WHILE 
-%token DO 
+%token<dir> DO 
 %token SEGUN
 %token WRITE 
 %token DEV
@@ -160,10 +112,10 @@ char *tmpEtq;
 %token CASO PRED
 %token DOSP
 %token FALSE TRUE
-%token ENTERO REAL DREAL SIN CAR
-%token<id> ID
-%token CARACTER
-%token<cad> CADENA
+%token<base> ENTERO REAL DREAL SIN CAR
+%token<dir> ID
+%token<dir> CARACTER
+%token<dir> CADENA
 %token<num> NUM
 
 %token COMA 
@@ -182,552 +134,177 @@ char *tmpEtq;
 %nonassoc SITEMP
 %nonassoc SINO
 
-%type<tipo> tipo base tipo_arreglo
-%type<eExpr> expresion
-%type<listIndice_S> sentencia sentencias
-%type<eBool> e_bool
-%type<rel> relacional
-%type<eListARGS> lista_param lista_arg
-%type<eListARGS> argumentos
-%type<eListARGS> parametros
-%type<tipo> arg tipo_registro
-%type<tipo> tipo_arg param_arr
+%type<base> tipo base tipo_arreglo
+%type<exp> expresion
+%type<tSentencia> sentencia sentencias
+%type<e_b> e_bool
+%type<e_b> relacional
+%type<list> lista_param lista_arg
+%type<list> argumentos
+%type<list> parametros
+%type<dir> tipo_registro
+%type<base> tipo_arg param_arr arg 
 %type<var> variable arreglo
-%type declaraciones
-%type lista_var
-%type lista_var2
-%type funciones
-%type<listIndice_C> casos casos2
-%type<listIndice_P> predeterminado
-%type<varComp> variable_comp
-%type<datoEst> dato_est_sim
+%type<dir> programa declaraciones
+%type<dir> lista_var
+%type<dir> lista_var2
+%type<dir> funciones
+%type<dir> casos casos2
+%type<dir> predeterminado
+%type<var> variable_comp
+%type<var> dato_est_sim
 
 %start programa
 
 %%
-programa:        {printf("==========================P r o g r a m a==========================\n");
-                  dir = 0;
-                  codigo = init_code();
-                  pDirecciones = crearPilaDir();
-                  pSimbolos = init_sym_tab_stack();
-                  pTipos = init_type_tab_stack();
-                  TGT = init_type_tab(TGT);
-				  printf(">>>>>>Tabla general de tipos>>>>>>\n");
-				  print_tab_type(TGT);
-                  TGS = init_sym_tab();
-                  push_st(pSimbolos,TGS);
-                  push_tt(pTipos,TGT);
-                  tabCadenas = crearTablaCadenas();
-                  } declaraciones funciones{print_code(codigo);};
-				  
-declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC{} declaraciones
-                | tipo_registro {typeGBL=$1.valorTipo;} lista_var PYC{
-																		print_tab_sym(getTopSym(pSimbolos));
-                                                            			print_tab_type(getTopType(pTipos));	
-																	} declaraciones
-                | {};
+programa: {
+			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>P R O G R A M A>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			codigo = init_code();
+			stack_dir = crearPilaDir();
+			stack_sym = init_sym_tab_stack();
+			stack_type = init_type_tab_stack();
+			tab_typeGBL = init_type_tab(tab_typeGBL);
+			printf(">>>>>>>>>>T A B   G E N E R A L    D E   T I P O S>>>>>>>>>>\n");
+			print_tab_type(tab_typeGBL);
+			tab_symGBL = init_sym_tab();
+			push_st(stack_sym,tab_symGBL);
+			push_tt(stack_type,tab_typeGBL);
+			address=0;
+			stack_sym->top->tt_asoc = stack_type->top; 
+		} declaraciones funciones { print_code(codigo); }; 
 
-tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
-							   	  TT1 = init_type_tab(TT1);
-								  structDir = crearDir();
-								  //structDir->info = dir;
-								  pushPDir(structDir, pDirecciones);
-								  dir = 0;
-								  push_tt(pTipos,TT1);
-								  push_st(pSimbolos, TS1);} declaraciones END {
-									TT1 = pop_tt(pTipos);
-									TS1 = pop_st(pSimbolos);
-									structDir = popPDir(pDirecciones);
-									dir = structDir->info;
-									newTYP = set_typ_struct(init_type(),"struct",0,TT1, TS1);
-									typeTemp = append_type(TT1, newTYP);
-									$$.valorTipo=typeTemp;
-									};
+declaraciones: tipo {tipoGBL = $1;} lista_var PYC delaraciones {}
+			| tipo_registro lista_var PYC declaraciones {}
+			| {};
 
-tipo:             base{baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;};
+tipo_registro: ESTRUCT INICIO{
+							tab_sym_struct = init_sym_tab();
+							tab_type_struct = init_type_tab(tab_type_struct);
+							structDir = crearDir();
+							structDir->info = address;
+							pushPDir(structDir, stack_dir);
+							push_tt(stack_type,tab_type_struct);
+							push_st(stack_sym, tab_sym_struct);
+						
+						} declaraciones END{
+								print_tab_sym(tab_sym_struct);
+								print_tab_type(tab_type_struct);
+								tab_typeGBL = pop_tt(stack_type);
+								tab_symGBL = pop_st(stack_sym);
+								structDir = popPDir(stack_dir);
+								address = structDir->info;
+								TYP *newTYP = set_typ_struct(init_type(),"struct",0,tab_type_struct,tab_sym_struct);
+								tipoGBL = append_type(tab_type_struct, newTYP);
+						} ;
 
-base:   ENTERO {
-				$$.valorTipo=0;
-			} 
-		| REAL {
-				$$.valorTipo=1;
-				} 
-		| DREAL {
-				$$.valorTipo=4;
-				} 
-		| CAR {
-				$$.valorTipo=2;
-				} 
-		| SIN {
-				$$.valorTipo=3;
-				};
+tipo: base { baseGBL = $1; } tipo_arreglo { $$ = $3; };
 
-tipo_arreglo:	LCOR NUM RCOR tipo_arreglo {
-					printf("tip_arreglo\n");
-					if($2.tipe==0){
-						const char *tmp=$2.valor;
-						int n = atoi(tmp);		
-						if(n>0){
-							newTYP = init_type();
-							newTYP = set_typ(newTYP,"array",$4.valorTipo,n*getTam(getTopType(pTipos),$4.valorTipo),getTopType(pTipos));
-							$$.valorTipo = append_type(getTopType(pTipos), newTYP);
-						}
-						else{
-							printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
-						}
+base: ENTERO { 
+			$$ = 0; }
+	  | REAL { 
+		  $$ = 1; }
+	  | DREAL { 
+		  $$ = 4; }
+	  | CAR { 
+		  $$ = 2; }
+	  |	SIN { 
+		  $$ = 3; };
+
+tipo_arreglo: LCOR NUM RCOR tipo_arreglo{
+				if ($2.tipo == 0){
+					if($2.num > 0 ){
+						TYP *newTYP = init_type();
+						newTYP = set_typ(newTYP,"array",$4,$2.num*getTam(getTopType(stack_type),$4),getTopType(stack_type));
+						$$ = append_type(getTopType(stack_type), newTYP);
+					}else{ printf("ERROR >>> El tam del arreglo debe ser mayo a cero\n"); }
+				}else { printf("ERROR >>> El tam del arreglo debe ser un numero entero\n"); }
+			}
+			| { $$ = baseGBL; };
+
+lista_var: ID lista_var2 {
+					if(search_id_symbol(getTopSym(stack_sym),$1)==-1){
+						SYM *new_sym = init_sym();
+						new_sym= set_sym(new_sym, $1, address, tipoGBL, "var", NULL, getTopSym(stack_sym), getTopType(stack_type));
+						append_sym(getTopSym(stack_sym),new_sym);
+						address = address + getTam(getTopType(stack_type), tipoGBL);
 					}else{
-						printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
+						printf("ERROR >>> El ID ya fue declarado \n");
 					}
-				} | {$$.valorTipo=baseGBL;} ;
-
-lista_var:		ID lista_var2{
-							if( search_id_symbol(getTopSym(pSimbolos),$1.lexval) == -1){
-								simbol = init_sym();
-								simbol = set_sym(simbol, $1.lexval, dir, typeGBL, "var", NULL, pSimbolos->top, getTopType(pTipos));
-								append_sym(pSimbolos->top,simbol);
-								dir = dir + getTam(getTopType(pTipos), typeGBL);
-							}
-							else{
-								printf("El identificador ya fue declarado\n");
-							}
 				};
 
-lista_var2: 	COMA ID lista_var2{
-									printf("Agregando var\n");
-									if( search_id_symbol(getTopSym(pSimbolos),$2.lexval) == -1){
-										simbol = init_sym(); 
-										simbol=set_sym(simbol, $2.lexval, dir, typeGBL, "var", NULL, pSimbolos->top, getTopType(pTipos));
-										append_sym(pSimbolos->top,simbol);
-										dir = dir + getTam(getTopType(pTipos), typeGBL);
-									}
-									else{
-										printf("El identificador ya fue declarado\n");
-									}  
-							}
-				| {};
-
-funciones:        DEF tipo ID {if(search_id_symbol(TGS,$3.lexval) == -1){
-									simbol = init_sym();
-									simbol = set_sym(simbol,$3.lexval,-1,$2.valorTipo,"func",NULL,TGS,TGT);
-									append_sym(TGS,simbol);
-									structDir = crearDir();
-									structDir->info = dir;
-									pushPDir(structDir,pDirecciones);
-									funcType = $2.valorTipo;
-									funcReturn = false;
-									dir = 0;
-									TS1 = init_sym_tab();
-							   	  	TT1 = init_type_tab(TT1);
-									push_tt(pTipos,TT1);
-								 	push_st(pSimbolos, TS1);
-									append_new_quad(codigo,"label","-","-",$3.lexval);
-								}
-
-					} LPAR argumentos RPAR INICIO declaraciones sentencias END{
-						tmpEtq = create_label();
-						backpatch(codigo,$10.nextlist,tmpEtq);
-						TT1= pop_tt(pTipos);
-                        TS1= pop_st(pSimbolos);
-						structDir = popPDir(pDirecciones);
-						dir = structDir->info;
-						simbol = init_sym();
-						simbol = search_SYM(pSimbolos->top,$3.lexval);
-						simbol->args = $6.listArgs;
-
-						if($2.valorTipo != 3 && funcReturn == false){
-							printf("Error la funcion no tiene valor de retorno\n");
+lista_var2: COMA ID lista_var2{
+						if(search_id_symbol(getTopSym(stack_sym),$2)==-1){
+							SYM *new_sym = init_sym();
+							new_sym= set_sym(new_sym, $2, address, tipoGBL, "var", NULL, getTopSym(stack_sym), getTopType(stack_type));
+							append_sym(getTopSym(stack_sym),new_sym);
+							address = address + getTam(getTopType(stack_type), tipoGBL);
+						}else{
+							printf("ERROR >>> El ID ya fue declarado \n");
 						}
-					} funciones| {};
-                    
-argumentos:       	lista_arg{$$.listArgs=$1.listArgs;} 
-					| SIN{$$.listArgs=NULL;};
+					}
+			| {};
 
-lista_arg:      lista_arg COMA arg {
+funciones: DEF tipo ID{
+					if(search_id_symbol(getTopSym(stack_sym),$3)==-1){
+							simbol = init_sym();
+							simbol = set_sym(simbol,$3,-1,$2,"func",NULL,tab_symGBL,tab_typeGBL);
+							append_sym(tab_symGBL,simbol);
+							structDir = crearDir();
+							structDir->info = address;
+							pushPDir(structDir,stack_dir);
+							funcType = $2;
+							funcReturn = false;
+							address = 0;
+							new_ST = init_sym_tab();
+							new_TT = init_type_tab(new_TT);
+							push_tt(stack_type,new_TT);
+							push_st(stack_sym, new_ST);
+							append_new_quad(codigo,"label","-","-",$3);
+					}else{
+						printf("ERROR >>> El ID ya fue declarado \n");
+					}
+				} LPAR argumentos RPAR INICIO declaraciones sentencias FIN {
+					simbol = init_sym();
+					simbol = search_SYM(getTopSym(stack_sym),$3);
+					simbol->args = $6.listArgs;
+					char *tmpEtq = create_label();
+					backpatch(codigo,$10.nextList,tmpEtq);
+					new_TT= pop_tt(stack_type);
+					new_ST= pop_st(stack_sym);
+					structDir = popPDir(stack_dir);
+					address = structDir->info;
+					if($2 != 3 && funcReturn == false){
+						printf("ERROR >>> la funcion no tiene valor de retorno\n");
+					}
+				} funciones {}
+			| {};
+
+argumentos: lista_arg { $$.listArgs = $1.listArgs; $$.num = $1.num; }
+			| SIN {  $$.listArgs = NULL; $$.num = 0; };
+
+lista_arg: lista_arg COMA arg {
 					$$.listArgs = $1.listArgs;
-					argx = init_arg($3.valorTipo);
-					append_arg($$.listArgs, argx->arg);
+					$$.num = $1.num+1;
+					//argx = init_arg($3);
+					append_arg($$.listArgs, $3);
 				}
 				| arg {
 					$$.listArgs = init_args();
-                    ARG* argx = init_arg($1.valorTipo);
-                    append_arg($$.listArgs, argx->arg);
+                    //argx = init_arg($1);
+                    append_arg($$.listArgs, $1);
+					$$.num = 1;
 				};
 
-arg:            tipo_arg ID {
-					if( search_id_symbol(pSimbolos->top,$2.lexval) == -1){
-                          simbol = init_sym();
-                          simbol= set_sym(simbol, $2.lexval, dir, typeGBL, "var", NULL,pSimbolos->top, getTopType(pTipos));
-                          append_sym(pSimbolos->top,simbol);
-                          dir = dir + getTam(getTopType(pTipos), typeGBL);
-                    }
-                    else
-                      printf("El identificador ya fue declarado\n");
-                    $$.valorTipo = $1.valorTipo;
-				};
-
-tipo_arg:         base param_arr {baseGBL = $1.valorTipo;};
-
-param_arr:      LCOR RCOR param_arr{
-					TYP *tp = init_type();
-					//newTYP = set_typ(init_type(),"array",$4.valorTipo,n*getTam(getTopType(pTipos),$4.valorTipo),getTopType(pTipos));
-                    tp = set_typ(tp,"array",$3.valorTipo,0,getTopType(pTipos));
-                    $$.valorTipo = append_type(getTopType(pTipos), tp);
-				} | {$$.valorTipo=baseGBL;};
-
-sentencias:     sentencias{
-					tmpEtq=create_label();
-                    backpatch(codigo,$1.nextlist,tmpEtq);
-                    append_new_quad(codigo,"label","-","-",tmpEtq);
-				} sentencia {$$.nextlist=$3.nextlist;}
-				| sentencia {$$.nextlist=$1.nextlist;};
-
-sentencia:        IF e_bool THEN sentencia END {tmpLabel=create_label();
-												backpatch(codigo,$2.listTrue,tmpLabel);
-												append_new_quad(codigo,"label","-","-",tmpLabel);
-												$$.nextlist=combinar($2.listFalse,$4.nextlist);
-											    }
-                  | IF e_bool THEN sentencia SINO sentencia END{
-															tmpLabel=create_label();
-															backpatch(codigo,$2.listTrue,tmpLabel);
-															append_new_quad(codigo,"label","-","-",tmpLabel);
-															tmpLabel=create_label();
-															backpatch(codigo,$2.listFalse,tmpLabel);
-															append_new_quad(codigo,"label","-","-",tmpLabel);
-															$$.nextlist=combinar($4.nextlist,$6.nextlist);
-															}
-                  | WHILE e_bool DO sentencia END{
-													L1=create_label();
-													L2=create_label();
-													backpatch(codigo,$4.nextlist,L1);
-													backpatch(codigo,$2.listTrue,L2);
-													$$.nextlist=$2.listFalse;
-													append_new_quad(codigo,"label","-","-",L1);
-													append_new_quad(codigo,"label","-","-",L2);
-													char *L_nextList = create_label();
-													backpatch(codigo,$4.nextlist,L_nextList);
-													append_new_quad(codigo,"goto","-","-",L_nextList);
-												}
-
-                  | DO sentencia WHILE e_bool PYC {tmpLabel=create_label();
-												   backpatch(codigo,$4.listTrue,tmpLabel);
-												   $$.nextlist=$4.listFalse;
-													}
-                  | SEGUN LPAR variable RPAR DO casos predeterminado END{
-					  												int i;
-																	L1=create_label();
-																	prueba = combinar($6.prueba, $7.prueba);
-																	backpatch(codigo,$6.nextlist,L1);
-																	sustituir("??",$3.idVar,prueba,codigo);
-																	}
-                  | variable IGUAL expresion PYC{
-										if((search_id_symbol(getTopSym(pSimbolos),$1.idVar) != -1) || (search_id_symbol(TGS,$1.idVar) != -1 )){
-											simbol = init_sym();
-											simbol=search_SYM(getTopSym(pSimbolos),$1.idVar);
-											if(simbol==NULL){
-												simbol=search_SYM(TGS,$1.idVar);
-											}
-											dir1=reducir($3.dirExp,$3.tipoExp,simbol->tipo,codigo);
-											char *tmp=(char*)malloc(sizeof(char));
-											char *tmp2=(char*)malloc(sizeof(char));
-											sprintf(tmp, "%i", simbol->dir);
-											strcpy(tmp2,$1.idVar);
-											strcat(tmp2,"+");
-											strcat(tmp2,tmp);
-											append_new_quad(codigo,"=",dir1,"-",tmp2);
-										}else{
-											printf("Error => El idntificador  no se ha declarado\n");
-										}
-										$$.nextlist=NULL;
-									}
-					| WRITE expresion PYC{
-									append_new_quad(codigo,"print",$2.dirExp,"-","-");
-									$$.nextlist = NULL;
-								}
-                  | READ variable PYC{
-									append_new_quad(codigo,"scan","-","-",$2.idVar); 
-									$$.nextlist = NULL;
-								}
-				  | DEV PYC {	
-						if(funcType==3){
-							append_new_quad(codigo,"return","-","-","-");
-						}else{
-							printf("la funcion debe retornar  algun valor de tipo ==> %d",funcType);
-						}
-						$$.nextlist=NULL;
-					}
-                  | DEV expresion PYC { 
-					  					if(funcType!=3){
-											dir1= reducir($2.dirExp,$2.tipoExp,funcType,codigo);
-											append_new_quad(codigo,"return",$2.dirExp,"-","-");
-											funcReturn=true;
-										}else{
-                    						 printf("la funcion debe retornar  algun valor de tipo ==>%d",funcType);
-                      					}
-										$$.nextlist=NULL;
-									}
-                  | TERMINAR PYC {	
-					  				indiceGlobal = init_index();
-									char *tmp3=(char*)malloc(sizeof(char));
-									sprintf(tmp3, "%i", indiceGlobal->indice);
-									append_new_quad(codigo, "goto", "-", "-", tmp3);
-									$$.nextlist = init_list_index(indiceGlobal);
-									append_index($$.nextlist, indiceGlobal);
-								}
-                  | INICIO sentencias END { 
-					  						$$.nextlist=$2.nextlist;
-										};
-				  
-casos:            CASO NUM DOSP sentencia casos2{
-										$$.nextlist = combinar($$.nextlist, $4.nextlist);
-										char *label_C = create_label();
-										/*Indica el inicio del código para la sentencia*/
-										$$.prueba = $5.prueba;
-										//sustituir_c()
-										//(if ”??” ”==” num.dir ”goto” L )
-									};
-
-casos2:           casos{
-						//casos.prueba = newCode()
-						char *LT = create_label();
-						/*Indica el inicio del código para la sentencia*/
-						//genCode(”label” L)
-						//casos.prueba.append(if ”??” ”==” num.dir ”goto” L )
-						} 
-				| {};
-
-predeterminado:   PRED DOSP sentencia{
-									//predeterminado.prueba = newCode()
-									char *lll = create_label();
-									/*Indica el inicio del código para la sentencia*/
-									//genCode(”label” L)
-									//predeterminado.prueba.append(”goto” L )
-									} | {};
-
-e_bool:         e_bool OR {
-					tmpEtq = create_label();
-					backpatch(codigo,$1.listFalse,tmpEtq);
-					append_new_quad(codigo,"label","-","-",tmpEtq);
-				} e_bool{
-					$$.listTrue=combinar($1.listTrue,$4.listTrue);
-					$$.listFalse=$4.listFalse;
-				}
-                | e_bool AND{
-					tmpEtq=create_label();
-					backpatch(codigo,$1.listTrue,tmpEtq);
-					append_new_quad(codigo,"label","-","-",tmpEtq);
-				}
-				 e_bool{
-					$$.listTrue=$4.listTrue;
-					$$.listFalse=combinar($1.listFalse,$4.listFalse);}
-                | NOT e_bool{
-					$$.listTrue=$2.listFalse;
-					$$.listFalse=$2.listTrue;}
-                | relacional{
-					$$.listTrue=$1.listRelTrue;
-					$$.listFalse=$1.listRelFalse;}
-                | TRUE{
-					indiceGlobal = init_index();
-					$$.listFalse=init_list_index(NULL); 
-					$$.listTrue=init_list_index(NULL);
-					append_index($$.listTrue, indiceGlobal);
-					char *tmp=(char*)malloc(sizeof(char));
-					sprintf(tmp, "%i", indiceGlobal->indice);
-					append_new_quad(codigo,"goto","-","-",tmp);}
-                | FALSE{
-					indiceGlobal = init_index();
-					$$.listFalse=init_list_index(NULL); 
-					$$.listTrue=init_list_index(NULL);
-					append_index($$.listFalse, indiceGlobal);
-					char *tmp=(char*)malloc(sizeof(char));
-					sprintf(tmp, "%i", indiceGlobal->indice);
-					append_new_quad(codigo,"goto","-","-",tmp);
-				};
-
-relacional:     relacional MENORQUE relacional {
-					$$.listRelTrue = init_list_index(NULL);
-					$$.listRelFalse = init_list_index(NULL);
-					indiceGlobal = init_index();
-
-					indiceAux = init_index();
-
-					append_index($$.listRelTrue, indiceGlobal);
-					append_index($$.listRelFalse, indiceAux);
-					$$.tipoRel = max($1.tipoRel, $3.tipoRel);
-					dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
-					dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
-					char *tmpIndGlobal=(char*)malloc(sizeof(char));
-					char *tmpIndAux=(char*)malloc(sizeof(char));
-					sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-					sprintf(tmpIndAux, "%i", indiceAux->indice);
-					append_new_quad(codigo,"<", dir1, dir2, tmpIndGlobal);
-					append_new_quad(codigo,"goto", "-", "-", tmpIndAux);
-				}
-                | relacional MAYORQUE relacional {
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									$$.listRelTrue = init_list_index(indiceGlobal);
-									$$.listRelFalse = init_list_index(indiceAux);
-									append_index($$.listRelTrue, indiceGlobal);
-									append_index($$.listRelFalse, indiceAux);
-									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
-									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
-									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, ">", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-                | relacional MENORIGUAL relacional {
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									$$.listRelTrue = init_list_index(indiceGlobal);
-									$$.listRelFalse = init_list_index(indiceAux);
-									append_index($$.listRelTrue, indiceGlobal);
-									append_index($$.listRelFalse, indiceAux);
-									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
-									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
-									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, "<=", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-                | relacional MAYORIGUAL relacional {
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									$$.listRelTrue = init_list_index(indiceGlobal);
-									$$.listRelFalse = init_list_index(indiceAux);
-									append_index($$.listRelTrue, indiceGlobal);
-									append_index($$.listRelFalse, indiceAux);
-									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
-									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
-									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, ">=", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-                | relacional IDENTICO relacional {
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									$$.listRelTrue = init_list_index(indiceGlobal);
-									$$.listRelFalse = init_list_index(indiceAux);
-									append_index($$.listRelTrue, indiceGlobal);
-									append_index($$.listRelFalse, indiceAux);
-									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
-									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
-									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, "==", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-                | relacional DIFERENTE relacional {
-									indiceGlobal = init_index();
-									indiceAux = init_index();
-									$$.listRelTrue = init_list_index(indiceGlobal);
-									$$.listRelFalse = init_list_index(indiceAux);
-									append_index($$.listRelTrue, indiceGlobal);
-									append_index($$.listRelFalse, indiceAux);
-									$$.tipoRel = max($1.tipoRel, $3.tipoRel);
-									dir1 = ampliar($1.dirRel,$1.tipoRel,$$.tipoRel, codigo);
-									dir2 = ampliar($3.dirRel,$3.tipoRel,$$.tipoRel, codigo);
-									char *tmpIndGlobal=(char*)malloc(sizeof(char));
-									char *tmpIndAux=(char*)malloc(sizeof(char));
-									sprintf(tmpIndGlobal, "%i", indiceGlobal->indice);
-									sprintf(tmpIndAux, "%i", indiceAux->indice);
-									append_new_quad(codigo, "<>", dir1, dir2, tmpIndGlobal);
-									append_new_quad(codigo, "goto", "-", "-", tmpIndAux);
-								}
-                | expresion {$$.tipoRel=$1.tipoExp;
-	                          $$.dirRel=$1.dirExp;} ;
-
-expresion:        expresion MAS expresion {
-					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
-                    $$.dirExp = newTemp();
-                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp,codigo);
-                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp,codigo);
-                    append_new_quad(codigo, "+", dir1, dir2,$$.dirExp);
-				}
-                | expresion MENOS expresion{
-					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
-                    $$.dirExp = newTemp();
-                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
-                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
-                    append_new_quad(codigo, "-", dir1, dir2,$$.dirExp);
-				}
-                | expresion MUL expresion {
-					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
-                    $$.dirExp = newTemp();
-                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
-                	dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
-                    append_new_quad(codigo, "*", dir1, dir2,$$.dirExp);
-				}
-                | expresion DIV expresion {
-					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
-                    $$.dirExp = newTemp();
-                	dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
-                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
-                    append_new_quad(codigo, "/", dir1, dir2,$$.dirExp);
-				}
-                | expresion MODULO expresion {
-					$$.tipoExp = max($1.tipoExp, $3.tipoExp);
-                    $$.dirExp = newTemp();
-                    dir1 = ampliar($1.dirExp,$1.tipoExp,$$.tipoExp, codigo);
-                    dir2 = ampliar($3.dirExp,$3.tipoExp,$$.tipoExp, codigo);
-                    append_new_quad(codigo, "%", dir1, dir2,$$.dirExp);
-				}
-                | LPAR expresion RPAR {
-					$$.dirExp = $2.dirExp;
-                    $$.tipoExp = $2.tipoExp;
-				}
-                | variable {}
-                | NUM{
-					$$.dirExp = $1.valor;
-                    $$.tipoExp = $1.tipe;
-				}
-                | CADENA{}
-                | CARACTER {};
-                
-
-variable:     	ID variable_comp {};
-
-variable_comp: 	dato_est_sim{} 
-				| arreglo{} 
-				| LPAR parametros RPAR{} ;
-
-dato_est_sim:  	dato_est_sim PUNTO ID{} 
-				| {};
-
-arreglo:       	LCOR expresion RCOR{}
-            	| arreglo LCOR expresion RCOR {};
-
-parametros:    	lista_param{
-					$$.listArgs=$1.listArgs;
-				} 
-				| {$$.listArgs = NULL;};
-
-lista_param:    lista_param COMA expresion {
-					$$.listArgs=$1.listArgs;
-                    ARG* argx = init_arg($3.tipoExp);
-                    append_arg($$.listArgs, argx->arg);
-                    append_new_quad(codigo,"param",$3.dirExp," ", " ");
-				}
-                | expresion {
-					$$.listArgs = init_args();
-                    ARG* argx = init_arg($1.tipoExp);
-                    append_arg($$.listArgs, argx->arg);
-                    append_new_quad(codigo,"param",$1.dirExp," ", " ");
-				};				  
-
+arg: tipo_arg ID {
+				if( search_id_symbol(pSimbolos->top,$2.lexval) == -1){
+					simbol = init_sym();
+					simbol= set_sym(simbol, $2.lexval, dir, typeGBL, "var", NULL,pSimbolos->top, getTopType(pTipos));
+					append_sym(pSimbolos->top,simbol);
+					dir = dir + getTam(getTopType(pTipos), typeGBL);
+				}else
+					printf("ERROR >>> El ID ya fue declarado\n");
+				$$ = $1;
+			};
 
 %%
 void yyerror(char *msg){

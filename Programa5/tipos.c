@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include "cuadruplas.h"
 #include "tipos.h"
 
 int conta_tmp = 0; //contador gobal de teporales creadas

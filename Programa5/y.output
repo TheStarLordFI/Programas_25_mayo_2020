@@ -6,46 +6,38 @@
 
    3  $$2 :
 
-   4  $$3 :
+   4  declaraciones : tipo $$2 lista_var PYC declaraciones
 
-   5  declaraciones : tipo $$2 lista_var PYC $$3 declaraciones
+   5  $$3 :
 
-   6  $$4 :
+   6  declaraciones : tipo_registro $$3 lista_var PYC declaraciones
+   7                |
 
-   7  $$5 :
+   8  $$4 :
 
-   8  declaraciones : tipo_registro $$4 lista_var PYC $$5 declaraciones
-   9                |
+   9  tipo_registro : ESTRUCT INICIO $$4 declaraciones END
 
-  10  $$6 :
+  10  $$5 :
 
-  11  tipo_registro : ESTRUCT INICIO $$6 declaraciones END
+  11  tipo : base $$5 tipo_arreglo
 
-  12  $$7 :
+  12  base : ENTERO
+  13       | REAL
+  14       | DREAL
+  15       | CAR
+  16       | SIN
 
-  13  tipo : base $$7 tipo_arreglo
+  17  tipo_arreglo : LCOR NUM RCOR tipo_arreglo
+  18               |
 
-  14  base : ENTERO
-  15       | REAL
-  16       | DREAL
-  17       | CAR
-  18       | SIN
+  19  lista_var : ID lista_var2
 
-  19  $$8 :
+  20  $$6 :
 
-  20  tipo_arreglo : LCOR NUM $$8 RCOR tipo_arreglo
-  21               |
+  21  lista_var2 : COMA ID $$6 lista_var2
+  22             |
 
-  22  $$9 :
-
-  23  lista_var : ID $$9 lista_var2
-
-  24  $$10 :
-
-  25  lista_var2 : COMA ID $$10 lista_var2
-  26             |
-
-  27  funciones :
+  23  funciones :
 
 state 0
 	$accept : . programa $end  (0)
@@ -65,7 +57,7 @@ state 1
 
 state 2
 	programa : $$1 . declaraciones funciones  (2)
-	declaraciones : .  (9)
+	declaraciones : .  (7)
 
 	ESTRUCT  shift 3
 	ENTERO  shift 4
@@ -73,7 +65,7 @@ state 2
 	DREAL  shift 6
 	SIN  shift 7
 	CAR  shift 8
-	$end  reduce 9
+	$end  reduce 7
 
 	tipo  goto 9
 	base  goto 10
@@ -82,44 +74,44 @@ state 2
 
 
 state 3
-	tipo_registro : ESTRUCT . INICIO $$6 declaraciones END  (11)
+	tipo_registro : ESTRUCT . INICIO $$4 declaraciones END  (9)
 
 	INICIO  shift 13
 	.  error
 
 
 state 4
-	base : ENTERO .  (14)
+	base : ENTERO .  (12)
+
+	.  reduce 12
+
+
+state 5
+	base : REAL .  (13)
+
+	.  reduce 13
+
+
+state 6
+	base : DREAL .  (14)
 
 	.  reduce 14
 
 
-state 5
-	base : REAL .  (15)
-
-	.  reduce 15
-
-
-state 6
-	base : DREAL .  (16)
+state 7
+	base : SIN .  (16)
 
 	.  reduce 16
 
 
-state 7
-	base : SIN .  (18)
-
-	.  reduce 18
-
-
 state 8
-	base : CAR .  (17)
+	base : CAR .  (15)
 
-	.  reduce 17
+	.  reduce 15
 
 
 state 9
-	declaraciones : tipo . $$2 lista_var PYC $$3 declaraciones  (5)
+	declaraciones : tipo . $$2 lista_var PYC declaraciones  (4)
 	$$2 : .  (3)
 
 	.  reduce 3
@@ -128,43 +120,43 @@ state 9
 
 
 state 10
-	tipo : base . $$7 tipo_arreglo  (13)
-	$$7 : .  (12)
+	tipo : base . $$5 tipo_arreglo  (11)
+	$$5 : .  (10)
 
-	.  reduce 12
+	.  reduce 10
 
-	$$7  goto 15
+	$$5  goto 15
 
 
 state 11
-	declaraciones : tipo_registro . $$4 lista_var PYC $$5 declaraciones  (8)
-	$$4 : .  (6)
+	declaraciones : tipo_registro . $$3 lista_var PYC declaraciones  (6)
+	$$3 : .  (5)
 
-	.  reduce 6
+	.  reduce 5
 
-	$$4  goto 16
+	$$3  goto 16
 
 
 state 12
 	programa : $$1 declaraciones . funciones  (2)
-	funciones : .  (27)
+	funciones : .  (23)
 
-	.  reduce 27
+	.  reduce 23
 
 	funciones  goto 17
 
 
 state 13
-	tipo_registro : ESTRUCT INICIO . $$6 declaraciones END  (11)
-	$$6 : .  (10)
+	tipo_registro : ESTRUCT INICIO . $$4 declaraciones END  (9)
+	$$4 : .  (8)
 
-	.  reduce 10
+	.  reduce 8
 
-	$$6  goto 18
+	$$4  goto 18
 
 
 state 14
-	declaraciones : tipo $$2 . lista_var PYC $$3 declaraciones  (5)
+	declaraciones : tipo $$2 . lista_var PYC declaraciones  (4)
 
 	ID  shift 19
 	.  error
@@ -173,17 +165,17 @@ state 14
 
 
 state 15
-	tipo : base $$7 . tipo_arreglo  (13)
-	tipo_arreglo : .  (21)
+	tipo : base $$5 . tipo_arreglo  (11)
+	tipo_arreglo : .  (18)
 
 	LCOR  shift 21
-	ID  reduce 21
+	ID  reduce 18
 
 	tipo_arreglo  goto 22
 
 
 state 16
-	declaraciones : tipo_registro $$4 . lista_var PYC $$5 declaraciones  (8)
+	declaraciones : tipo_registro $$3 . lista_var PYC declaraciones  (6)
 
 	ID  shift 19
 	.  error
@@ -198,8 +190,8 @@ state 17
 
 
 state 18
-	tipo_registro : ESTRUCT INICIO $$6 . declaraciones END  (11)
-	declaraciones : .  (9)
+	tipo_registro : ESTRUCT INICIO $$4 . declaraciones END  (9)
+	declaraciones : .  (7)
 
 	ESTRUCT  shift 3
 	ENTERO  shift 4
@@ -207,7 +199,7 @@ state 18
 	DREAL  shift 6
 	SIN  shift 7
 	CAR  shift 8
-	END  reduce 9
+	END  reduce 7
 
 	tipo  goto 9
 	base  goto 10
@@ -216,201 +208,165 @@ state 18
 
 
 state 19
-	lista_var : ID . $$9 lista_var2  (23)
-	$$9 : .  (22)
+	lista_var : ID . lista_var2  (19)
+	lista_var2 : .  (22)
 
-	.  reduce 22
+	COMA  shift 25
+	PYC  reduce 22
 
-	$$9  goto 25
+	lista_var2  goto 26
 
 
 state 20
-	declaraciones : tipo $$2 lista_var . PYC $$3 declaraciones  (5)
+	declaraciones : tipo $$2 lista_var . PYC declaraciones  (4)
 
-	PYC  shift 26
+	PYC  shift 27
 	.  error
 
 
 state 21
-	tipo_arreglo : LCOR . NUM $$8 RCOR tipo_arreglo  (20)
+	tipo_arreglo : LCOR . NUM RCOR tipo_arreglo  (17)
 
-	NUM  shift 27
+	NUM  shift 28
 	.  error
 
 
 state 22
-	tipo : base $$7 tipo_arreglo .  (13)
-
-	.  reduce 13
-
-
-state 23
-	declaraciones : tipo_registro $$4 lista_var . PYC $$5 declaraciones  (8)
-
-	PYC  shift 28
-	.  error
-
-
-state 24
-	tipo_registro : ESTRUCT INICIO $$6 declaraciones . END  (11)
-
-	END  shift 29
-	.  error
-
-
-state 25
-	lista_var : ID $$9 . lista_var2  (23)
-	lista_var2 : .  (26)
-
-	COMA  shift 30
-	PYC  reduce 26
-
-	lista_var2  goto 31
-
-
-state 26
-	declaraciones : tipo $$2 lista_var PYC . $$3 declaraciones  (5)
-	$$3 : .  (4)
-
-	.  reduce 4
-
-	$$3  goto 32
-
-
-state 27
-	tipo_arreglo : LCOR NUM . $$8 RCOR tipo_arreglo  (20)
-	$$8 : .  (19)
-
-	.  reduce 19
-
-	$$8  goto 33
-
-
-state 28
-	declaraciones : tipo_registro $$4 lista_var PYC . $$5 declaraciones  (8)
-	$$5 : .  (7)
-
-	.  reduce 7
-
-	$$5  goto 34
-
-
-state 29
-	tipo_registro : ESTRUCT INICIO $$6 declaraciones END .  (11)
+	tipo : base $$5 tipo_arreglo .  (11)
 
 	.  reduce 11
 
 
-state 30
-	lista_var2 : COMA . ID $$10 lista_var2  (25)
+state 23
+	declaraciones : tipo_registro $$3 lista_var . PYC declaraciones  (6)
 
-	ID  shift 35
+	PYC  shift 29
 	.  error
+
+
+state 24
+	tipo_registro : ESTRUCT INICIO $$4 declaraciones . END  (9)
+
+	END  shift 30
+	.  error
+
+
+state 25
+	lista_var2 : COMA . ID $$6 lista_var2  (21)
+
+	ID  shift 31
+	.  error
+
+
+state 26
+	lista_var : ID lista_var2 .  (19)
+
+	.  reduce 19
+
+
+state 27
+	declaraciones : tipo $$2 lista_var PYC . declaraciones  (4)
+	declaraciones : .  (7)
+
+	ESTRUCT  shift 3
+	ENTERO  shift 4
+	REAL  shift 5
+	DREAL  shift 6
+	SIN  shift 7
+	CAR  shift 8
+	$end  reduce 7
+	END  reduce 7
+
+	tipo  goto 9
+	base  goto 10
+	tipo_registro  goto 11
+	declaraciones  goto 32
+
+
+state 28
+	tipo_arreglo : LCOR NUM . RCOR tipo_arreglo  (17)
+
+	RCOR  shift 33
+	.  error
+
+
+state 29
+	declaraciones : tipo_registro $$3 lista_var PYC . declaraciones  (6)
+	declaraciones : .  (7)
+
+	ESTRUCT  shift 3
+	ENTERO  shift 4
+	REAL  shift 5
+	DREAL  shift 6
+	SIN  shift 7
+	CAR  shift 8
+	$end  reduce 7
+	END  reduce 7
+
+	tipo  goto 9
+	base  goto 10
+	tipo_registro  goto 11
+	declaraciones  goto 34
+
+
+state 30
+	tipo_registro : ESTRUCT INICIO $$4 declaraciones END .  (9)
+
+	.  reduce 9
 
 
 state 31
-	lista_var : ID $$9 lista_var2 .  (23)
-
-	.  reduce 23
-
-
-state 32
-	declaraciones : tipo $$2 lista_var PYC $$3 . declaraciones  (5)
-	declaraciones : .  (9)
-
-	ESTRUCT  shift 3
-	ENTERO  shift 4
-	REAL  shift 5
-	DREAL  shift 6
-	SIN  shift 7
-	CAR  shift 8
-	$end  reduce 9
-	END  reduce 9
-
-	tipo  goto 9
-	base  goto 10
-	tipo_registro  goto 11
-	declaraciones  goto 36
-
-
-state 33
-	tipo_arreglo : LCOR NUM $$8 . RCOR tipo_arreglo  (20)
-
-	RCOR  shift 37
-	.  error
-
-
-state 34
-	declaraciones : tipo_registro $$4 lista_var PYC $$5 . declaraciones  (8)
-	declaraciones : .  (9)
-
-	ESTRUCT  shift 3
-	ENTERO  shift 4
-	REAL  shift 5
-	DREAL  shift 6
-	SIN  shift 7
-	CAR  shift 8
-	$end  reduce 9
-	END  reduce 9
-
-	tipo  goto 9
-	base  goto 10
-	tipo_registro  goto 11
-	declaraciones  goto 38
-
-
-state 35
-	lista_var2 : COMA ID . $$10 lista_var2  (25)
-	$$10 : .  (24)
-
-	.  reduce 24
-
-	$$10  goto 39
-
-
-state 36
-	declaraciones : tipo $$2 lista_var PYC $$3 declaraciones .  (5)
-
-	.  reduce 5
-
-
-state 37
-	tipo_arreglo : LCOR NUM $$8 RCOR . tipo_arreglo  (20)
-	tipo_arreglo : .  (21)
-
-	LCOR  shift 21
-	ID  reduce 21
-
-	tipo_arreglo  goto 40
-
-
-state 38
-	declaraciones : tipo_registro $$4 lista_var PYC $$5 declaraciones .  (8)
-
-	.  reduce 8
-
-
-state 39
-	lista_var2 : COMA ID $$10 . lista_var2  (25)
-	lista_var2 : .  (26)
-
-	COMA  shift 30
-	PYC  reduce 26
-
-	lista_var2  goto 41
-
-
-state 40
-	tipo_arreglo : LCOR NUM $$8 RCOR tipo_arreglo .  (20)
+	lista_var2 : COMA ID . $$6 lista_var2  (21)
+	$$6 : .  (20)
 
 	.  reduce 20
 
-
-state 41
-	lista_var2 : COMA ID $$10 lista_var2 .  (25)
-
-	.  reduce 25
+	$$6  goto 35
 
 
-54 terminals, 20 nonterminals
-28 grammar rules, 42 states
+state 32
+	declaraciones : tipo $$2 lista_var PYC declaraciones .  (4)
+
+	.  reduce 4
+
+
+state 33
+	tipo_arreglo : LCOR NUM RCOR . tipo_arreglo  (17)
+	tipo_arreglo : .  (18)
+
+	LCOR  shift 21
+	ID  reduce 18
+
+	tipo_arreglo  goto 36
+
+
+state 34
+	declaraciones : tipo_registro $$3 lista_var PYC declaraciones .  (6)
+
+	.  reduce 6
+
+
+state 35
+	lista_var2 : COMA ID $$6 . lista_var2  (21)
+	lista_var2 : .  (22)
+
+	COMA  shift 25
+	PYC  reduce 22
+
+	lista_var2  goto 37
+
+
+state 36
+	tipo_arreglo : LCOR NUM RCOR tipo_arreglo .  (17)
+
+	.  reduce 17
+
+
+state 37
+	lista_var2 : COMA ID $$6 lista_var2 .  (21)
+
+	.  reduce 21
+
+
+54 terminals, 16 nonterminals
+24 grammar rules, 38 states

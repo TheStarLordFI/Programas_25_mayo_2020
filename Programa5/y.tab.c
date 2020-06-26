@@ -17,65 +17,50 @@
 
 #define YYPURE 0
 
-#line 8 "parser_pruebas.y"
+#line 7 "parser.y"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "tabla_simbolos.h"
 #include "tabla_tipos.h"
-/*#include "cuadruplas.h"*/
-/*#include "backpatch.h"*/
+#include "cuadruplas.h"
+#include "backpatch.h"
 #include "tipos.h"
 #include "tabla_cadenas.h"
 #include "pila_direcciones.h"
 
 void yyerror(char *s);
-extern int yylineno;
 extern int yylex();
 extern char* yytext;
-/*void print_code(struct code *c);*/
-
-/*Se deben declarar las estructuras que para nuestro proyecto se tienen.
-* Estas estructuras estan dentro de Data.h, cuadruplas.h, backpatch.h y tipos.h
-*/
-SSTACK *pSimbolos; 
-TSTACK *pTipos; 
-DSTACK *pDirecciones;
+void print_code(struct code *c);
+/*///////////////////////////estructuras/////////////////////////////////////*/
+CODE *codigo;
+SYM *simbol;
+SYMTAB *new_ST;
+TYPTAB *new_TT;
+SSTACK *stack_sym;
+TSTACK *stack_type;
+SYMTAB *tab_sym;
+SYMTAB *tab_symGBL;
+SYMTAB *tab_sym_struct;
+TYPTAB *tab_type_struct;
+TYPTAB *tab_type;
+TYPTAB *tab_typeGBL;
+DSTACK *stack_dir;
 DIR *structDir;
-SYMTAB *TGS;
-SYMTAB *TS1;
-SYMTAB *tTempSimbol;
-/*TGT: Tabla General de Tipos, TT1: Tabla Tipos 1*/
-TYPTAB *TGT;
-TYPTAB *TT1; 
-TYPTAB *tTempTipos; 
-CADTAB *tabCadenas;
-SYM *simbol; 
-ARG *argx; 
-ARG *arg; 
-ARG *arg2; 
-TYP *newTipo;
-TYP *newTYP; 
-/*CODE *codigo; */
-ARGS *ListaArg; 
-/*INDEX *indiceGlobal, *indiceAux; */
-/*LINDEX *prueba;*/
-/*///////////////////////////Variables doc 2020-2DDS_usr1///////////////////////////////////////*/
-int dir;
-char *dir1, *dir2, *dirTemp; /*Dir temporales*/
-int typeGBL;
-int typeTemp;
-int tam;
+ARG *argx;
+/*///////////////////////////Variables///////////////////////////////////////*/
+int tipoGBL;
 int baseGBL;
+int tamTSGBL;
+int address;
 int funcType;
 bool funcReturn;
-char *L, *tmpLabel;
-char *L1, *L2; /*L temporales*/
-char IDGBL[32];
-char *estTemp;/*nombre de la tabla de tipos*/
-char *tmpEtq;
-#line 67 "parser_pruebas.y"
+ARGS *listaRET;
+char idGBL[32];
+#line 51 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -83,83 +68,52 @@ char *tmpEtq;
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 typedef union{
-	int valExt;
+	char dir[32];
+	
+	int base;
+	
 	struct{
-    	int valorTipo;
-  	}tipo;
+		struct list_index *nextList;
+		char label[15];
+		char final_label[15];
+	}tSentencia;
 
 	struct{
-	    int tipe;
-	    char* valor;
+		int tipo;
+		int num;
+		char dir[32];
 	}num;
 
 	struct{
-	   char *lexval;
-	}id;
-		
-	struct{
-	    int tipoCad;
-	    char *lexval;
-	    struct cadenas *cad;
-	}cad;
-
-	/*struct{
-	  	struct list_index *nextlist;//listIndex
-	}listIndice_S; 
-	
-	struct{
-		struct list_index *prueba;//listIndex
-	  	struct list_index *nextlist;//listIndex
-	}listIndice_C; 
+		int num;
+		struct args *listArgs;
+	}list;
 
 	struct{
-		struct list_index *prueba;//listIndex
-	}listIndice_P;
+		char dir[20];
+		char base[20];
+		int des;
+		int tipo;
+		int estruct;
+		int code_struct;
+		struct sym_tab *tab_sym;
+	}var;
 
 	struct{
-	   	struct list_index *listTrue; //En la DDS viene como truelist
-	   	struct list_index *listFalse; //En la DDS viene como falselist
-	}eBool;
+		int tipo;
+		char dir[32];
+		int valor;
+	}exp;
 
 	struct{
-	    int tipoRel; //En la DDS viene como tipo 
-	    char* dirRel;//En la DDS viene como dir
-	    struct list_index *listRelTrue;//En la DDS viene como truelist
-	    struct list_index *listRelFalse;//En la DDS viene como falselist
-  	}rel;*/
-	
-	struct{
-    	int tipoExp;
-		char *dirExp;
-    }eExpr;
-	
-	struct{
-    	int tipoVA;
-    	int baseVA;
-    	int tam;
-    	char *idVar;
-  	}var;
-	
-	/*struct{
-    	struct args *listArgs;//listParam
-  	}eListARGS;*/
-
-	struct{
-		int tipoVaComp;
-		char *des;
-		int code_est;
-	}varComp;
-
-	struct{
-		int estructura;
-		struct SYMTAB *tabla;
-		int type;
-		char *des;
-		int code_est;
-	}datoEst;
+		char dir[32];
+		int tipo;
+		struct list_index *truelist;
+		struct list_index *falselist;
+	}e_b;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 163 "y.tab.c"
+#line 117 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -244,52 +198,75 @@ extern int YYPARSE_DECL();
 #define RPAR 306
 #define SITEMP 307
 #define SINO 308
+#define expresion 309
+#define sentencia 310
+#define sentencias 311
+#define e_bool 312
+#define relacional 313
+#define lista_param 314
+#define parametros 315
+#define tipo_arg 316
+#define param_arr 317
+#define variable 318
+#define arreglo 319
+#define casos 320
+#define casos2 321
+#define predeterminado 322
+#define variable_comp 323
+#define dato_est_sim 324
+#define delaraciones 325
+#define FIN 326
 #define YYERRCODE 256
 typedef short YYINT;
 static const YYINT yylhs[] = {                           -1,
-    9,    0,   10,   11,    5,   12,   13,    5,    5,   14,
-    4,   15,    1,    2,    2,    2,    2,    2,   16,    3,
-    3,   17,    6,   18,    7,    7,    8,
+   12,    0,   13,    8,    8,    8,   14,    6,   15,    1,
+    2,    2,    2,    2,    2,    3,    3,    9,   10,   10,
+   16,   17,   11,   11,    5,    5,    4,    4,    7,
 };
 static const YYINT yylen[] = {                            2,
-    0,    3,    0,    0,    6,    0,    0,    6,    0,    0,
-    5,    0,    3,    1,    1,    1,    1,    1,    0,    5,
-    0,    0,    3,    0,    4,    0,    0,
+    0,    3,    0,    5,    4,    0,    0,    5,    0,    3,
+    1,    1,    1,    1,    1,    4,    0,    2,    3,    0,
+    0,    0,   13,    0,    1,    1,    3,    1,    0,
 };
 static const YYINT yydefred[] = {                         1,
-    0,    0,    0,   14,   15,   16,   18,   17,    3,   12,
-    6,   27,   10,    0,    0,    0,    2,    0,   22,    0,
-    0,   13,    0,    0,    0,    4,   19,    7,   11,    0,
-   23,    0,    0,    0,   24,    5,    0,    8,    0,   20,
-   25,
+    0,    0,    0,   11,   12,   13,   15,   14,    3,    9,
+    0,    0,    7,    0,    0,    0,    0,    0,    2,    0,
+    0,    0,   10,    0,   18,    0,    0,    0,    0,    0,
+    0,    5,   21,    8,    4,    0,   19,    0,   16,    0,
+   26,    0,    0,   28,   29,    0,   27,    0,    0,    0,
+   22,    0,   23,
 };
 static const YYINT yydgoto[] = {                          1,
-    9,   10,   22,   11,   12,   20,   31,   17,    2,   14,
-   32,   16,   34,   18,   15,   33,   25,   39,
+    9,   10,   23,   42,   43,   11,   44,   12,   17,   25,
+   19,    2,   14,   20,   15,   38,   52,
 };
 static const YYINT yysindex[] = {                         0,
-    0, -261, -257,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0, -279, -300, -279,    0, -261,    0, -253,
- -277,    0, -252, -251, -276,    0,    0,    0,    0, -271,
-    0, -261, -291, -261,    0,    0, -300,    0, -276,    0,
-    0,
+    0, -258, -254,    0,    0,    0,    0,    0,    0,    0,
+ -269, -250,    0, -269, -290, -271, -242, -270,    0, -258,
+ -241, -267,    0, -257,    0, -258, -256, -233, -296, -273,
+ -271,    0,    0,    0,    0, -290,    0, -274,    0, -248,
+    0, -253, -272,    0,    0, -224,    0, -258, -275, -289,
+    0, -250,    0,
 };
 static const YYINT yyrindex[] = {                         0,
-    0,   13,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0, -268,    0,    0, -245,    0,    0,
-    0,    0,    0,    0, -253,    0,    0,    0,    0,    0,
-    0,    1,    0,    1,    0,    0, -268,    0, -253,    0,
-    0,
+    0,    2,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,   38,    0,    0, -243, -218,    0,    0,    0, -219,
+    0,    0,    0,    0,    0,    1,    0,    0,    0,    0,
+ -218,    0,    0,    0,    0, -243,    0,    0,    0, -282,
+    0, -264,    0,    0,    0,    0,    0, -268,    0,    0,
+    0,   38,    0,
 };
 static const YYINT yygindex[] = {                         0,
-    0,    0,  -15,    0,  -11,    8,  -14,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,
+   26,    0,    9,    0,    0,    0,    3,  -20,   32,   16,
+   -3,    0,    0,    0,    0,    0,    0,
 };
-#define YYTABLESIZE 261
-static const YYINT yytable[] = {                          3,
-    9,   13,   19,   21,   26,   28,   24,   27,   29,   30,
-   35,   37,    9,   21,    9,    4,    5,    6,    7,    8,
-   36,   40,   38,   23,   41,    0,    0,    0,    0,    0,
+#define YYTABLESIZE 312
+static const YYINT yytable[] = {                         28,
+    6,    6,    3,   29,   13,   32,    4,    5,    6,    7,
+    8,   18,   16,   22,   24,   26,   29,   30,    4,    5,
+    6,    7,    8,   29,   31,   33,   34,   49,   35,   36,
+   40,   41,   45,   46,   48,   50,   51,   24,   17,   20,
+    6,   25,    6,   27,   39,   21,   37,   47,   53,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -311,14 +288,19 @@ static const YYINT yytable[] = {                          3,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    6,    0,    6,    6,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    9,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    6,
 };
-static const YYINT yycheck[] = {                        261,
-    0,  259,  282,  304,  258,  258,   18,  285,  260,  286,
-  282,  303,    0,  282,  260,  277,  278,  279,  280,  281,
-   32,   37,   34,   16,   39,   -1,   -1,   -1,   -1,   -1,
+static const YYINT yycheck[] = {                         20,
+    0,    0,  261,  286,  259,   26,  277,  278,  279,  280,
+  281,  262,  282,  304,  286,  258,  258,  285,  277,  278,
+  279,  280,  281,  306,  282,  282,  260,   48,  325,  303,
+  305,  280,  286,  306,  259,  311,  326,    0,  282,  258,
+  260,  306,  311,   18,   36,   14,   31,   45,   52,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -340,16 +322,19 @@ static const YYINT yycheck[] = {                        261,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+  260,   -1,  262,  262,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-  260,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,  311,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define YYMAXTOKEN 308
-#define YYUNDFTOKEN 329
+#define YYMAXTOKEN 326
+#define YYUNDFTOKEN 346
 #define YYTRANSLATE(a) ((a) > YYMAXTOKEN ? YYUNDFTOKEN : (a))
 #if YYDEBUG
 static const char *const yyname[] = {
@@ -365,38 +350,43 @@ static const char *const yyname[] = {
 "TERMINAR","CASO","PRED","DOSP","FALSE","TRUE","ENTERO","REAL","DREAL","SIN",
 "CAR","ID","CARACTER","CADENA","NUM","COMA","IGUAL","OR","AND","IDENTICO",
 "DIFERENTE","MENORQUE","MENORIGUAL","MAYORIGUAL","MAYORQUE","MAS","MENOS","MUL",
-"DIV","MODULO","NOT","PUNTO","RCOR","LCOR","LPAR","RPAR","SITEMP","SINO",0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"illegal-symbol",
+"DIV","MODULO","NOT","PUNTO","RCOR","LCOR","LPAR","RPAR","SITEMP","SINO",
+"expresion","sentencia","sentencias","e_bool","relacional","lista_param",
+"parametros","tipo_arg","param_arr","variable","arreglo","casos","casos2",
+"predeterminado","variable_comp","dato_est_sim","delaraciones","FIN",0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,"illegal-symbol",
 };
 static const char *const yyrule[] = {
 "$accept : programa",
 "$$1 :",
 "programa : $$1 declaraciones funciones",
 "$$2 :",
-"$$3 :",
-"declaraciones : tipo $$2 lista_var PYC $$3 declaraciones",
-"$$4 :",
-"$$5 :",
-"declaraciones : tipo_registro $$4 lista_var PYC $$5 declaraciones",
+"declaraciones : tipo $$2 lista_var PYC delaraciones",
+"declaraciones : tipo_registro lista_var PYC declaraciones",
 "declaraciones :",
-"$$6 :",
-"tipo_registro : ESTRUCT INICIO $$6 declaraciones END",
-"$$7 :",
-"tipo : base $$7 tipo_arreglo",
+"$$3 :",
+"tipo_registro : ESTRUCT INICIO $$3 declaraciones END",
+"$$4 :",
+"tipo : base $$4 tipo_arreglo",
 "base : ENTERO",
 "base : REAL",
 "base : DREAL",
 "base : CAR",
 "base : SIN",
-"$$8 :",
-"tipo_arreglo : LCOR NUM $$8 RCOR tipo_arreglo",
+"tipo_arreglo : LCOR NUM RCOR tipo_arreglo",
 "tipo_arreglo :",
-"$$9 :",
-"lista_var : ID $$9 lista_var2",
-"$$10 :",
-"lista_var2 : COMA ID $$10 lista_var2",
+"lista_var : ID lista_var2",
+"lista_var2 : COMA ID lista_var2",
 "lista_var2 :",
+"$$5 :",
+"$$6 :",
+"funciones : DEF tipo ID $$5 LPAR argumentos RPAR INICIO declaraciones sentencias FIN $$6 funciones",
 "funciones :",
+"argumentos : lista_arg",
+"argumentos : SIN",
+"lista_arg : lista_arg COMA arg",
+"lista_arg : arg",
+"arg :",
 
 };
 #endif
@@ -434,11 +424,22 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 297 "parser_pruebas.y"
+#line 300 "parser.y"
+
 void yyerror(char *msg){
 	printf("%s, token: %s\n",msg, yytext);
 }
-#line 442 "y.tab.c"
+
+void print_code(struct code *c){
+	struct cuad *q =(struct cuad *)malloc(sizeof(struct cuad)); 
+	printf("=========================CODIGO DE 3 DIRECCIONES=========================\n");
+	q=c->head;
+	while(q!=NULL){
+		printf("|%s\t|%s\t|%s\t|%s\t|\n",q->op,q->arg1,q->arg2,q->res);
+		q=q->next;
+	}
+}
+#line 443 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -641,172 +642,227 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 205 "parser_pruebas.y"
-	{printf("==========================P r o g r a m a==========================\n");
-                  dir = 0;
-                  /*codigo = init_code();*/
-                  pDirecciones = crearPilaDir();
-                  pSimbolos = init_sym_tab_stack();
-                  pTipos = init_type_tab_stack();
-                  TGT = init_type_tab(TGT);
-				  printf(">>>>>>Tabla general de tipos>>>>>>\n");
-				  print_tab_type(TGT);
-                  TGS = init_sym_tab();
-                  push_st(pSimbolos,TGS);
-                  push_tt(pTipos,TGT);
-                  tabCadenas = crearTablaCadenas();
-                  }
+#line 160 "parser.y"
+	{
+			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>P R O G R A M A>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			codigo = init_code();
+			stack_dir = crearPilaDir();
+			stack_sym = init_sym_tab_stack();
+			stack_type = init_type_tab_stack();
+			tab_typeGBL = init_type_tab(tab_typeGBL);
+			printf(">>>>>>>>>>T A B   G E N E R A L    D E   T I P O S>>>>>>>>>>\n");
+			print_tab_type(tab_typeGBL);
+			tab_symGBL = init_sym_tab();
+			push_st(stack_sym,tab_symGBL);
+			push_tt(stack_type,tab_typeGBL);
+			address=0;
+			stack_sym->top->tt_asoc = stack_type->top; 
+		}
 break;
 case 2:
-#line 218 "parser_pruebas.y"
-	{/*print_code(codigo);*/}
+#line 174 "parser.y"
+	{ print_code(codigo); }
 break;
 case 3:
-#line 220 "parser_pruebas.y"
-	{typeGBL=yystack.l_mark[0].tipo.valorTipo;}
+#line 176 "parser.y"
+	{tipoGBL = yystack.l_mark[0].base;}
 break;
 case 4:
-#line 220 "parser_pruebas.y"
-	{
-                                                            print_tab_sym(getTopSym(pSimbolos));
-                                                            print_tab_type(getTopType(pTipos));															
-															}
-break;
-case 6:
-#line 224 "parser_pruebas.y"
-	{typeGBL=yystack.l_mark[0].tipo.valorTipo;}
-break;
-case 7:
-#line 224 "parser_pruebas.y"
-	{
-																		print_tab_sym(getTopSym(pSimbolos));
-                                                            			print_tab_type(getTopType(pTipos));	
-																	}
-break;
-case 9:
-#line 228 "parser_pruebas.y"
+#line 176 "parser.y"
 	{}
 break;
+case 5:
+#line 177 "parser.y"
+	{}
+break;
+case 6:
+#line 178 "parser.y"
+	{}
+break;
+case 7:
+#line 180 "parser.y"
+	{
+							tab_sym_struct = init_sym_tab();
+							tab_type_struct = init_type_tab(tab_type_struct);
+							structDir = crearDir();
+							structDir->info = address;
+							pushPDir(structDir, stack_dir);
+							push_tt(stack_type,tab_type_struct);
+							push_st(stack_sym, tab_sym_struct);
+						
+						}
+break;
+case 8:
+#line 189 "parser.y"
+	{
+								print_tab_sym(tab_sym_struct);
+								print_tab_type(tab_type_struct);
+								tab_typeGBL = pop_tt(stack_type);
+								tab_symGBL = pop_st(stack_sym);
+								structDir = popPDir(stack_dir);
+								address = structDir->info;
+								TYP *newTYP = set_typ_struct(init_type(),"struct",0,tab_type_struct,tab_sym_struct);
+								tipoGBL = append_type(tab_type_struct, newTYP);
+						}
+break;
+case 9:
+#line 200 "parser.y"
+	{ baseGBL = yystack.l_mark[0].base; }
+break;
 case 10:
-#line 230 "parser_pruebas.y"
-	{TS1 = init_sym_tab();
-							   	  TT1 = init_type_tab(TT1);
-								  structDir = crearDir();
-								  /*structDir->info = dir;*/
-								  pushPDir(structDir, pDirecciones);
-								  dir = 0;
-								  push_tt(pTipos,TT1);
-								  push_st(pSimbolos, TS1);
-								}
+#line 200 "parser.y"
+	{ yyval.base = yystack.l_mark[0].base; }
 break;
 case 11:
-#line 238 "parser_pruebas.y"
-	{
-									TT1 = pop_tt(pTipos);
-									TS1 = pop_st(pSimbolos);
-									structDir = popPDir(pDirecciones);
-									dir = structDir->info;
-									newTYP = set_typ_struct(init_type(),"struct",0,TT1, TS1);
-									typeTemp = append_type(TT1, newTYP);
-									yyval.tipo.valorTipo=typeTemp;
-									}
+#line 202 "parser.y"
+	{ 
+			yyval.base = 0; }
 break;
 case 12:
-#line 248 "parser_pruebas.y"
-	{baseGBL=yystack.l_mark[0].tipo.valorTipo;}
+#line 204 "parser.y"
+	{ 
+		  yyval.base = 1; }
 break;
 case 13:
-#line 248 "parser_pruebas.y"
-	{yyval.tipo.valorTipo=yystack.l_mark[0].tipo.valorTipo;}
+#line 206 "parser.y"
+	{ 
+		  yyval.base = 4; }
 break;
 case 14:
-#line 251 "parser_pruebas.y"
-	{
-				yyval.tipo.valorTipo=0;
-				printf("entero\n");
-			}
+#line 208 "parser.y"
+	{ 
+		  yyval.base = 2; }
 break;
 case 15:
-#line 255 "parser_pruebas.y"
-	{
-				yyval.tipo.valorTipo=1;
-				printf("real\n");
-				}
+#line 210 "parser.y"
+	{ 
+		  yyval.base = 3; }
 break;
 case 16:
-#line 259 "parser_pruebas.y"
+#line 213 "parser.y"
 	{
-				yyval.tipo.valorTipo=4;
-				printf("dreal\n");
-				}
+				if (yystack.l_mark[-2].num.tipo == 0){
+					if(yystack.l_mark[-2].num.num > 0 ){
+						TYP *newTYP = init_type();
+						newTYP = set_typ(newTYP,"array",yystack.l_mark[0].base,yystack.l_mark[-2].num.num*getTam(getTopType(stack_type),yystack.l_mark[0].base),getTopType(stack_type));
+						yyval.base = append_type(getTopType(stack_type), newTYP);
+					}else{ printf("ERROR >>> El tam del arreglo debe ser mayo a cero\n"); }
+				}else { printf("ERROR >>> El tam del arreglo debe ser un numero entero\n"); }
+			}
 break;
 case 17:
-#line 263 "parser_pruebas.y"
-	{
-				yyval.tipo.valorTipo=2;
-				printf("car\n");
-				}
+#line 222 "parser.y"
+	{ yyval.base = baseGBL; }
 break;
 case 18:
-#line 267 "parser_pruebas.y"
+#line 224 "parser.y"
 	{
-				yyval.tipo.valorTipo=3;
-				printf("sin\n");
-				}
-break;
-case 19:
-#line 272 "parser_pruebas.y"
-	{printf("num: %s\n",yystack.l_mark[0].num.valor);}
-break;
-case 20:
-#line 272 "parser_pruebas.y"
-	{
-					printf("tip_arreglo\n");
-					if(yystack.l_mark[-3].num.tipe==0){
-						const char *tmp=yystack.l_mark[-3].num.valor;
-						int n = atoi(tmp);		
-						if(n>0){
-							newTYP = init_type();
-							newTYP = set_typ(newTYP,"array",yystack.l_mark[0].tipo.valorTipo,n*getTam(getTopType(pTipos),yystack.l_mark[0].tipo.valorTipo),getTopType(pTipos));
-							yyval.tipo.valorTipo = append_type(getTopType(pTipos), newTYP);
-						}
-						else{
-							printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
-						}
+					if(search_id_symbol(getTopSym(stack_sym),yystack.l_mark[-1].dir)==-1){
+						SYM *new_sym = init_sym();
+						new_sym= set_sym(new_sym, yystack.l_mark[-1].dir, address, tipoGBL, "var", NULL, getTopSym(stack_sym), getTopType(stack_type));
+						append_sym(getTopSym(stack_sym),new_sym);
+						address = address + getTam(getTopType(stack_type), tipoGBL);
 					}else{
-						printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
+						printf("ERROR >>> El ID ya fue declarado \n");
 					}
 				}
 break;
+case 19:
+#line 235 "parser.y"
+	{
+						if(search_id_symbol(getTopSym(stack_sym),yystack.l_mark[-1].dir)==-1){
+							SYM *new_sym = init_sym();
+							new_sym= set_sym(new_sym, yystack.l_mark[-1].dir, address, tipoGBL, "var", NULL, getTopSym(stack_sym), getTopType(stack_type));
+							append_sym(getTopSym(stack_sym),new_sym);
+							address = address + getTam(getTopType(stack_type), tipoGBL);
+						}else{
+							printf("ERROR >>> El ID ya fue declarado \n");
+						}
+					}
+break;
+case 20:
+#line 245 "parser.y"
+	{}
+break;
 case 21:
-#line 288 "parser_pruebas.y"
-	{ yyval.tipo.valorTipo = baseGBL; }
+#line 247 "parser.y"
+	{
+					if(search_id_symbol(getTopSym(stack_sym),yystack.l_mark[0].dir)==-1){
+							simbol = init_sym();
+							simbol = set_sym(simbol,yystack.l_mark[0].dir,-1,yystack.l_mark[-1].base,"func",NULL,tab_symGBL,tab_typeGBL);
+							append_sym(tab_symGBL,simbol);
+							structDir = crearDir();
+							structDir->info = address;
+							pushPDir(structDir,stack_dir);
+							funcType = yystack.l_mark[-1].base;
+							funcReturn = false;
+							address = 0;
+							new_ST = init_sym_tab();
+							new_TT = init_type_tab(new_TT);
+							push_tt(stack_type,new_TT);
+							push_st(stack_sym, new_ST);
+							append_new_quad(codigo,"label","-","-",yystack.l_mark[0].dir);
+					}else{
+						printf("ERROR >>> El ID ya fue declarado \n");
+					}
+				}
 break;
 case 22:
-#line 290 "parser_pruebas.y"
-	{printf("id: %s\n", yystack.l_mark[0].id.lexval);}
+#line 266 "parser.y"
+	{
+					simbol = init_sym();
+					simbol = search_SYM(getTopSym(stack_sym),yystack.l_mark[-8].dir);
+					simbol->args = yystack.l_mark[-5].list.listArgs;
+					char *tmpEtq = create_label();
+					backpatch(codigo,yystack.l_mark[-1].tSentencia.nextList,tmpEtq);
+					new_TT= pop_tt(stack_type);
+					new_ST= pop_st(stack_sym);
+					structDir = popPDir(stack_dir);
+					address = structDir->info;
+					if(yystack.l_mark[-9].base != 3 && funcReturn == false){
+						printf("Error la funcion no tiene valor de retorno\n");
+					}
+				}
 break;
 case 23:
-#line 290 "parser_pruebas.y"
+#line 279 "parser.y"
 	{}
 break;
 case 24:
-#line 292 "parser_pruebas.y"
-	{"id: %s",yystack.l_mark[0].id.lexval;}
+#line 280 "parser.y"
+	{}
 break;
 case 25:
-#line 292 "parser_pruebas.y"
-	{}
+#line 282 "parser.y"
+	{ yyval.list.listArgs = yystack.l_mark[0].list.listArgs; yyval.list.num = yystack.l_mark[0].list.num; }
 break;
 case 26:
-#line 293 "parser_pruebas.y"
-	{}
+#line 283 "parser.y"
+	{ printf("SIN ARG\n"); yyval.list.listArgs = NULL; yyval.list.num = 0; }
 break;
 case 27:
-#line 295 "parser_pruebas.y"
+#line 285 "parser.y"
+	{
+					yyval.list.listArgs = yystack.l_mark[-2].list.listArgs;
+					yyval.list.num = yystack.l_mark[-2].list.num+1;
+					/*argx = init_arg($3);*/
+					append_arg(yyval.list.listArgs, yystack.l_mark[0].base);
+				}
+break;
+case 28:
+#line 291 "parser.y"
+	{
+					yyval.list.listArgs = init_args();
+                    /*argx = init_arg($1);*/
+                    append_arg(yyval.list.listArgs, yystack.l_mark[0].base);
+					yyval.list.num = 1;
+				}
+break;
+case 29:
+#line 298 "parser.y"
 	{}
 break;
-#line 810 "y.tab.c"
+#line 866 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

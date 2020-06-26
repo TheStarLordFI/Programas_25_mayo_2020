@@ -26,7 +26,7 @@ QUAD *init_quad(char* op, char* arg1, char* arg2, char* res){
 * Fecha de creación: 11 de junio 2020*/
 void finish_quad(QUAD *c){
   free(c);
-  printf("Se ha eliminado una cuadrupla");
+  printf("Se ha eliminado una cuadrupla\n");
 }
 
 /*
@@ -72,7 +72,6 @@ void append_quad(CODE* c, QUAD *cd)
 	c->tail->next = cd;
 	c->tail  = cd;
   }
-  append_quad(c, append_new_quad);
   c->num_instru++;
 }
 

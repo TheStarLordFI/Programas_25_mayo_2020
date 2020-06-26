@@ -69,8 +69,10 @@ SYM *set_sym(SYM *simbol, char *id, int direccion, int tipo, char *tipoVariable,
 */
 SYM *init_sym(){
   SYM *nuevoSYM;
+  ARGS *n_args = init_args();
     nuevoSYM= (SYM *)malloc(sizeof(SYM));
     nuevoSYM->next = NULL;
+    nuevoSYM->args = n_args;
   return nuevoSYM;
 }
 
@@ -272,31 +274,17 @@ int getNumArgs(SYMTAB *st,char *id){
 * Fecha de creación: 31 de mayo 2020
 */
 void append_arg(ARGS* args, int arg){
-  ARG* temporal;
-  ARG* nuevoArg;
-
-  nuevoArg = init_arg(arg);
-
-  if(args->num > 1){
-
-    temporal = args->tail;
-
-    args->tail = nuevoArg;
-    temporal->next = nuevoArg;
-    nuevoArg->next = NULL;
-  }
-  else if (args->num = 1)
-  {
-    args->head->next = nuevoArg;
-    args->tail = nuevoArg;
-    nuevoArg->next = NULL;
-  }else
-  {
-    args->head = nuevoArg;
-    args->tail = nuevoArg;
-    nuevoArg->next = NULL;
-  }
-      args->num ++;
+  if (args->head == NULL){
+        args->head = init_arg(arg);
+        args->num = 1;
+    } else {
+        ARG *Aux = args->head;
+        while(Aux->next != NULL){
+            Aux = Aux->next;
+        }
+        Aux->next = init_arg(arg);
+        args->num ++;
+    }
 }
 
 /*

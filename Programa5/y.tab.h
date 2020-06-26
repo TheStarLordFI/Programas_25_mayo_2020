@@ -50,6 +50,24 @@
 #define RPAR 306
 #define SITEMP 307
 #define SINO 308
+#define expresion 309
+#define sentencia 310
+#define sentencias 311
+#define e_bool 312
+#define relacional 313
+#define lista_param 314
+#define parametros 315
+#define tipo_arg 316
+#define param_arr 317
+#define variable 318
+#define arreglo 319
+#define casos 320
+#define casos2 321
+#define predeterminado 322
+#define variable_comp 323
+#define dato_est_sim 324
+#define delaraciones 325
+#define FIN 326
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -57,80 +75,49 @@
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 typedef union{
-	int valExt;
+	char dir[32];
+	
+	int base;
+	
 	struct{
-    	int valorTipo;
-  	}tipo;
+		struct list_index *nextList;
+		char label[15];
+		char final_label[15];
+	}tSentencia;
 
 	struct{
-	    int tipe;
-	    char* valor;
+		int tipo;
+		int num;
+		char dir[32];
 	}num;
 
 	struct{
-	   char *lexval;
-	}id;
-		
-	struct{
-	    int tipoCad;
-	    char *lexval;
-	    struct cadenas *cad;
-	}cad;
-
-	/*struct{
-	  	struct list_index *nextlist;//listIndex
-	}listIndice_S; 
-	
-	struct{
-		struct list_index *prueba;//listIndex
-	  	struct list_index *nextlist;//listIndex
-	}listIndice_C; 
+		int num;
+		struct args *listArgs;
+	}list;
 
 	struct{
-		struct list_index *prueba;//listIndex
-	}listIndice_P;
+		char dir[20];
+		char base[20];
+		int des;
+		int tipo;
+		int estruct;
+		int code_struct;
+		struct sym_tab *tab_sym;
+	}var;
 
 	struct{
-	   	struct list_index *listTrue; //En la DDS viene como truelist
-	   	struct list_index *listFalse; //En la DDS viene como falselist
-	}eBool;
+		int tipo;
+		char dir[32];
+		int valor;
+	}exp;
 
 	struct{
-	    int tipoRel; //En la DDS viene como tipo 
-	    char* dirRel;//En la DDS viene como dir
-	    struct list_index *listRelTrue;//En la DDS viene como truelist
-	    struct list_index *listRelFalse;//En la DDS viene como falselist
-  	}rel;*/
-	
-	struct{
-    	int tipoExp;
-		char *dirExp;
-    }eExpr;
-	
-	struct{
-    	int tipoVA;
-    	int baseVA;
-    	int tam;
-    	char *idVar;
-  	}var;
-	
-	/*struct{
-    	struct args *listArgs;//listParam
-  	}eListARGS;*/
-
-	struct{
-		int tipoVaComp;
-		char *des;
-		int code_est;
-	}varComp;
-
-	struct{
-		int estructura;
-		struct SYMTAB *tabla;
-		int type;
-		char *des;
-		int code_est;
-	}datoEst;
+		char dir[32];
+		int tipo;
+		struct list_index *truelist;
+		struct list_index *falselist;
+	}e_b;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
 extern YYSTYPE yylval;

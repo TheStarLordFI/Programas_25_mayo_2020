@@ -18,6 +18,7 @@
 /*Modifico: OJA*/
 id [a-zA-Z_][a-zA-Z_0-9]*
 num [0-9]+
+real {num}*"."{num}+|{num}+"."{num}*
 cadena \"([a-zA-Z][a-zA-Z])*\"
 caracter \'([a-zA-Z])\' 
 
@@ -72,20 +73,25 @@ caracter \'([a-zA-Z])\'
 "*" {return MUL;}
 "/" {return DIV;}
 {caracter} {
-           strcpy(yylval.cad.lexval,yytext); 
            return CARACTER;
           }
 {num} { 
-        yylval.num.tipe= 0;
-        yylval.num.valor= strdup(yytext);
+        yylval.num.tipo = 0;
+        yylval.num.num = atoi(yytext);
+        strcpy(yylval.num.dir, yytext);
+        return NUM;
+      }
+{real} {
+        yylval.num.tipo = 2;
+        yylval.num.num = atof(yytext);
+        strcpy(yylval.num.dir, yytext);
         return NUM;
       }
 {id} {  
-        strcpy(yylval.id.lexval,yytext);
+        strcpy(yylval.dir,yytext);
         return ID;
       }
 {cadena} {
-          strcpy(yylval.cad.lexval,yytext);
           return CADENA;
         }
 [ \n\r\t] {}//se ignoran el salto de linea, el retorno de carro y los espacios en blancos

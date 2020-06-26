@@ -165,7 +165,7 @@ char *tmpEtq;
 %token<cad> CADENA
 %token<num> NUM
 
-%token COMA 
+//%token COMA 
 %right IGUAL
 %left OR
 %left AND
@@ -174,7 +174,7 @@ char *tmpEtq;
 %left MUL DIV MODULO
 %right NOT
 
-%nonassoc PUNTO
+%nonassoc PUNTO COMA
 %nonassoc RCOR
 %nonassoc LCOR
 %nonassoc LPAR RPAR
@@ -202,7 +202,7 @@ char *tmpEtq;
 %start programa
 
 %%
-programa:        {printf("==========================P r o g r a m a==========================\n");
+programa:{printf("==========================P r o g r a m a==========================\n");
                   dir = 0;
                   //codigo = init_code();
                   pDirecciones = crearPilaDir();
@@ -217,7 +217,7 @@ programa:        {printf("==========================P r o g r a m a=============
                   tabCadenas = crearTablaCadenas();
                   } declaraciones funciones{/*print_code(codigo);*/};
 				  
-declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC{
+declaraciones:tipo {typeGBL=$1.valorTipo;} lista_var PYC{
                                                             print_tab_sym(getTopSym(pSimbolos));
                                                             print_tab_type(getTopType(pTipos));															
 															} declaraciones
@@ -227,7 +227,7 @@ declaraciones:    tipo {typeGBL=$1.valorTipo;} lista_var PYC{
 																	} declaraciones
                 | {};
 
-tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
+tipo_registro:ESTRUCT INICIO {TS1 = init_sym_tab();
 							   	  TT1 = init_type_tab(TT1);
 								  structDir = crearDir();
 								  //structDir->info = dir;
@@ -245,10 +245,10 @@ tipo_registro:    ESTRUCT INICIO {TS1 = init_sym_tab();
 									$$.valorTipo=typeTemp;
 									};
 
-tipo:	base{baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;};
+tipo:base{baseGBL=$1.valorTipo;} tipo_arreglo {$$.valorTipo=$3.valorTipo;};
 
 
-base:   ENTERO {
+base:ENTERO {
 				$$.valorTipo=0;
 				printf("entero\n");
 			} 
@@ -269,27 +269,13 @@ base:   ENTERO {
 				printf("sin\n");
 				};
 
-tipo_arreglo:	LCOR NUM{printf("num: %s\n",$2.valor);} RCOR tipo_arreglo {
-					printf("tip_arreglo\n");	
-					if($2.tipe==0){
-						const char *tmp=$2.valor;
-						int n = atoi(tmp);		
-						if(n>0){
-							newTYP = init_type();
-							newTYP = set_typ(newTYP,"array",$5.valorTipo,n*getTam(getTopType(pTipos),$5.valorTipo),getTopType(pTipos));
-							$$.valorTipo = append_type(getTopType(pTipos), newTYP);
-						}
-						else{
-							printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
-						}
-					}else{
-						printf("El tam del arreglo tiene que ser entero y mayor que cero\n");
-					}
-				} | { $$.valorTipo = baseGBL; } ;
+tipo_arreglo:LCOR NUM RCOR tipo_arreglo{
+								} |  { printf("arr\n"); } ;
 
-lista_var:		ID{printf("id: %s\n", $1.lexval);} lista_var2{};
+lista_var: ID lista_var2 {};
 
-lista_var2: 	COMA ID{"id: %s",$2.lexval;} lista_var2{}
+lista_var2:COMA ID{
+				printf("id %s",$2.lexval);} lista_var2{}
 				| {};
 
 funciones: {}
