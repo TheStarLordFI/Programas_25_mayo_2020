@@ -16,7 +16,7 @@ struct pilaDirecciones{
 
 DIR *crearDir();
 DSTACK *crearPilaDir();
-void imprimePDir(DSTACK pilaDir);
+void imprimePDir(DSTACK *pilaDir);
 void borrarPDir(DSTACK *pilaDir);
 void pushPDir(DIR *direccion,DSTACK *pilaDir);
 DIR *getCimaPDir(DSTACK *pilaDir);

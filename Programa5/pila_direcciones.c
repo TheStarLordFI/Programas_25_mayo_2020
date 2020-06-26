@@ -39,10 +39,10 @@ DSTACK *crearPilaDir()
 * Fecha de creación: 20 de Junio
 */
 void borrarPDir(DSTACK *pilaDir){
-  printf("Pila de Direcciones: Borrando toda la pila\n");
+  
   DIR *direccion,* dirAux;
   direccion = pilaDir->tope;
-  while(direccion->sig != NULL)
+  while(direccion != NULL)
   {
     dirAux = direccion;
     direccion = direccion->sig;
@@ -50,6 +50,8 @@ void borrarPDir(DSTACK *pilaDir){
   }
   free(pilaDir);
   pilaDir->elementosPila=0;
+
+  printf("Pila de Direcciones: Borrando toda la pila\n");
 }
 
 /*
@@ -71,10 +73,10 @@ void pushPDir(DIR *direccion, DSTACK *pilaDir){
 * Autor: Osmar Juarez Aguilar, Morales Garcia Luis
 * Fecha de creación: 20 de Junio
 */
-void imprimePDir(DSTACK pila){
+void imprimePDir(DSTACK *pila){
     DIR *direccion;
-    direccion=pila.tope;
-    if (pila.tope!=NULL){
+    direccion=pila->tope;
+    if (pila->tope!=NULL){
       printf("\n=====================================\n");
       printf("|         PILA DE DIRECCIONES       |\n");
       printf("=====================================\n");
